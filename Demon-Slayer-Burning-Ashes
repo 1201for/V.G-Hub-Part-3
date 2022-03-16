@@ -150,6 +150,24 @@ spawn(
 
 end)
 
+local Toggle1 = Section1:CreateToggle("Infinite Breath", nil, function(State)
+dog = State
+while dog do
+    wait()
+    game:GetService("ReplicatedStorage").events.remote:FireServer("manacharges")
+    wait(3)
+    game:GetService("ReplicatedStorage").events.remote:FireServer("manacharged")
+end
+end)
+
+local Toggle1 = Section1:CreateToggle("Infinite Hunger", nil, function(State)
+dog1 = State
+while dog1 do
+    wait()
+    game:GetService("Players").LocalPlayer.CharStats.Hunger.Value = 100
+end
+end)
+
 local TextBox1 = Section2:CreateTextBox("Fps Cap", "Only numbers", true, function(Value)
     getgenv().Fps = Value
     pcall(function()
