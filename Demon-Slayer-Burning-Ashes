@@ -27,6 +27,12 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
         if getnamecallmethod()=="BreakJoints"    then
             return true
         end
+        if getnamecallmethod() == "Kick" and self == game.Players.LocalPlayer then
+            return nil 
+        end 
+        if getnamecallmethod() == "Kick" then
+            return nil
+        end 
     return OldNameCall(self, unpack(Args))
 end)
 
@@ -86,7 +92,16 @@ spawn(
                             end
                             repeat
                                 wait(0.1)
-                                game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
+                                if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana") then
+                                game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):EquipTool(game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana"))
+                                end 
+                                if game:GetService("Players").LocalPlayer.cds:FindFirstChild("NormalAttack") then
+                                game:GetService("ReplicatedStorage").events.remote:FireServer("blockstart")
+                                end 
+                                if not game:GetService("Players").LocalPlayer.cds:FindFirstChild("NormalAttack") then
+                                game:GetService("ReplicatedStorage").events.remote:FireServer("blockend")
+                                end 
+                                game:GetService("VirtualUser"):ClickButton1(Vector2.new(0,300))
                                 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
                                     v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
                                 if not game:GetService("Players").LocalPlayer.states:FindFirstChild("exeing") then
