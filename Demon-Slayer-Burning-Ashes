@@ -27,12 +27,6 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
         if getnamecallmethod()=="BreakJoints"    then
             return true
         end
-        if getnamecallmethod() == "Kick" and self == game.Players.LocalPlayer then
-            return nil 
-        end 
-        if getnamecallmethod() == "Kick" then
-            return nil
-        end 
     return OldNameCall(self, unpack(Args))
 end)
 
