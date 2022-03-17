@@ -150,6 +150,15 @@ spawn(
                             end
                             repeat
                                 wait(0.1)
+                                if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana") then
+                                game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):EquipTool(game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana"))
+                                end 
+                                if game:GetService("Players").LocalPlayer.cds:FindFirstChild("NormalAttack") then
+                                game:GetService("ReplicatedStorage").events.remote:FireServer("blockstart")
+                                end 
+                                if not game:GetService("Players").LocalPlayer.cds:FindFirstChild("NormalAttack") then
+                                game:GetService("ReplicatedStorage").events.remote:FireServer("blockend")
+                                end 
                                 game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
                                 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
                                     v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
