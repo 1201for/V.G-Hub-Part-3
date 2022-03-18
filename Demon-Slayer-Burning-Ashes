@@ -3,7 +3,7 @@ local Config = {
 	Color = Color3.fromRGB(255,128,64),
 	Keybind = Enum.KeyCode.RightControl
 }
-repeat wait() until game:IsLoaded() wait()
+repeat wait() until game:IsLoaded() wait() 
 game:GetService("Players").LocalPlayer.Idled:connect(function()
 game:GetService("VirtualUser"):ClickButton2(Vector2.new())
 end)
@@ -37,10 +37,13 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
 end)
 
 
+
 spawn(
     function()
         game:GetService("RunService").Stepped:connect(
             function()
+                game.Players.LocalPlayer.Character:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.FallingDown, false);
+                game.Players.LocalPlayer.Character:WaitForChild("Humanoid").PlatformStand = false
                 workspace.FallenPartsDestroyHeight = 0 / 0
                 sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", 1000)
             end
@@ -85,29 +88,30 @@ spawn(
                     for i, v in pairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
                         if
                             v:IsA("Model") and v.Name == "Demon Slayer" and v:FindFirstChild("HumanoidRootPart") and
-                                v:FindFirstChildOfClass("Humanoid").Health ~= 0
+                                v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v.Head.Transparency == 0
                          then
                             if getgenv().Ok == false then
                                 break
                             end
                             repeat
-                                wait(0.1)
+                                wait()
+                                game:GetService("VirtualUser"):ClickButton1(Vector2.new(0,300))
+                                game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
                                 if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana") then
                                 game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):EquipTool(game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana"))
                                 end 
-                                if game:GetService("Players").LocalPlayer.cds:FindFirstChild("NormalAttack") then
-                                game:GetService("ReplicatedStorage").events.remote:FireServer("blockstart")
-                                end 
-                                if not game:GetService("Players").LocalPlayer.cds:FindFirstChild("NormalAttack") then
-                                game:GetService("ReplicatedStorage").events.remote:FireServer("blockend")
-                                end 
-                                game:GetService("VirtualUser"):ClickButton1(Vector2.new(0,300))
                                 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
                                 if not game:GetService("Players").LocalPlayer.states:FindFirstChild("exeing") then
                                     game:GetService("VirtualInputManager"):SendKeyEvent(true, "B", false, game)
-                                    print("B")
                                 end
+                                if not game:GetService("Players").LocalPlayer.states:FindFirstChild("selfstun") then
+                                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "R", false, game)
+                                end 
+                                if v.Humanoid.Health < 3 then
+                                game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
+                                end 
                             until getgenv().Ok == false or v.Humanoid.Health == 0 
                             if v.Humanoid.Health == 0 then
                             v:remove()
@@ -143,29 +147,30 @@ spawn(
                         if
                             v:IsA("Model") and v.Name ~= "Strong Demon" and v:FindFirstChild("HumanoidRootPart") and
                                 v:FindFirstChild("Demon") and
-                                v:FindFirstChildOfClass("Humanoid").Health ~= 0 
+                                v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v.Head.Transparency == 0
                          then
                             if getgenv().Go == false then
                                 break
                             end
                             repeat
                                 wait(0.1)
+                                   game:GetService("VirtualUser"):ClickButton1(Vector2.new(0,300))
+                                game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
                                 if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana") then
                                 game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):EquipTool(game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana"))
                                 end 
-                                if game:GetService("Players").LocalPlayer.cds:FindFirstChild("NormalAttack") then
-                                game:GetService("ReplicatedStorage").events.remote:FireServer("blockstart")
-                                end 
-                                if not game:GetService("Players").LocalPlayer.cds:FindFirstChild("NormalAttack") then
-                                game:GetService("ReplicatedStorage").events.remote:FireServer("blockend")
-                                end 
-                                game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
                                 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
                                 if not game:GetService("Players").LocalPlayer.states:FindFirstChild("exeing") then
                                     game:GetService("VirtualInputManager"):SendKeyEvent(true, "B", false, game)
-                                    print("B")
                                 end
+                                if not game:GetService("Players").LocalPlayer.states:FindFirstChild("selfstun") then
+                                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "R", false, game)
+                                end 
+                                if v.Humanoid.Health < 3 then
+                                game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
+                                end 
                             until getgenv().Go == false or v.Humanoid.Health == 0
                             if v.Humanoid.Health == 0 then
                             v:remove()
