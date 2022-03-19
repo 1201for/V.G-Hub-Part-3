@@ -14,7 +14,7 @@ end)
 local OldNameCall = nil
 OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
     local Args = {...}
-        if self.Name == "check" or self.Name == "checknumber" or self.Name == "maxstat" and getnamecallmethod() == "InvokeServer" or getnamecallmethod() == "FireServer" and Args[2] == true then
+        if self.Name == "check" or self.Name == "checknumber" or self.Name == "maxstat" and getnamecallmethod() == "InvokeServer" or getnamecallmethod() == "FireServer"  then
             return nil
         end
         if getnamecallmethod() == "BreakJoints" then
