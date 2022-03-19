@@ -9,11 +9,7 @@ game:GetService("VirtualUser"):ClickButton2(Vector2.new())
 end)
 
 
-local function Invis()
-local Clone = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart"):WaitForChild("RootJoint"):Clone()
-game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart"):WaitForChild("RootJoint"):remove()
-Clone.Parent = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart")
-end 
+
 
 local OldNameCall = nil
 OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
@@ -21,17 +17,11 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
         if self.Name == "check" or self.Name == "maxstat" and getnamecallmethod() == "InvokeServer" or getnamecallmethod() == "FireServer" and Args[2] == true then
             return nil
         end
-        if self == "TeleportService" and getnamecallmethod():lower():find("teleport") then
-            return nil
-        end 
-        if getnamecallmethod()=="BreakJoints"    then
+        if getnamecallmethod() == "BreakJoints" then
             return true
         end
-        if getnamecallmethod() == "Kick" and self == game.Players.LocalPlayer then
+        if getnamecallmethod() == "GetPropertyChangedSignal" and self == game.Players.LocalPlayer.Character.Humanoid.WalkSpeed or self == game.Players.LocalPlayer.Character.Humanoid.JumpPower or self == game.Players.LocalPlayer.Character.Humanoid.MoveDirection then 
             return nil 
-        end 
-        if getnamecallmethod() == "Kick" then
-            return nil
         end 
     return OldNameCall(self, unpack(Args))
 end)
@@ -42,14 +32,30 @@ spawn(
     function()
         game:GetService("RunService").Stepped:connect(
             function()
-                game.Players.LocalPlayer.Character:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.FallingDown, false);
-                game.Players.LocalPlayer.Character:WaitForChild("Humanoid").PlatformStand = false
                 workspace.FallenPartsDestroyHeight = 0 / 0
                 sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", 1000)
             end
         )
     end
 )
+
+
+Mobs = {"Demon","Strong Demon","Fast Demon","Demon Slayer","Strong Demon Slayer"}
+local function getNearestMob()
+    local TargetDistance = math.huge
+    local Target
+    for i, v in ipairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
+         if v:IsA("Model") and v.Name == Mobs and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v.Head.Transparency == 0 then
+            local Mag = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+            if Mag < TargetDistance then
+                TargetDistance = Mag
+                Target = v
+            end
+        end
+    end
+    return Target
+end;
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -68,7 +74,7 @@ while att do wait()
 game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
 end
 end)
-local Toggle1 = Section1:CreateToggle("AutoFarm DemonSlayers", nil, function(State)
+local Toggle1 = Section1:CreateToggle("AutoFarm Mobs", nil, function(State)
 getgenv().Ok = State
 getgenv().Mob = State
 
@@ -80,109 +86,91 @@ game:GetService("RunService").Stepped:connect(
     end
 )
 
-spawn(
-    function()
-        while wait() and getgenv().Ok do
-            pcall(
-                function()
-                    for i, v in pairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
-                        if
-                            v:IsA("Model") and v.Name == "Demon Slayer" and v:FindFirstChild("HumanoidRootPart") and
-                                v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v.Head.Transparency == 0
-                         then
-                            if getgenv().Ok == false then
-                                break
-                            end
-                            repeat
-                                wait()
-                                game:GetService("VirtualUser"):ClickButton1(Vector2.new(0,300))
-                                game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
-                                if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana") then
-                                game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):EquipTool(game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana"))
-                                end 
-                                game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
-                                if not game:GetService("Players").LocalPlayer.states:FindFirstChild("exeing") then
-                                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "B", false, game)
-                                end
-                                if not game:GetService("Players").LocalPlayer.states:FindFirstChild("selfstun") then
-                                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "R", false, game)
-                                end 
-                                if v.Humanoid.Health < 3 then
-                                game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
-                                end 
-                            until getgenv().Ok == false or v.Humanoid.Health == 0 
-                            if v.Humanoid.Health == 0 then
-                            v:remove()
-                            end 
-                        end
+while wait() and getgenv().Ok do
+    pcall(
+        function()
+            repeat
+                wait()
+                if getgenv().Ok == false then
+                    break
+                end
+                if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
+                    game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
+                    game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
+                    if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana") then
+                        game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):EquipTool(
+                            game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana")
+                        )
+                    end
+                    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
+                        getNearestMob().HumanoidRootPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
+                    if not game:GetService("Players").LocalPlayer.states:FindFirstChild("exeing") then
+                        game:GetService("VirtualInputManager"):SendKeyEvent(true, "B", false, game)
+                    end
+                    if not game:GetService("Players").LocalPlayer.states:FindFirstChild("selfstun") then
+                        game:GetService("VirtualInputManager"):SendKeyEvent(true, "R", false, game)
+                    end
+                    if getNearestMob().Humanoid.Health < 3 then
+                        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
+                            getNearestMob().HumanoidRootPart.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
                     end
                 end
-            )
+            until getgenv().Ok == false or getNearestMob().Humanoid.Health == 0
+            if getNearestMob().Humanoid.Health == 0 then
+                getNearestMob():remove()
+            end
         end
-    end
-)
+    )
+end
 
 end)
 
+local Dropdown1 = Section1:CreateDropdown("Mobs", Mobs, function(String)
+	Mobs = String
+end)
 
-local Toggle1 = Section1:CreateToggle("AutoFarm Demons", nil, function(State)
-getgenv().Go = State
-getgenv().Mob = State
-game:GetService("RunService").Stepped:connect(
-    function()
-        if getgenv().Go then
-            game.Players.LocalPlayer.Character:WaitForChild("Humanoid"):ChangeState(11)
+
+local Toggle1 = Section1:CreateToggle("Mob Anchored Aura", nil, function(State)
+u = State
+while u do
+    wait()
+    for i, v in ipairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
+        if v:FindFirstChild("HumanoidRootPart") then
+            if isnetworkowner(v.HumanoidRootPart) then
+                v.HumanoidRootPart.Anchored = true
+            end
         end
     end
-)
+end
+end)
 
-spawn(
-    function()
-        while wait() and getgenv().Go do
-            pcall(
-                function()
-                    for i, v in pairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
-                        if
-                            v:IsA("Model") and v.Name ~= "Strong Demon" and v:FindFirstChild("HumanoidRootPart") and
-                                v:FindFirstChild("Demon") and
-                                v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v.Head.Transparency == 0
-                         then
-                            if getgenv().Go == false then
-                                break
-                            end
-                            repeat
-                                wait(0.1)
-                                   game:GetService("VirtualUser"):ClickButton1(Vector2.new(0,300))
-                                game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
-                                if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana") then
-                                game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):EquipTool(game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana"))
-                                end 
-                                game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
-                                if not game:GetService("Players").LocalPlayer.states:FindFirstChild("exeing") then
-                                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "B", false, game)
-                                end
-                                if not game:GetService("Players").LocalPlayer.states:FindFirstChild("selfstun") then
-                                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "R", false, game)
-                                end 
-                                if v.Humanoid.Health < 3 then
-                                game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
-                                end 
-                            until getgenv().Go == false or v.Humanoid.Health == 0
-                            if v.Humanoid.Health == 0 then
-                            v:remove()
-                            end 
-                        end
-                    end
-                end
-            )
+
+local Toggle1 = Section1:CreateToggle("Mob Stun Aura", nil, function(State)
+u1 = State
+while u1 do
+    wait()
+    for i, v in ipairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
+        if v:FindFirstChild("HumanoidRootPart") then
+            if isnetworkowner(v.HumanoidRootPart) then
+                v.Humanoid.PlatformStand = true
+            end
         end
     end
-)
+end
+end)
 
+local Toggle1 = Section1:CreateToggle("Mob Jump Aura", nil, function(State)
+u2 = State
+while u2 do
+    wait()
+    for i, v in ipairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
+        if v:FindFirstChild("HumanoidRootPart") then
+            if isnetworkowner(v.HumanoidRootPart) then
+                v.Humanoid.Jump = true
+            end
+        end
+    end
+end
 end)
 
 local Toggle1 = Section1:CreateToggle("Infinite Breath", nil, function(State)
@@ -195,26 +183,30 @@ while dog do
 end
 end)
 
-local Toggle1 = Section1:CreateToggle("Infinite Hunger", nil, function(State)
-dog1 = State
-while dog1 do
-    wait()
-    game:GetService("Players").LocalPlayer.CharStats.Hunger.Value = 100
-end
-end)
-
 local TextBox1 = Section2:CreateTextBox("Fps Cap", "Only numbers", true, function(Value)
     getgenv().Fps = Value
     pcall(function()
 setfpscap(getgenv().Fps)
 end)
 end)
-
+getgenv().WalkSpeed = 16
+getgenv().JumpPower = 50
+local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", nil, function(State)
+getgenv().s = State
+game:GetService("RunService").Stepped:connect(
+    function()
+        if getgenv().s then
+            game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = getgenv().WalkSpeed
+            game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = getgenv().JumpPower
+        end
+    end
+)
+end)
 local TextBox1 = Section2:CreateTextBox("WalkSpeed", "Only numbers", true, function(Value)
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+    getgenv().WalkSpeed = Value
 end)
 local TextBox1 = Section2:CreateTextBox("JumpPower", "Only numbers", true, function(Value)
-    game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+    getgenv().JumpPower = Value
 end)
 
 
@@ -227,12 +219,37 @@ game:GetService("UserInputService").JumpRequest:connect(function()
 	end
 end) end)
 
-
-
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/Karrot-Esp"))()
+ESP:AddObjectListener(game:GetService("Workspace").npc.npcs, {
+    Color =  Color3.new(255,0,0),
+    Type = "Model",
+    PrimaryPart = function(v)
+        local H = v:FindFirstChild("HumanoidRootPart")
+        while not H do
+            wait()
+            H = v:FindFirstChild("HumanoidRootPart")
+        end
+        return H
+    end,
+    Validator = function(v)
+        return not game.Players:GetPlayerFromCharacter(v)
+    end,
+    CustomName = function(v)
+        return  v.Name
+    end,
+    IsEnabled = "NPC",
+})
 
-local Toggle1 = Section1:CreateToggle("Player Esp", nil, function(State)
+
+
+local Toggle1 = Section1:CreateToggle("Enable Esp", nil, function(State)
     ESP:Toggle(State)
+end)
+local Toggle1 = Section1:CreateToggle("Mob Esp", nil, function(State)
+    ESP.NPC = State
+end)
+local Toggle1 = Section1:CreateToggle("PLayer Esp", nil, function(State)
+    ESP.Players = State
 end)
 local Toggle1 = Section1:CreateToggle("Tracers Esp", nil, function(State)
     ESP.Tracers = State
@@ -279,7 +296,7 @@ game.Players.LocalPlayer:GetMouse().KeyDown:connect(
     end
 )
 end)
-local Toggle1 = Section2:CreateToggle("B Fly", nil, function(State)
+local Toggle1 = Section2:CreateToggle("H Fly", nil, function(State)
 sex2 = State
 local Max = 0
 local Players = game.Players
@@ -287,7 +304,7 @@ local LP = Players.LocalPlayer
 local Mouse = LP:GetMouse()
 Mouse.KeyDown:connect(
     function(k)
-        if k:lower() == "b" then
+        if k:lower() == "h" then
             Max = Max + 1
             getgenv().Fly = false
             if sex2 then
@@ -516,31 +533,7 @@ end)
 local Button1 = Section2:CreateButton("Rejoin", function()
 game:GetService("TeleportService"):Teleport(game.PlaceId, game:GetService("Players").LocalPlayer) end)
 
-local Button1 = Section1:CreateButton("???", function()
-while wait() do
-    pcall(
-        function()
-            for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.Menu:GetChildren()) do
-                if v:IsA("TextLabel") then
-                    v.Text = game:GetService("HttpService"):GenerateGUID(false)
-                elseif v.ClassName ~= "TextLabel" then
-                    for i, v in pairs(v:GetChildren()) do
-                        if v:IsA("TextLabel") then
-                            v.Text = game:GetService("HttpService"):GenerateGUID(false)
-                        elseif v.ClassName ~= "TextLabel" then
-                            for i, v in pairs(v:GetChildren()) do
-                                if v:IsA("TextLabel") then
-                                    v.Text = game:GetService("HttpService"):GenerateGUID(false)
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    )
-end
-end)
+
 
 
 
