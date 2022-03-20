@@ -8,9 +8,6 @@ game:GetService("Players").LocalPlayer.Idled:connect(function()
 game:GetService("VirtualUser"):ClickButton2(Vector2.new())
 end)
 
-
-
-
 local OldNameCall = nil
 OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
     local Args = {...}
@@ -20,12 +17,9 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
         if getnamecallmethod() == "BreakJoints" then
             return true
         end
-        if getnamecallmethod() == "GetPropertyChangedSignal" and self == game.Players.LocalPlayer.Character.Humanoid.WalkSpeed or self == game.Players.LocalPlayer.Character.Humanoid.JumpPower or self == game.Players.LocalPlayer.Character.Humanoid.MoveDirection then 
-            return nil 
-        end 
+
     return OldNameCall(self, unpack(Args))
 end)
-
 
 
 spawn(
@@ -130,6 +124,7 @@ end)
 local Dropdown1 = Section1:CreateDropdown("Mobs", Mobs, function(String)
 	Mobs = String
 end)
+
 
 
 local Toggle1 = Section1:CreateToggle("Auto Buy Food", nil, function(State)
