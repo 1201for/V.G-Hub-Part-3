@@ -189,7 +189,7 @@ while wait() and got do
                 end
             end
             for i, v in pairs(game:GetService("Workspace").chatnpcs.Quest:GetChildren()) do
-                if v:IsA("Model") and v:FindFirstChild("Amazon Box") and  not game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Quest") then
+                if v:IsA("Model") and v:FindFirstChild("Amazon Box") then
                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
                         v.PrimaryPart.CFrame * CFrame.new(0, -26, 0)
                     fireclickdetector(v.hitbox:FindFirstChildOfClass("ClickDetector"))
