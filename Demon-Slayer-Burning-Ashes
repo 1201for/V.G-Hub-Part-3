@@ -33,6 +33,128 @@ spawn(
     end
 )
 
+-- Instances:
+
+local ChadStats = Instance.new("ScreenGui")
+local Breathing = Instance.new("TextLabel")
+local Hunger = Instance.new("TextLabel")
+local Health = Instance.new("TextLabel")
+local Rep = Instance.new("TextLabel")
+
+--Properties:
+
+ChadStats.Name = "Chad Stats"
+ChadStats.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+if syn and syn.protect_gui then
+    syn.protect_gui(ChadStats)
+    ChadStats.Parent = game.CoreGui
+elseif gethui then
+    ChadStats.Parent = gethui()
+else
+    ChadStats.Parent = game.CoreGui
+end
+
+Breathing.Name = "Breathing"
+Breathing.Parent = ChadStats
+Breathing.Active = true
+Breathing.BackgroundColor3 = Color3.fromRGB(0, 19, 0)
+Breathing.BackgroundTransparency = 0
+Breathing.Position = UDim2.new(0.823636413, 0, 0, 0)
+Breathing.Size = UDim2.new(0, 200, 0, 50)
+Breathing.Font = Enum.Font.SourceSans
+Breathing.TextColor3 = Color3.fromRGB(255, 0.0)
+Breathing.TextSize = 16
+
+Hunger.Name = "Hunger"
+Hunger.Parent = ChadStats
+Hunger.Active = true
+Hunger.BackgroundColor3 = Color3.fromRGB(0, 19, 0)
+Hunger.BackgroundTransparency = 0
+Hunger.Position = UDim2.new(0.823636413, 0, 0.199999988, 0)
+Hunger.Size = UDim2.new(0, 200, 0, 50)
+Hunger.Font = Enum.Font.SourceSans
+Hunger.TextColor3 = Color3.fromRGB(255, 0.0)
+Hunger.TextSize = 16
+
+Health.Name = "Health"
+Health.Parent = ChadStats
+Health.Active = true
+Health.BackgroundColor3 = Color3.fromRGB(0, 19, 0)
+Health.BackgroundTransparency = 0
+Health.Position = UDim2.new(0.823030353, 0, 0.130061358, 0)
+Health.Size = UDim2.new(0, 200, 0, 50)
+Health.Font = Enum.Font.SourceSans
+Health.TextColor3 = Color3.fromRGB(255, 0.0)
+Health.TextSize = 16
+
+Rep.Name = "Rep"
+Rep.Parent = ChadStats
+Rep.Active = true
+Rep.BackgroundColor3 = Color3.fromRGB(0, 19, 0)
+Rep.BackgroundTransparency = 0
+Rep.Position = UDim2.new(0.823286057, 0, 0.0613496974, 0)
+Rep.Size = UDim2.new(0, 200, 0, 50)
+Rep.Font = Enum.Font.SourceSans
+Rep.TextColor3 = Color3.fromRGB(255, 0.0)
+Rep.TextSize = 16
+
+local script = Instance.new("LocalScript", Breathing)
+game:GetService("RunService").Stepped:connect(
+    function()
+        if getgenv().Visible then
+            Breathing.Text =
+                "Breath " ..
+                math.floor(game:GetService("Players").LocalPlayer:WaitForChild("NoSaveValue"):WaitForChild("Air").Value) ..
+                    "%"
+            Breathing.Visible = true
+        else
+            Breathing.Visible = false
+        end
+    end
+)
+local script = Instance.new("LocalScript", Hunger)
+game:GetService("RunService").Stepped:connect(
+    function()
+        if getgenv().Visible then
+            Hunger.Text =
+                "Hunger " ..
+                math.floor(
+                    game:GetService("Players").LocalPlayer:WaitForChild("CharStats"):WaitForChild("Hunger").Value
+                ) ..
+                    "%"
+            Hunger.Visible = true
+        else
+            Hunger.Visible = false
+        end
+    end
+)
+local script = Instance.new("LocalScript", Health)
+game:GetService("RunService").Stepped:connect(
+    function()
+        if getgenv().Visible then
+            Health.Text =
+                "Health " ..
+                math.floor(game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid").Health) .. "%"
+            Health.Visible = true
+        else
+            Health.Visible = false
+        end
+    end
+)
+
+local script = Instance.new("LocalScript", Rep)
+game:GetService("RunService").Stepped:connect(
+    function()
+        if getgenv().Visible then
+            Rep.Text = "Rep " .. game:GetService("Players").LocalPlayer:WaitForChild("Data"):WaitForChild("Rep").Value
+            Rep.Visible = true
+        else
+            Rep.Visible = false
+        end
+    end
+)
+
 
 Mobs = {"Demon","Strong Demon","Fast Demon","Demon Slayer","Strong Demon Slayer"}
 local function getNearestMob()
@@ -69,6 +191,10 @@ game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
 end
 end)
 
+
+local Toggle1 = Section1:CreateToggle("Stats", nil, function(State)
+getgenv().Visible = State
+end)
 
 local Toggle1 = Section1:CreateToggle("AutoFarm Mobs", nil, function(State)
 getgenv().Ok = State
