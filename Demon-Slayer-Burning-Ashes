@@ -74,6 +74,8 @@ while att do wait()
 game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
 end
 end)
+
+
 local Toggle1 = Section1:CreateToggle("AutoFarm Mobs", nil, function(State)
 getgenv().Ok = State
 getgenv().Mob = State
@@ -129,6 +131,81 @@ local Dropdown1 = Section1:CreateDropdown("Mobs", Mobs, function(String)
 	Mobs = String
 end)
 
+
+local Toggle1 = Section1:CreateToggle("Auto Buy Food", nil, function(State)
+jj = State
+game:GetService("RunService").Stepped:connect(
+    function()
+        if jj then
+            game.Players.LocalPlayer.Character:WaitForChild("Humanoid"):ChangeState(11)
+        end
+    end
+)
+while wait() and jj do
+    pcall(
+        function()
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                game:GetService("Workspace").Store.Onigiri.CFrame * CFrame.new(0, -26, 0)
+            fireclickdetector(game:GetService("Workspace").Store.Onigiri.ClickDetector)
+            if game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("dialogGUI") then
+                game:GetService("VirtualUser"):ClickButton1(Vector2.new())
+                for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.dialogGUI.f.sf:GetChildren()) do
+                    if v:IsA("UIGridLayout") then
+                        v.CellSize = UDim2.new(500, 500, -500, -500)
+                    end
+                    if v.Name == "button" then
+                        v:remove()
+                    end
+                end
+            end
+        end
+    )
+end
+end)
+
+local Toggle1 = Section1:CreateToggle("Money Farm | Fast", nil, function(State)
+got = State
+
+game:GetService("RunService").Stepped:connect(
+    function()
+        if got then
+            game.Players.LocalPlayer.Character:WaitForChild("Humanoid"):ChangeState(11)
+        end
+    end
+)
+
+while wait() and got do
+    pcall(
+        function()
+            if game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("dialogGUI") then
+                game:GetService("VirtualUser"):ClickButton1(Vector2.new())
+                for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.dialogGUI.f.sf:GetChildren()) do
+                    if v:IsA("UIGridLayout") then
+                        v.CellSize = UDim2.new(500, 500, -500, -500)
+                    end
+                    if v.Name == "button" then
+                        v:remove()
+                    end
+                end
+            end
+            for i, v in pairs(game:GetService("Workspace").chatnpcs.Quest:GetChildren()) do
+                if v:IsA("Model") and v:FindFirstChild("Amazon Box") and  not game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Quest") then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                        v.PrimaryPart.CFrame * CFrame.new(0, -26, 0)
+                    fireclickdetector(v.hitbox:FindFirstChildOfClass("ClickDetector"))
+                elseif
+                    game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Quest") and v:IsA("Model") and
+                        v:FindFirstChild("Main")
+                 then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                        v.PrimaryPart.CFrame * CFrame.new(0, -26, 0)
+                    fireclickdetector(v.pp:FindFirstChildOfClass("ClickDetector"))
+                end
+            end
+        end
+    )
+end
+end)
 
 local Toggle1 = Section1:CreateToggle("Mob Anchored Aura", nil, function(State)
 u = State
