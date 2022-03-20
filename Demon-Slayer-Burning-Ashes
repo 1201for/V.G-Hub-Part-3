@@ -155,6 +155,13 @@ game:GetService("RunService").Stepped:connect(
     end
 )
 
+Areas = {}
+for i, v in pairs(game:GetService("ReplicatedStorage").Areas:GetChildren()) do
+    if v:IsA("BasePart") then
+        table.insert(Areas, v.Name)
+    end
+end
+
 
 Mobs = {"Demon","Strong Demon","Fast Demon","Demon Slayer","Strong Demon Slayer"}
 local function getNearestMob()
@@ -294,6 +301,9 @@ game:GetService("RunService").Stepped:connect(
         end
     end
 )
+repeat wait()
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("ReplicatedStorage").Areas["Yokai Village"].CFrame
+until game:GetService("Workspace").chatnpcs.Quest.Box:FindFirstChild("Main") or got == false
 
 while wait() and got do
     pcall(
@@ -438,6 +448,14 @@ ESP:AddObjectListener(game:GetService("Workspace").npc.npcs, {
     IsEnabled = "NPC",
 })
 
+
+local Button1 = Section2:CreateButton("Teleport To Area", function()
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("ReplicatedStorage").Areas[Areas].CFrame
+end)
+
+local Dropdown1 = Section2:CreateDropdown("Areas", Areas, function(String)
+	Areas = String
+end)
 
 
 local Toggle1 = Section1:CreateToggle("Enable Esp", nil, function(State)
@@ -784,3 +802,4 @@ local Slider4 = Section4:CreateSlider("Tile Scale",0,1,nil,false, function(Value
 	Window:SetTileScale(Value)
 end)
 Slider4:SetValue(0.5)
+
