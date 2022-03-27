@@ -10,7 +10,7 @@ end)
 game.CoreGui.RobloxPromptGui.promptOverlay.DescendantAdded:Connect(
     function()
         if game.CoreGui.RobloxPromptGui.promptOverlay:FindFirstChild("ErrorPrompt") then
-            wait()
+            wait(25)
             game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
         end
     end
