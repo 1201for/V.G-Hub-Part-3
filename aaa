@@ -228,7 +228,6 @@ local function getNearestMob()
                         if  
                             v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
                                 v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                                v.Head.Transparency == 0 and
                                 v.Name == Settings.Mobs
                          then
                             local Mag =
@@ -257,24 +256,16 @@ local function getNearestiii()
             for i, v in ipairs(v:GetChildren()) do
                 if v:IsA("Folder") then
                     for i, v in ipairs(v:GetChildren()) do
-                        if  
+                        if
                             v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
                                 v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                                v.Head.Transparency == 0 and
                                 v.Name == Settings.Mobs
                          then
-                            if
-                                v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
-                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                                    v.Head.Transparency == 0 and
-                                    v.Name == Settings.Mobs
-                             then
-                                local Mag =
-                                    (Vector3.new(-673, -288, -648) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-                                if Mag < TargetDistance then
-                                    TargetDistance = Mag
-                                    Target = v
-                                end
+                            local Mag =
+                                (Vector3.new(-673, -288, -648) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+                            if Mag < TargetDistance then
+                                TargetDistance = Mag
+                                Target = v
                             end
                         end
                     end
