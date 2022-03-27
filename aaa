@@ -54,9 +54,6 @@ OldNameCall =
         if getnamecallmethod() == "BreakJoints" then
             return true
         end
-        if getnamecallmethod() == math.random and self == workspace.npc then 
-            return nil
-        end 
         if getnamecallmethod() == "Destroy" and self == game.Players.LocalPlayer then 
             return nil
         end 
@@ -414,7 +411,6 @@ spawn(
                 function()
                     repeat
                         wait()
-                        print(getNearestiii())
                         if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
                             if isnetworkowner(getNearestiii().PrimaryPart) then
                                 getNearestiii().PrimaryPart.CFrame = CFrame.new(-673, -288, -648)
