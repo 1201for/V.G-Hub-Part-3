@@ -364,6 +364,11 @@ game:GetService("RunService").Stepped:connect(
         end
     end
 )
+spawn(function()
+while wait(3) and Settings.AutoFarmSafely do
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame= CFrame.new(-673, -288, -648)
+end end)
+
 spawn(
     function()
         while wait() and Settings.AutoFarmSafely do
