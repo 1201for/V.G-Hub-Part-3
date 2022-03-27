@@ -507,7 +507,7 @@ end)
 local Toggle1 = Section1:CreateToggle("Auto Tp To Flute/EarRing", Settings.AutoTeleport, function(State)
 Settings.AutoTeleport = State
 for i, v in pairs(game:GetService("Workspace").map.Stuff:GetDescendants()) do
-    if v:FindFirstChildOfClass("ClickDetector") and v:IsA("BasePart") and v.Name == "Barrel" then
+    if v:FindFirstChildOfClass("ClickDetector") and v:IsA("BasePart")  then
         if Settings.AutoTeleport then
             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
             wait(0.5)
@@ -518,7 +518,7 @@ end
 game:GetService("Workspace").map.Stuff.DescendantAdded:Connect(
     function(v)
         if Settings.AutoTeleport then
-            if v:FindFirstChildOfClass("ClickDetector") and v:IsA("BasePart") and v.Name == "Barrel" then
+            if v:FindFirstChildOfClass("ClickDetector") and v:IsA("BasePart") then
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
                 wait(0.5)
                 fireclickdetector(v:FindFirstChildOfClass("ClickDetector"))
@@ -783,13 +783,13 @@ local function esp(v)
     update()
 end
 for i,v in pairs(game:GetService("Workspace").map:GetDescendants()) do
-    if v:FindFirstChildOfClass("ClickDetector") and v:IsA("BasePart") and v.Name == "Barrel" then
+    if v:FindFirstChildOfClass("ClickDetector") and v:IsA("BasePart")  then
         esp(v)
     end
 end
 game:GetService("Workspace").map.DescendantAdded:Connect(
     function(v)
-        if v:FindFirstChildOfClass("ClickDetector") and v:IsA("BasePart") and v.Name == "Barrel" then
+        if v:FindFirstChildOfClass("ClickDetector") and v:IsA("BasePart") then
             esp(v)
         end
     end
