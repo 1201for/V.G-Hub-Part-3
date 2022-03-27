@@ -48,13 +48,18 @@ OldNameCall =
     "__namecall",
     function(self, ...)
         local Args = {...}
-        if self.Name == "check" or self.Name == "checknumber" or self.Name == "maxstat" then
+        if self.Name == "check" or self.Name == "checknumber" or self.Name == "maxstat" or self.Name == "checkstats" then
             return nil
         end
         if getnamecallmethod() == "BreakJoints" then
             return true
         end
-
+        if getnamecallmethod() == math.random and self == workspace.npc then 
+            return nil
+        end 
+        if getnamecallmethod() == "Destroy" and self == game.Players.LocalPlayer then 
+            return nil
+        end 
         return OldNameCall(self, unpack(Args))
     end
 )
@@ -209,45 +214,80 @@ for i, v in pairs(game:GetService("ReplicatedStorage").Areas:GetChildren()) do
 end
 
 Mobs = {"Demon", "Strong Demon", "Fast Demon", "Demon Slayer", "Strong Demon Slayer"}
+if not game.workspace:FindFirstChild("Mobs") then
+Folder = Instance.new("Folder",workspace)
+Folder.Name = "Mobs"
+end 
+
+
 local function getNearestMob()
     local TargetDistance = math.huge
     local Target
-    for i, v in ipairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
-        if
-            v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                v.Head.Transparency == 0 and
-                v.Name == Settings.Mobs
-         then
-            local Mag =
-                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
-                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-            if Mag < TargetDistance then
-                TargetDistance = Mag
-                Target = v
+    for i, v in ipairs(game:GetService("Workspace").npc:GetChildren()) do
+        for i, v in ipairs(v:GetChildren()) do
+            for i, v in ipairs(v:GetChildren()) do
+                if v:IsA("Folder") then
+                    for i, v in ipairs(v:GetChildren()) do
+                        if  
+                            v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
+                                v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
+                                v.Head.Transparency == 0 and
+                                v.Name == Settings.Mobs
+                         then
+                            local Mag =
+                                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
+                                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+                            if Mag < TargetDistance then
+                                TargetDistance = Mag
+                                Target = v
+                            end
+                        end
+                    end
+                end
             end
         end
     end
     return Target
 end
 
+
+
 local function getNearestiii()
     local TargetDistance = math.huge
     local Target
-    for i, v in ipairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
-        if
-            v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                v.Head.Transparency == 0 and
-                v.Name == Settings.Mobs
-         then
-            local Mag = (Vector3.new(-673, -288, -648) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-            if Mag < TargetDistance then
-                TargetDistance = Mag
-                Target = v
+    for i, v in ipairs(game:GetService("Workspace").npc:GetChildren()) do
+        for i, v in ipairs(v:GetChildren()) do
+            for i, v in ipairs(v:GetChildren()) do
+                if v:IsA("Folder") then
+                    for i, v in ipairs(v:GetChildren()) do
+                        if  
+                            v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
+                                v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
+                                v.Head.Transparency == 0 and
+                                v.Name == Settings.Mobs
+                         then
+                            if
+                                v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
+                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
+                                    v.Head.Transparency == 0 and
+                                    v.Name == Settings.Mobs
+                             then
+                                local Mag =
+                                    (Vector3.new(-673, -288, -648) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+                                if Mag < TargetDistance then
+                                    TargetDistance = Mag
+                                    Target = v
+                                end
+                            end
+                        end
+                    end
+                end
             end
         end
     end
     return Target
 end
+
 
 pcall(
     function()
@@ -358,9 +398,7 @@ Settings.AutoFarmSafely = State
 game:GetService("RunService").Stepped:connect(
     function()
         if Settings.AutoFarmSafely then
-            if game:GetService("Workspace").npc.npcs:FindFirstChild(Settings.Mobs) then
-                game.Players.LocalPlayer.Character:WaitForChild("Humanoid"):ChangeState(11)
-            end
+            game.Players.LocalPlayer.Character:WaitForChild("Humanoid"):ChangeState(11)
         end
     end
 )
@@ -376,6 +414,7 @@ spawn(
                 function()
                     repeat
                         wait()
+                        print(getNearestiii())
                         if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
                             if isnetworkowner(getNearestiii().PrimaryPart) then
                                 getNearestiii().PrimaryPart.CFrame = CFrame.new(-673, -288, -648)
@@ -590,9 +629,9 @@ Settings.MobAch = State
 spawn(
     function()
         while Settings.MobAch do
-            wait()
-            for i, v in ipairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
-                if v:FindFirstChild("HumanoidRootPart") then
+            wait(3)
+            for i, v in ipairs(game:GetService("Workspace"):GetDescendants()) do
+                if v:FindFirstChild("HumanoidRootPart") and table.find(Mobs,v.Name) and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude < 25 then
                     if isnetworkowner(v.HumanoidRootPart) then
                         v.HumanoidRootPart.Anchored = true
                     end
@@ -610,9 +649,9 @@ Settings.MobStu = State
 spawn(
     function()
         while Settings.MobStu do
-            wait()
-            for i, v in ipairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
-                if v:FindFirstChild("HumanoidRootPart") then
+            wait(3)
+            for i, v in ipairs(game:GetService("Workspace").npc:GetDescendants()) do
+                if v:FindFirstChild("HumanoidRootPart") and table.find(Mobs,v.Name) and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude < 25 then wait()
                     if isnetworkowner(v.HumanoidRootPart) then
                         v.Humanoid.PlatformStand = true
                     end
@@ -629,8 +668,8 @@ Settings.MobJum = State
 spawn(function()
 while Settings.MobJum do
     wait()
-    for i, v in ipairs(game:GetService("Workspace").npc.npcs:GetChildren()) do
-        if v:FindFirstChild("HumanoidRootPart") then
+    for i, v in ipairs(game:GetService("Workspace"):GetDescendants()) do
+        if v:FindFirstChild("HumanoidRootPart") and table.find(Mobs,v.Name) and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude < 25 then
             if isnetworkowner(v.HumanoidRootPart) then
                 v.Humanoid.Jump = true
             end
@@ -719,7 +758,7 @@ game:GetService("UserInputService").JumpRequest:connect(
 end)
 
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/Karrot-Esp"))()
-ESP:AddObjectListener(game:GetService("Workspace").npc.npcs, {
+ESP:AddObjectListener(game:GetService("Workspace").npc, {
     Color =  Color3.new(255,0,0),
     Type = "Model",
     PrimaryPart = function(v)
