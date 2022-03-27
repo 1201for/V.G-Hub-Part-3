@@ -15,16 +15,12 @@ game.CoreGui.RobloxPromptGui.promptOverlay.DescendantAdded:Connect(
         end
     end
 )
-
 local Name = "DemonSlayerBurningAshes.txt"
-
 Des = {}
 if makefolder then
     makefolder("V.G Hub")
 end
-
 local Settings
-
 if
     not pcall(
         function()
@@ -34,13 +30,10 @@ if
  then
     writefile("V.G Hub//" .. Name, game:service "HttpService":JSONEncode(Des))
 end
-
 Settings = game:service "HttpService":JSONDecode(readfile("V.G Hub//" .. Name))
-
 local function Save()
     writefile("V.G Hub//" .. Name, game:service "HttpService":JSONEncode(Settings))
 end
-
 local OldNameCall = nil
 OldNameCall =
     hookmetamethod(
@@ -80,20 +73,15 @@ spawn(
         )
     end
 )
-
 -- Instances:
-
 local ChadStats = Instance.new("ScreenGui")
 local Breathing = Instance.new("TextLabel")
 local Hunger = Instance.new("TextLabel")
 local Health = Instance.new("TextLabel")
 local Rep = Instance.new("TextLabel")
-
 --Properties:
-
 ChadStats.Name = "Chad Stats"
 ChadStats.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
 if syn and syn.protect_gui then
     syn.protect_gui(ChadStats)
     ChadStats.Parent = game.CoreGui
@@ -102,7 +90,6 @@ elseif gethui then
 else
     ChadStats.Parent = game.CoreGui
 end
-
 Breathing.Name = "Breathing"
 Breathing.Parent = ChadStats
 Breathing.Active = true
@@ -113,7 +100,6 @@ Breathing.Size = UDim2.new(0, 200, 0, 50)
 Breathing.Font = Enum.Font.SourceSans
 Breathing.TextColor3 = Color3.fromRGB(255, 0.0)
 Breathing.TextSize = 16
-
 Hunger.Name = "Hunger"
 Hunger.Parent = ChadStats
 Hunger.Active = true
@@ -124,7 +110,6 @@ Hunger.Size = UDim2.new(0, 200, 0, 50)
 Hunger.Font = Enum.Font.SourceSans
 Hunger.TextColor3 = Color3.fromRGB(255, 0.0)
 Hunger.TextSize = 16
-
 Health.Name = "Health"
 Health.Parent = ChadStats
 Health.Active = true
@@ -135,7 +120,6 @@ Health.Size = UDim2.new(0, 200, 0, 50)
 Health.Font = Enum.Font.SourceSans
 Health.TextColor3 = Color3.fromRGB(255, 0.0)
 Health.TextSize = 16
-
 Rep.Name = "Rep"
 Rep.Parent = ChadStats
 Rep.Active = true
@@ -146,7 +130,6 @@ Rep.Size = UDim2.new(0, 200, 0, 50)
 Rep.Font = Enum.Font.SourceSans
 Rep.TextColor3 = Color3.fromRGB(255, 0.0)
 Rep.TextSize = 16
-
 local script = Instance.new("LocalScript", Breathing)
 game:GetService("RunService").Stepped:connect(
     function()
@@ -190,7 +173,6 @@ game:GetService("RunService").Stepped:connect(
         end
     end
 )
-
 local script = Instance.new("LocalScript", Rep)
 game:GetService("RunService").Stepped:connect(
     function()
@@ -202,21 +184,17 @@ game:GetService("RunService").Stepped:connect(
         end
     end
 )
-
 Areas = {}
 for i, v in pairs(game:GetService("ReplicatedStorage").Areas:GetChildren()) do
     if v:IsA("BasePart") then
         table.insert(Areas, v.Name)
     end
 end
-
 Mobs = {"Demon", "Strong Demon", "Fast Demon", "Demon Slayer", "Strong Demon Slayer"}
 if not game.workspace:FindFirstChild("Mobs") then
 Folder = Instance.new("Folder",workspace)
 Folder.Name = "Mobs"
 end 
-
-
 local function getNearestMob()
     local TargetDistance = math.huge
     local Target
@@ -228,41 +206,35 @@ local function getNearestMob()
                         if  
                             v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
                                 v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
+                                v.Head.Transparency == 0 and
                                 v.Name == Settings.Mobs
                          then
                             local Mag =
-                                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
-                                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-                            if Mag < TargetDistance then
-                                TargetDistance = Mag
-                                Target = v
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return Target
-end
-
-
-
-local function getNearestiii()
-    local TargetDistance = math.huge
-    local Target
-    for i, v in ipairs(game:GetService("Workspace").npc:GetChildren()) do
-        for i, v in ipairs(v:GetChildren()) do
+@@ -257,24 +256,16 @@ local function getNearestiii()
             for i, v in ipairs(v:GetChildren()) do
                 if v:IsA("Folder") then
                     for i, v in ipairs(v:GetChildren()) do
+                        if  
                         if
                             v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
                                 v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
+                                v.Head.Transparency == 0 and
                                 v.Name == Settings.Mobs
                          then
+                            if
+                                v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
+                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
+                                    v.Head.Transparency == 0 and
+                                    v.Name == Settings.Mobs
+                             then
+                                local Mag =
+                                    (Vector3.new(-673, -288, -648) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+                                if Mag < TargetDistance then
+                                    TargetDistance = Mag
+                                    Target = v
+                                end
                             local Mag =
-                                (Vector3.new(math.random(-673,-450), -288, math.random(-648,-450)) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+                                (Vector3.new(-673, -288, -648) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
                             if Mag < TargetDistance then
                                 TargetDistance = Mag
                                 Target = v
@@ -275,8 +247,6 @@ local function getNearestiii()
     end
     return Target
 end
-
-
 pcall(
     function()
         Que = {}
@@ -305,19 +275,14 @@ local function CheckMate()
         game:GetService("VirtualInputManager"):SendKeyEvent(true, "R", false, game)
     end
 end
-
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
-
 local Tab1 = Window:CreateTab("Demon Slayer-Burning Ashes")
 local Tab2 = Window:CreateTab("UI Settings")
-
 local Section1 = Tab1:CreateSection("")
 local Section2 = Tab1:CreateSection("")
 local Section3 = Tab2:CreateSection("Menu")
 local Section4 = Tab2:CreateSection("Background")
-
-
 local Toggle1 = Section1:CreateToggle("Auto Attack", Settings.Attack, function(State)
 Settings.Attack = State
 spawn(
@@ -328,17 +293,12 @@ spawn(
         end
     end
 )
-
 end)
-
-
 local Toggle1 = Section1:CreateToggle("Stats", Settings.Visible, function(State)
 Settings.Visible = State
 end)
-
 local Toggle1 = Section1:CreateToggle("AutoFarm Mobs", Settings.AutoFarmMobs, function(State)
 Settings.AutoFarmMobs = State
-
 game:GetService("RunService").Stepped:connect(
     function()
         if Settings.AutoFarmMobs then
@@ -377,9 +337,7 @@ spawn(
         end
     end
 )
-
 end)
-
 if isnetworkowner then
 local Toggle1 = Section1:CreateToggle("AutoFarm Mobs Safely", Settings.AutoFarmSafely, function(State)
 Settings.AutoFarmSafely = State
@@ -391,11 +349,9 @@ game:GetService("RunService").Stepped:connect(
     end
 )
 spawn(function()
-while wait(5) and Settings.AutoFarmSafely do
-game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame= CFrame.new(math.random(-673,-450), -288, math.random(-648,-450))
-
+while wait(3) and Settings.AutoFarmSafely do
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame= CFrame.new(-673, -288, -648)
 end end)
-
 spawn(
     function()
         while wait() and Settings.AutoFarmSafely do
@@ -404,9 +360,8 @@ spawn(
                     repeat
                         wait()
                         if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
-                            if isnetworkowner(getNearestiii().PrimaryPart) then wait(0.1)
-                                getNearestiii().PrimaryPart.CFrame = CFrame.new(math.random(-673,-450), -288, math.random(-648,-450))
-
+                            if isnetworkowner(getNearestiii().PrimaryPart) then
+                                getNearestiii().PrimaryPart.CFrame = CFrame.new(-673, -288, -648)
                                 game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
                                 game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
                             end
@@ -426,14 +381,9 @@ spawn(
 )
 end)
 end
-
-
 local Dropdown1 = Section1:CreateDropdown("Mobs", Mobs, function(String)
 	Settings.Mobs = String
 end)
-
-
-
 local Toggle1 = Section1:CreateToggle("Auto Accept Quest", Settings.AutoQuest, function(State)
 Settings.AutoQuest = State
 game:GetService("RunService").Stepped:connect(
@@ -493,13 +443,9 @@ spawn(
     end
 )
 end)
-
-
 local Dropdown1 = Section1:CreateDropdown("Quests", Que, function(String)
 	Settings.Quest = String
 end)
-
-
 local Toggle1 = Section1:CreateToggle("Auto Buy Food", Settings.Food, function(State)
 Settings.Food = State
 game:GetService("RunService").Stepped:connect(
@@ -532,11 +478,8 @@ while wait() and Settings.Food do
 end
 end)
 end)
-
-
 local Toggle1 = Section1:CreateToggle("Auto Tp To Flute/EarRing", Settings.AutoTeleport, function(State)
 Settings.AutoTeleport = State
-
 spawn(
     function()
         while Settings.AutoTeleport do
@@ -555,11 +498,8 @@ spawn(
     end
 )
 end)
-
-
 local Toggle1 = Section1:CreateToggle("Money Farm | Fast", Settings.Money, function(State)
 Settings.Money = State
-
 game:GetService("RunService").Stepped:connect(
     function()
         if Settings.Money then
@@ -609,9 +549,7 @@ spawn(
         end
     end
 )
-
 end)
-
 local Toggle1 = Section1:CreateToggle("Mob Anchored Aura", Settings.MobAch, function(State)
 Settings.MobAch = State
 spawn(
@@ -628,10 +566,7 @@ spawn(
         end
     end
 )
-
 end)
-
-
 local Toggle1 = Section1:CreateToggle("Mob Stun Aura", Settings.MobStu, function(State)
 Settings.MobStu = State
 spawn(
@@ -648,9 +583,7 @@ spawn(
         end
     end
 )
-
 end)
-
 local Toggle1 = Section1:CreateToggle("Mob Jump Aura", Settings.MobJum, function(State)
 Settings.MobJum = State
 spawn(function()
@@ -666,7 +599,6 @@ while Settings.MobJum do
 end
 end)
 end)
-
 local Toggle1 = Section1:CreateToggle("Infinite Breath", Settings.InfiniteBreath, function(State)
 Settings.InfiniteBreath = State
 spawn(
@@ -680,7 +612,6 @@ spawn(
     end
 )
 end)
-
 local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", Settings.Go, function(State)
 Settings.Go = State
 game:GetService("RunService").Stepped:connect(
@@ -694,20 +625,16 @@ game:GetService("RunService").Stepped:connect(
         end
     end
 )
-
 end)
-
 local TextBox1 = Section2:CreateTextBox("Fps Cap", "Only numbers", true, function(Value)
     Settings.Fps = Value
 end)
-
 local TextBox1 = Section2:CreateTextBox("WalkSpeed", "Only numbers", true, function(Value)
     Settings.WalkSpeed = Value
 end)
 local TextBox1 = Section2:CreateTextBox("JumpPower", "Only numbers", true, function(Value)
     Settings.JumpPower = Value
 end)
-
 local TextBox1 = Section2:CreateTextBox("Yen Amount", "Only numbers", true, function(Value)
     Settings.YenAmount = Value
 end)
@@ -725,15 +652,9 @@ end)
 local Button1 = Section2:CreateButton("Teleport To Area", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("ReplicatedStorage").Areas[Areas].CFrame
 end)
-
 local Dropdown1 = Section2:CreateDropdown("Areas", Areas, function(String)
 	Areas = String
 end)
-
-
-
-
-
 local Toggle1 = Section2:CreateToggle("Infinite Jump", Settings.InfiniteJump, function(State)
 Settings.InfiniteJump = State
 game:GetService("UserInputService").JumpRequest:connect(
@@ -744,7 +665,6 @@ game:GetService("UserInputService").JumpRequest:connect(
     end
 )
 end)
-
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/Karrot-Esp"))()
 ESP:AddObjectListener(game:GetService("Workspace").npc, {
     Color =  Color3.new(255,0,0),
@@ -765,12 +685,6 @@ ESP:AddObjectListener(game:GetService("Workspace").npc, {
     end,
     IsEnabled = "NPC",
 })
-
-
-
-
-
-
 local Toggle1 = Section1:CreateToggle("Enable Esp", Settings.Esp, function(State)
     Settings.Esp = State
     ESP:Toggle(Settings.Esp)
@@ -842,7 +756,6 @@ local Toggle1 = Section1:CreateToggle("Boxes Esp", Settings.Boxes, function(Stat
     Settings.Boxes = State
     ESP.Boxes = Settings.Boxes
 end)
-
 local Toggle1 = Section2:CreateToggle("Invisicam", Settings.Sorry, function(State)
 Settings.Sorry = State
 if Settings.Sorry then
@@ -869,7 +782,6 @@ spawn(
     end
 )
 end)
-
 local Toggle1 = Section2:CreateToggle("N Noclip", Settings.Sex1, function(State)
 noclips = false
 Settings.Sex1 = State
@@ -898,9 +810,7 @@ game:GetService("RunService").Stepped:connect(
         end
     end
 )
-
 end)
-
 local Toggle1 = Section2:CreateToggle("G Noclip", Settings.Sex, function(State)
 Settings.Sex = State
 noclip = false
@@ -1058,10 +968,8 @@ for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
     end
 end
 end)
-
 local Button1 = Section2:CreateButton("Teleport to RandomPlayer", function()
 local randomPlayer = game.Players:GetPlayers()[math.random(1, #game.Players:GetPlayers())]
-
 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
     CFrame.new(
     Vector3.new(
@@ -1074,7 +982,6 @@ end)
 local Button1 = Section2:CreateButton("Lag Switch F3", function()
 local ass = false
 local bitch = settings()
-
 game:service "UserInputService".InputEnded:connect(
     function(i)
         if i.KeyCode == Enum.KeyCode.F3 then
@@ -1142,7 +1049,6 @@ function TPReturner()
         end
     end
 end
-
 function Teleport()
     while wait() do
         pcall(function()
@@ -1153,17 +1059,11 @@ function Teleport()
         end)
     end
 end
-
 -- If you'd like to use a script before server hopping (Like a Automatic Chest collector you can put the Teleport() after it collected everything.
 Teleport() 
 end)
 local Button1 = Section2:CreateButton("Rejoin", function()
 game:GetService("TeleportService"):Teleport(game.PlaceId, game:GetService("Players").LocalPlayer) end)
-
-
-
-
-
 local Toggle3 = Section3:CreateToggle("UI Toggle", nil, function(State)
 	Window:Toggle(State)
 end)
@@ -1178,7 +1078,6 @@ local Colorpicker3 = Section3:CreateColorpicker("UI Color", function(Color)
 	Window:ChangeColor(Color)
 end)
 Colorpicker3:UpdateColor(Config.Color)
-
 -- credits to jan for patterns
 local Dropdown3 = Section4:CreateDropdown("Image", {"Default","Hearts","Abstract","Hexagon","Circles","Lace With Flowers","Floral"}, function(Name)
 	if Name == "Default" then
@@ -1198,23 +1097,18 @@ local Dropdown3 = Section4:CreateDropdown("Image", {"Default","Hearts","Abstract
 	end
 end)
 Dropdown3:SetOption("Default")
-
 local Colorpicker4 = Section4:CreateColorpicker("Color", function(Color)
 	Window:SetBackgroundColor(Color)
 end)
 Colorpicker4:UpdateColor(Color3.new(1,1,1))
-
 local Slider3 = Section4:CreateSlider("Transparency",0,1,nil,false, function(Value)
 	Window:SetBackgroundTransparency(Value)
 end)
 Slider3:SetValue(0)
-
 local Slider4 = Section4:CreateSlider("Tile Scale",0,1,nil,false, function(Value)
 	Window:SetTileScale(Value)
 end)
 Slider4:SetValue(0.5)
-
-
 spawn(function()
 while wait() do
 Save()
