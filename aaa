@@ -537,8 +537,10 @@ game:GetService("RunService").Stepped:connect(
 )
 repeat
     wait()
+    if Settings.Money then
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
         game:GetService("ReplicatedStorage").Areas["Yokai Village"].CFrame
+        end
 until game:GetService("Workspace").chatnpcs.Quest.Box:FindFirstChild("Main") or Settings.Money == false
 spawn(
     function()
@@ -733,28 +735,6 @@ ESP:AddObjectListener(game:GetService("Workspace").npc.npcs, {
 })
 
 
-ESP:AddObjectListener(game:GetService("Workspace").map.Stuff, {
-    Color =  Color3.new(0,0,25),
-    Type = "Model",
-    PrimaryPart = function(v)
-        if v:FindFirstChildOfClass("ClickDetector") then
-        local H = v
-        while not H do
-            wait()
-            H = v
-        end
-        return H
-        end
-        end,
-    Validator = function(v)
-        return not game.Players:GetPlayerFromCharacter(v)
-    end,
-    CustomName = function(v)
-        return  "Flute/EarRing"
-    end,
-    IsEnabled = "FluteEsp",
-})
-
 
 
 
@@ -765,7 +745,50 @@ local Toggle1 = Section1:CreateToggle("Enable Esp", Settings.Esp, function(State
     
 end)local Toggle1 = Section1:CreateToggle("Flute/EarRing Esp", Settings.FluteEsp, function(State)
     Settings.FluteEsp = State
-    ESP.FluteEsp = Settings.Esp
+local function esp(v)
+    local T = Drawing.new("Text")
+    T.Visible = false
+    T.Center = true
+    T.Outline = true
+    T.Font = 2
+    T.Text = "item"
+    T.Size = 14
+    T.Color = Color3.fromRGB(203, 214, 73)
+    local function update()
+        local Re
+        Re =
+            game:GetService('RunService').Stepped:Connect(
+            function() pcall(function()
+                if v  then
+                    local Vector, Screen = workspace.CurrentCamera:WorldToViewportPoint(v.Position)
+                    if Settings.FluteEsp and Screen then
+                        T.Position = Vector2.new(Vector.X, Vector.Y)
+                        T.Visible = true
+                        T.Text = "Flute/Earring"
+                    else
+                        T.Visible = false
+                    end
+                elseif v == nil then
+                    T:Remove()
+                    Re:disconnect()
+                end end)
+            end
+        )
+    end
+    update()
+end
+for i,v in pairs(game:GetService("Workspace").map.Stuff:GetDescendants()) do
+    if v:FindFirstChildOfClass("ClickDetector") then
+        esp(v)
+    end
+end
+game:GetService("Workspace").map.Stuff.DescendantAdded:Connect(
+    function(v)
+        if v:FindFirstChildOfClass("ClickDetector")then
+            esp(v)
+        end
+    end
+)
 end)
 local Toggle1 = Section1:CreateToggle("Mob Esp", Settings.NPC, function(State)
     Settings.NPC = State
