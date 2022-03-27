@@ -262,7 +262,7 @@ local function getNearestiii()
                                 v.Name == Settings.Mobs
                          then
                             local Mag =
-                                (Vector3.new(-673, -288, -648) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+                                (Vector3.new(math.random(-673,-450), -288, math.random(-648,-450)) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
                             if Mag < TargetDistance then
                                 TargetDistance = Mag
                                 Target = v
@@ -361,7 +361,7 @@ spawn(
                             game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
                             game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
                                 getNearestMob().HumanoidRootPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
-                            CheckMate()
+                                CheckMate()
                             if getNearestMob().Humanoid.Health < 3 then
                                 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
                                     getNearestMob().HumanoidRootPart.CFrame * CFrame.new(0, 0, 0) *
@@ -406,11 +406,12 @@ spawn(
                         wait()
                         if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
                             if isnetworkowner(getNearestiii().PrimaryPart) then
-                                getNearestiii().PrimaryPart.CFrame = CFrame.new(-673, -288, -648)
-                                CheckMate()
+                                getNearestiii().PrimaryPart.CFrame = CFrame.new(math.random(-673,-450), -288, math.random(-648,-450))
+                                
                                 game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
                                 game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
                             end
+                            CheckMate()
                             game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
                                 getNearestiii().PrimaryPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
                             
