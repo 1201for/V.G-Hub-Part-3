@@ -1244,3 +1244,4 @@ spawn(function()
 while wait() do
 Save()
 end end)
+-- sigh the more you do this the more retarded you look Faceless#6666
