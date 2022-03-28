@@ -748,29 +748,6 @@ game:GetService("UserInputService").JumpRequest:connect(
 end)
 
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/Karrot-Esp"))()
-ESP:AddObjectListener(game:GetService("Workspace").npc, {
-    Color =  Color3.new(255,0,0),
-    Type = "Model",
-    PrimaryPart = function(v)
-        local H = v:FindFirstChild("HumanoidRootPart")
-        while not H do
-            wait()
-            H = v:FindFirstChild("HumanoidRootPart")
-        end
-        return H
-    end,
-    Validator = function(v)
-        return not game.Players:GetPlayerFromCharacter(v)
-    end,
-    CustomName = function(v)
-        return  v.Name
-    end,
-    IsEnabled = "NPC",
-})
-
-
-
-
 
 
 local Toggle1 = Section1:CreateToggle("Enable Esp", Settings.Esp, function(State)
@@ -824,10 +801,7 @@ game:GetService("Workspace").map.Stuff.DescendantAdded:Connect(
     end
 )
 end)
-local Toggle1 = Section1:CreateToggle("Mob Esp", Settings.NPC, function(State)
-    Settings.NPC = State
-    ESP.NPC = Settings.NPC
-end)
+
 local Toggle1 = Section1:CreateToggle("PLayer Esp", Settings.PlayerEsp, function(State)
     Settings.PlayerEsp = State
     ESP.Players = Settings.PlayerEsp
@@ -845,6 +819,40 @@ local Toggle1 = Section1:CreateToggle("Boxes Esp", Settings.Boxes, function(Stat
     ESP.Boxes = Settings.Boxes
 end)
 
+local Button1 = Section2:CreateButton("JumpScare Why Press This", function()
+game:GetService("ReplicatedStorage").effect.RedSky:Clone().Parent = game.Lighting
+game.Lighting.FogColor = Color3.new(0, 0, 0)
+game.Lighting.ColorShift_Top = Color3.new(0, 0, 0)
+local Table = {2972135324, 83046327, 2120834873}
+local ImageLabal = Instance.new("ImageLabel")
+ImageLabal.Parent = game.Players.LocalPlayer.PlayerGui.guis
+ImageLabal.AnchorPoint = Vector2.new(0.5, 0.5)
+ImageLabal.Position = UDim2.new(0.5, 0, 0.5, 0)
+ImageLabal.Size = UDim2.new(0, 1, 0, 1)
+ImageLabal.Image = "http://www.roblox.com/asset/?id=" .. Table[math.random(1, #Table)]
+for i = 1, 50 do
+    wait()
+    game.Lighting.FogEnd = game.Lighting.FogEnd - 16
+end
+wait(1)
+ImageLabal.Size = UDim2.new(0.1, 0, 0.1, 0)
+for i = 1, 10 do
+    local Sound = Instance.new("Sound")
+    Sound.Parent = workspace
+    Sound.SoundId = "rbxassetid://3317082923"
+    Sound.Volume = 10
+    Sound:Play()
+end
+for i = 1, 4 do
+    ImageLabal.Size = UDim2.new(i * 0.4, 0, i * 0.4, 0)
+    wait()
+end
+wait(3)
+ImageLabal:Destroy()
+game.Lighting.RedSky:Destroy()
+game.workspace.Sound:Destroy()
+game:GetService("Lighting").FogEnd = 1000000
+end)
 local Toggle1 = Section2:CreateToggle("Invisicam", Settings.Sorry, function(State)
 Settings.Sorry = State
 if Settings.Sorry then
