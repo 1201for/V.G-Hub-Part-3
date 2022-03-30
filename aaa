@@ -217,54 +217,52 @@ end
 Mobs = {"Demon", "Strong Demon", "Fast Demon", "Demon Slayer", "Strong Demon Slayer"}
 
 
-local is_synapse_function =
-    is_synapse_function or isourclosure or isexecutorclosure or is_sirhurt_closure or issentinelclosure or
-    is_protosmasher_closure or
-    game.Players.LocalPlayer:Kick("unsupported executor")
-local renamerFunction
-for i, v in next, getreg() do
-    if typeof(v) == "function" and islclosure(v) and not is_synapse_function(v) then
-        if getinfo(v).source:find("ClientModulee") then
-            for i, constant in pairs(getupvalues(v)) do
-                if typeof(constant) == "Instance" and string.find(tostring(constant:GetFullName()), "npc") then
-                    renamerFunction = v
-                end
-            end
-        end
-    end
-end
 
 
-mobFolder = getupvalue(renamerFunction,4)
-
-
-
-
-local function getNearestMob()
+--[[local function getNearestMob()
     local TargetDistance = math.huge
     local Target
-    for i, v in ipairs(mobFolder:GetChildren()) do
-        if Settings.Mobs == "Demon" or Settings.Mobs == "Strong Demon" or Settings.Mobs == "Fast Demon"
-          and   v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v:FindFirstChild("Demon") and Settings.Mobs == "Demon" or Settings.Mobs == "Strong Demon" or Settings.Mobs == "Fast Demon"
-         then
-            local Mag =
-                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
-                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-            
-            if Mag < TargetDistance then
-                TargetDistance = Mag
-                Target = v
+    for i, v in ipairs(game:GetService("Workspace").npc:GetChildren()) do
+        for i, v in ipairs(v:GetChildren()) do
+            for i, v in ipairs(v:GetChildren()) do
+                if v:IsA("Folder") then
+                    for i, v in ipairs(v:GetChildren()) do
+                        if
+                            Settings.Mobs == "Demon" or Settings.Mobs == "Strong Demon" or
+                                Settings.Mobs == "Fast Demon" and v:IsA("Model") and
+                                    v:FindFirstChild("HumanoidRootPart") and
+                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
+                                    v:FindFirstChild("Demon") and
+                                    Settings.Mobs == "Demon" or
+                                Settings.Mobs == "Strong Demon" or
+                                Settings.Mobs == "Fast Demon"
+                         then
+                            local Mag =
+                                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
+                                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+
+                            if Mag < TargetDistance then
+                                TargetDistance = Mag
+                                Target = v
+                            end
+                        elseif
+                            Settings.Mobs == "Strong Demon Slayer" or
+                                Settings.Mobs == "Demon Slayer" and not v:FindFirstChild("Demon") and v:IsA("Model") and
+                                    v:FindFirstChild("HumanoidRootPart") and
+                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0
+                         then
+                            local Mag =
+                                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
+                                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+
+                            if Mag < TargetDistance then
+                                TargetDistance = Mag
+                                Target = v
+                            end
+                        end
+                    end
+                end
             end
-            elseif Settings.Mobs == "Strong Demon Slayer" or Settings.Mobs == "Demon Slayer" and  not  v:FindFirstChild("Demon") and v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0  then
-             local Mag =
-                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
-                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-            
-            if Mag < TargetDistance then
-                TargetDistance = Mag
-                Target = v
-            end
-            
         end
     end
     return Target
@@ -273,33 +271,46 @@ end
 local function getNearestiii()
     local TargetDistance = math.huge
     local Target
-        for i, v in ipairs(mobFolder:GetChildren()) do
-        if Settings.Mobs == "Demon" or Settings.Mobs == "Strong Demon" or Settings.Mobs == "Fast Demon" and 
-            v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v:FindFirstChild("Demon")
-         then
-            local Mag =
-                (Vector3.new(-673, -288,-648) -
-                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-            
-            if Mag < TargetDistance then
-                TargetDistance = Mag
-                Target = v
+    for i, v in ipairs(game:GetService("Workspace").npc:GetChildren()) do
+        for i, v in ipairs(v:GetChildren()) do
+            for i, v in ipairs(v:GetChildren()) do
+                if v:IsA("Folder") then
+                    for i, v in ipairs(v:GetChildren()) do
+                        if
+                            Settings.Mobs == "Demon" or Settings.Mobs == "Strong Demon" or
+                                Settings.Mobs == "Fast Demon" and v:IsA("Model") and
+                                    v:FindFirstChild("HumanoidRootPart") and
+                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
+                                    v:FindFirstChild("Demon")
+                         then
+                            local Mag =
+                                (Vector3.new(-673, -288, -647) 
+                                    - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+
+
+                                TargetDistance = Mag
+                                Target = v
+                        elseif
+                            Settings.Mobs == "Strong Demon Slayer" or
+                                Settings.Mobs == "Demon Slayer" and not v:FindFirstChild("Demon") and v:IsA("Model") and
+                                    v:FindFirstChild("HumanoidRootPart") and
+                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0
+                         then
+                            local Mag =
+                                (Vector3.new(-673, -288, -648) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+
+                                TargetDistance = Mag
+                                Target = v
+                            end
+                      
+                    end
+                end
             end
-            elseif Settings.Mobs == "Strong Demon Slayer" or Settings.Mobs == "Demon Slayer" and not v:FindFirstChild("Demon") and v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0   then
-             local Mag =
-                (Vector3.new(-673, -288,-648) -
-                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-            
-            if Mag < TargetDistance then
-                TargetDistance = Mag
-                Target = v
-            end
-            
         end
     end
     return Target
 end
-
+]]--
 
 pcall(
     function()
@@ -359,7 +370,7 @@ end)
 local Toggle1 = Section1:CreateToggle("Stats", Settings.Visible, function(State)
 Settings.Visible = State
 end)
-
+--[[
 local Toggle1 = Section1:CreateToggle("AutoFarm Mobs", Settings.AutoFarmMobs, function(State)
 Settings.AutoFarmMobs = State
 
@@ -415,10 +426,10 @@ game:GetService("RunService").Stepped:connect(
     end
 )
 spawn(function()
-while wait(5) and Settings.AutoFarmSafely do
+while wait(5) and Settings.AutoFarmSafely do pcall(function()
 if getNearestiii() == nil then
 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame= CFrame.new(math.random(-673,-450), -288, math.random(-648,-450))
-end 
+end end)
 end end)
 
 spawn(
@@ -453,7 +464,7 @@ spawn(
 end)
 end
 
-
+]]--
 local Dropdown1 = Section1:CreateDropdown("Mobs", Mobs, function(String)
 	Settings.Mobs = String
 end)
@@ -636,61 +647,6 @@ spawn(
     end
 )
 
-end)
-
-local Toggle1 = Section1:CreateToggle("Mob Anchored Aura", Settings.MobAch, function(State)
-Settings.MobAch = State
-spawn(
-    function()
-        while Settings.MobAch do
-            wait(3)
-            for i, v in ipairs(mobFolder:GetChildren()) do
-                if v:FindFirstChild("HumanoidRootPart") then
-                    if isnetworkowner(v.HumanoidRootPart) then
-                        v.HumanoidRootPart.Anchored = true
-                    end
-                end
-            end
-        end
-    end
-)
-
-end)
-
-
-local Toggle1 = Section1:CreateToggle("Mob Stun Aura", Settings.MobStu, function(State)
-Settings.MobStu = State
-spawn(
-    function()
-        while Settings.MobStu do
-            wait(3)
-            for i, v in ipairs(mobFolder:GetChildren()) do
-                if v:FindFirstChild("HumanoidRootPart")  then wait()
-                    if isnetworkowner(v.HumanoidRootPart) then
-                        v.Humanoid.PlatformStand = true
-                    end
-                end
-            end
-        end
-    end
-)
-
-end)
-
-local Toggle1 = Section1:CreateToggle("Mob Jump Aura", Settings.MobJum, function(State)
-Settings.MobJum = State
-spawn(function()
-while Settings.MobJum do
-    wait()
-    for i, v in ipairs(mobFolder:GetChildren()) do
-        if v:FindFirstChild("HumanoidRootPart") then
-            if isnetworkowner(v.HumanoidRootPart) then
-                v.Humanoid.Jump = true
-            end
-        end
-    end
-end
-end)
 end)
 
 local Toggle1 = Section1:CreateToggle("Infinite Breath", Settings.InfiniteBreath, function(State)
