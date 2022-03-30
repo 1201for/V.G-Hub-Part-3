@@ -16,6 +16,9 @@ game.CoreGui.RobloxPromptGui.promptOverlay.DescendantAdded:Connect(
     end
 )
 
+
+
+
 local Name = "DemonSlayerBurningAshes.txt"
 
 Des = {}
@@ -57,6 +60,7 @@ OldNameCall =
         if getnamecallmethod() == "Destroy" and self == game.Players.LocalPlayer then 
             return nil
         end 
+
         return OldNameCall(self, unpack(Args))
     end
 )
@@ -211,66 +215,86 @@ for i, v in pairs(game:GetService("ReplicatedStorage").Areas:GetChildren()) do
 end
 
 Mobs = {"Demon", "Strong Demon", "Fast Demon", "Demon Slayer", "Strong Demon Slayer"}
-if not game.workspace:FindFirstChild("Mobs") then
-Folder = Instance.new("Folder",workspace)
-Folder.Name = "Mobs"
-end 
+
+
+local is_synapse_function =
+    is_synapse_function or isourclosure or isexecutorclosure or is_sirhurt_closure or issentinelclosure or
+    is_protosmasher_closure or
+    game.Players.LocalPlayer:Kick("unsupported executor")
+local renamerFunction
+for i, v in next, getreg() do
+    if typeof(v) == "function" and islclosure(v) and not is_synapse_function(v) then
+        if getinfo(v).source:find("ClientModulee") then
+            for i, constant in pairs(getupvalues(v)) do
+                if typeof(constant) == "Instance" and string.find(tostring(constant:GetFullName()), "npc") then
+                    renamerFunction = v
+                end
+            end
+        end
+    end
+end
+
+
+mobFolder = getupvalue(renamerFunction,4)
+
+
 
 
 local function getNearestMob()
     local TargetDistance = math.huge
     local Target
-    for i, v in ipairs(game:GetService("Workspace").npc:GetChildren()) do
-        for i, v in ipairs(v:GetChildren()) do
-            for i, v in ipairs(v:GetChildren()) do
-                if v:IsA("Folder") then
-                    for i, v in ipairs(v:GetChildren()) do
-                        if  
-                            v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
-                                v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                                v.Name == Settings.Mobs
-                         then
-                            local Mag =
-                                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
-                                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-                            if Mag < TargetDistance then
-                                TargetDistance = Mag
-                                Target = v
-                            end
-                        end
-                    end
-                end
+    for i, v in ipairs(mobFolder:GetChildren()) do
+        if Settings.Mobs == "Demon" or Settings.Mobs == "Strong Demon" or Settings.Mobs == "Fast Demon"
+          and   v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v:FindFirstChild("Demon") and Settings.Mobs == "Demon" or Settings.Mobs == "Strong Demon" or Settings.Mobs == "Fast Demon"
+         then
+            local Mag =
+                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
+                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+            
+            if Mag < TargetDistance then
+                TargetDistance = Mag
+                Target = v
             end
+            elseif Settings.Mobs == "Strong Demon Slayer" or Settings.Mobs == "Demon Slayer" and  not  v:FindFirstChild("Demon") and v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0  then
+             local Mag =
+                (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
+                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+            
+            if Mag < TargetDistance then
+                TargetDistance = Mag
+                Target = v
+            end
+            
         end
     end
     return Target
 end
 
-
-
 local function getNearestiii()
     local TargetDistance = math.huge
     local Target
-    for i, v in ipairs(game:GetService("Workspace").npc:GetChildren()) do
-        for i, v in ipairs(v:GetChildren()) do
-            for i, v in ipairs(v:GetChildren()) do
-                if v:IsA("Folder") then
-                    for i, v in ipairs(v:GetChildren()) do
-                        if
-                            v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
-                                v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                                v.Name == Settings.Mobs
-                         then
-                            local Mag =
-                                (Vector3.new(math.random(-673,-450), -288, math.random(-648,-450)) - v:FindFirstChild("HumanoidRootPart").Position).Magnitude
-                            if Mag < TargetDistance then
-                                TargetDistance = Mag
-                                Target = v
-                            end
-                        end
-                    end
-                end
+        for i, v in ipairs(mobFolder:GetChildren()) do
+        if Settings.Mobs == "Demon" or Settings.Mobs == "Strong Demon" or Settings.Mobs == "Fast Demon" and 
+            v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v:FindFirstChild("Demon")
+         then
+            local Mag =
+                (Vector3.new(-673, -288,-648) -
+                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+            
+            if Mag < TargetDistance then
+                TargetDistance = Mag
+                Target = v
             end
+            elseif Settings.Mobs == "Strong Demon Slayer" or Settings.Mobs == "Demon Slayer" and not v:FindFirstChild("Demon") and v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid").Health ~= 0   then
+             local Mag =
+                (Vector3.new(-673, -288,-648) -
+                v:FindFirstChild("HumanoidRootPart").Position).Magnitude
+            
+            if Mag < TargetDistance then
+                TargetDistance = Mag
+                Target = v
+            end
+            
         end
     end
     return Target
@@ -620,8 +644,8 @@ spawn(
     function()
         while Settings.MobAch do
             wait(3)
-            for i, v in ipairs(game:GetService("Workspace"):GetDescendants()) do
-                if v:FindFirstChild("HumanoidRootPart") and table.find(Mobs,v.Name) and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude < 25 then
+            for i, v in ipairs(mobFolder:GetChildren()) do
+                if v:FindFirstChild("HumanoidRootPart") then
                     if isnetworkowner(v.HumanoidRootPart) then
                         v.HumanoidRootPart.Anchored = true
                     end
@@ -640,8 +664,8 @@ spawn(
     function()
         while Settings.MobStu do
             wait(3)
-            for i, v in ipairs(game:GetService("Workspace").npc:GetDescendants()) do
-                if v:FindFirstChild("HumanoidRootPart") and table.find(Mobs,v.Name) and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude < 25 then wait()
+            for i, v in ipairs(mobFolder:GetChildren()) do
+                if v:FindFirstChild("HumanoidRootPart")  then wait()
                     if isnetworkowner(v.HumanoidRootPart) then
                         v.Humanoid.PlatformStand = true
                     end
@@ -658,8 +682,8 @@ Settings.MobJum = State
 spawn(function()
 while Settings.MobJum do
     wait()
-    for i, v in ipairs(game:GetService("Workspace"):GetDescendants()) do
-        if v:FindFirstChild("HumanoidRootPart") and table.find(Mobs,v.Name) and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude < 25 then
+    for i, v in ipairs(mobFolder:GetChildren()) do
+        if v:FindFirstChild("HumanoidRootPart") then
             if isnetworkowner(v.HumanoidRootPart) then
                 v.Humanoid.Jump = true
             end
@@ -748,6 +772,29 @@ game:GetService("UserInputService").JumpRequest:connect(
 end)
 
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/Karrot-Esp"))()
+ESP:AddObjectListener(game:GetService("Workspace").npc, {
+    Color =  Color3.new(255,0,0),
+    Type = "Model",
+    PrimaryPart = function(v)
+        local H = v:FindFirstChild("HumanoidRootPart")
+        while not H do
+            wait()
+            H = v:FindFirstChild("HumanoidRootPart")
+        end
+        return H
+    end,
+    Validator = function(v)
+        return not game.Players:GetPlayerFromCharacter(v)
+    end,
+    CustomName = function(v)
+        return  v.Name
+    end,
+    IsEnabled = "NPC",
+})
+
+
+
+
 
 
 local Toggle1 = Section1:CreateToggle("Enable Esp", Settings.Esp, function(State)
@@ -801,7 +848,10 @@ game:GetService("Workspace").map.Stuff.DescendantAdded:Connect(
     end
 )
 end)
-
+local Toggle1 = Section1:CreateToggle("Mob Esp", Settings.NPC, function(State)
+    Settings.NPC = State
+    ESP.NPC = Settings.NPC
+end)
 local Toggle1 = Section1:CreateToggle("PLayer Esp", Settings.PlayerEsp, function(State)
     Settings.PlayerEsp = State
     ESP.Players = Settings.PlayerEsp
@@ -819,40 +869,6 @@ local Toggle1 = Section1:CreateToggle("Boxes Esp", Settings.Boxes, function(Stat
     ESP.Boxes = Settings.Boxes
 end)
 
-local Button1 = Section2:CreateButton("JumpScare Why Press This", function()
-game:GetService("ReplicatedStorage").effect.RedSky:Clone().Parent = game.Lighting
-game.Lighting.FogColor = Color3.new(0, 0, 0)
-game.Lighting.ColorShift_Top = Color3.new(0, 0, 0)
-local Table = {2972135324, 83046327, 2120834873}
-local ImageLabal = Instance.new("ImageLabel")
-ImageLabal.Parent = game.Players.LocalPlayer.PlayerGui.guis
-ImageLabal.AnchorPoint = Vector2.new(0.5, 0.5)
-ImageLabal.Position = UDim2.new(0.5, 0, 0.5, 0)
-ImageLabal.Size = UDim2.new(0, 1, 0, 1)
-ImageLabal.Image = "http://www.roblox.com/asset/?id=" .. Table[math.random(1, #Table)]
-for i = 1, 50 do
-    wait()
-    game.Lighting.FogEnd = game.Lighting.FogEnd - 16
-end
-wait(1)
-ImageLabal.Size = UDim2.new(0.1, 0, 0.1, 0)
-for i = 1, 10 do
-    local Sound = Instance.new("Sound")
-    Sound.Parent = workspace
-    Sound.SoundId = "rbxassetid://3317082923"
-    Sound.Volume = 10
-    Sound:Play()
-end
-for i = 1, 4 do
-    ImageLabal.Size = UDim2.new(i * 0.4, 0, i * 0.4, 0)
-    wait()
-end
-wait(3)
-ImageLabal:Destroy()
-game.Lighting.RedSky:Destroy()
-game.workspace.Sound:Destroy()
-game:GetService("Lighting").FogEnd = 1000000
-end)
 local Toggle1 = Section2:CreateToggle("Invisicam", Settings.Sorry, function(State)
 Settings.Sorry = State
 if Settings.Sorry then
@@ -1184,6 +1200,7 @@ Toggle3:SetState(true)
 Section3:CreateLabel("Credits DekuDimz#7960")
 Section3:CreateLabel("Credits AlexR32#3232 Ui")
 Section3:CreateLabel("Credits The3Bakers")
+Section3:CreateLabel("Credits E621")
 local Colorpicker3 = Section3:CreateColorpicker("UI Color", function(Color)
 	Window:ChangeColor(Color)
 end)
@@ -1244,4 +1261,3 @@ spawn(function()
 while wait() do
 Save()
 end end)
--- sigh the more you do this the more retarded you look Faceless#6666
