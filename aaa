@@ -92,6 +92,7 @@ local Breathing = Instance.new("TextLabel")
 local Hunger = Instance.new("TextLabel")
 local Health = Instance.new("TextLabel")
 local Rep = Instance.new("TextLabel")
+local Time = Instance.new("TextLabel")
 
 --Properties:
 
@@ -151,6 +152,18 @@ Rep.Font = Enum.Font.SourceSans
 Rep.TextColor3 = Color3.fromRGB(255, 0.0)
 Rep.TextSize = 16
 
+Time.Name = "Time"
+Time.Parent = ChadStats
+Time.Active = true
+Time.BackgroundColor3 = Color3.fromRGB(0, 19, 0)
+Time.BackgroundTransparency = 0
+Time.Position = UDim2.new(0.82328605, 0, 0.259079749, 0)
+Time.Size = UDim2.new(0, 200, 0, 50)
+Time.Font = Enum.Font.SourceSans
+Time.TextColor3 = Color3.fromRGB(255, 0.0)
+Time.TextSize = 16
+
+
 local script = Instance.new("LocalScript", Breathing)
 game:GetService("RunService").Stepped:connect(
     function()
@@ -206,6 +219,23 @@ game:GetService("RunService").Stepped:connect(
         end
     end
 )
+
+local script = Instance.new("LocalScript", Time)
+game:GetService("RunService").Stepped:connect(
+    function()
+        if Settings.Visible then
+            if game:GetService("Lighting").ClockTime >= 13 then
+            Time.Text =  math.floor(game:GetService("Lighting").ClockTime - 12) .. "PM"
+            else
+            Time.Text =  math.floor(game:GetService("Lighting").ClockTime) .. "AM"
+            end 
+            Time.Visible = true
+        else
+            Time.Visible = false
+        end
+    end
+)
+
 
 Areas = {}
 for i, v in pairs(game:GetService("ReplicatedStorage").Areas:GetChildren()) do
