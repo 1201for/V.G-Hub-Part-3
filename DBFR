@@ -48,7 +48,16 @@ game:GetService("RunService").Stepped:connect(
     end
 )
 
-
+spawn(
+    function()
+        game:GetService("RunService").Stepped:connect(
+            function()
+                workspace.FallenPartsDestroyHeight = 0 / 0
+                sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", 1000)
+            end
+        )
+    end
+)
 local Mobs = {}
 for i, v in pairs(game.Workspace:GetChildren()) do
     if v:IsA("Model") and v:FindFirstChild("AI") and not table.find(Mobs, v.Name) then
@@ -107,6 +116,130 @@ local Dropdown1 = Section1:CreateDropdown("Mobs", Mobs, function(String)
 	Settings.Mobs = String
 end)
 
+
+local Toggle1 = Section1:CreateToggle("Player Silent Aim", Settings.PlayerSilentAim, function(State)
+Settings.PlayerSilentAim = State
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+function ClosestPlayerToCurser()
+    local MaxDistance, Closest = math.huge
+    for i, v in pairs(Players.GetPlayers(Players)) do
+        if v ~= LocalPlayer and v.Character then
+            local H = v.Character.FindFirstChild(v.Character, "Head")
+            if H then
+                local Pos, Vis = workspace.CurrentCamera.WorldToScreenPoint(workspace.CurrentCamera, H.Position)
+                if Vis then
+                    local A1, A2 = Vector2.new(Mouse.X, Mouse.Y), Vector2.new(Pos.X, Pos.Y)
+                    local Dist = (A2 - A1).Magnitude
+                    if Dist < MaxDistance and Dist <= math.huge then
+                        MaxDistance = Dist
+                        Closest = v
+                    end
+                end
+            end
+        end
+    end
+    return Closest
+end
+
+
+local OldIndex = nil
+OldIndex =
+    hookmetamethod(
+    game,
+    "__index",
+    function(self, v, ...)
+        if self == Mouse and (v == "Hit" or v == "Target") then
+            if ClosestPlayerToCurser() and Settings.PlayerSilentAim then
+                return ((v == "Hit" and ((ClosestPlayerToCurser().Character.Head.CFrame) or (ClosestPlayerToCurser().Character.Head.CFrame + (ClosestPlayerToCurser().Character.Head.Velocity)))) or
+                    (v == "Target" and ClosestPlayerToCurser().Character.Head))
+            end
+        end
+
+        return OldIndex(self, v)
+    end
+)
+end)
+local Toggle1 = Section1:CreateToggle("Mob Silent Aim", Settings.MobSilentAim, function(State)
+
+Settings.MobSilentAim = State
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+function ClosestMobToCurser()
+    local MaxDistance, Closest = math.huge
+    for i, v in pairs(game.Workspace:GetChildren()) do
+        if v:IsA("Model") and v:FindFirstChild("AI") then
+            local H = v:FindFirstChild("Head")
+            if H then
+                local Pos, Vis = workspace.CurrentCamera:WorldToScreenPoint(H.Position)
+                if Vis then
+                    local A1, A2 = Vector2.new(Mouse.X, Mouse.Y), Vector2.new(Pos.X, Pos.Y)
+                    local Dist = (A2 - A1).Magnitude
+                    if Dist < MaxDistance and Dist <= math.huge then
+                        MaxDistance = Dist
+                        Closest = v
+                    end
+                end
+            end
+        end
+    end
+    return Closest
+end
+
+
+
+local OldIndex = nil
+OldIndex =
+    hookmetamethod(
+    game,
+    "__index",
+    function(self, v, ...)
+        if self == Mouse and (v == "Hit" or v == "Target") then
+            if ClosestMobToCurser() and Settings.MobSilentAim then
+                return ((v == "Hit" and ((ClosestMobToCurser().Head.CFrame) or (ClosestMobToCurser().Head.CFrame + (ClosestMobToCurser().Head.Velocity)))) or
+                    (v == "Target" and ClosestMobToCurser().Head))
+            end
+        end
+
+        return OldIndex(self, v)
+    end
+)
+end)
+
+
+local Toggle1 = Section1:CreateToggle("InstantKill", Settings.InstantKill, function(State)
+Settings.InstantKill = State
+spawn(function()
+while Settings.InstantKill do
+    wait()
+    pcall(
+        function()
+            for i, v in pairs(game:GetService("Workspace"):GetChildren()) do
+                if v:IsA("Model") and v:FindFirstChild("AI")  and 
+                    v.Humanoid.Health ~= 0 and isnetworkowner(v.HumanoidRootPart) and
+                        v.Humanoid.Health < v.Humanoid.MaxHealth
+                 then
+                    v.Humanoid.Health = 0
+                end
+            end
+        end
+    )
+end
+if Settings.InstantKill then
+    game.StarterGui:SetCore(
+        "SendNotification",
+        {
+            Title = "if it dosen't work",
+            Text = "Minmize the roblox tab and then reopen it should work again"
+        }
+    )
+end
+end)
+
+end)
 
 local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", Settings.Go, function(State)
 Settings.Go = State
