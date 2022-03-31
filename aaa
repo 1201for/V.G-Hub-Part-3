@@ -16,9 +16,6 @@ game.CoreGui.RobloxPromptGui.promptOverlay.DescendantAdded:Connect(
     end
 )
 
-
-
-
 local Name = "DemonSlayerBurningAshes.txt"
 
 Des = {}
@@ -509,56 +506,49 @@ spawn(
     end
 )
 
-
 spawn(
     function()
-        while wait() and Settings.AutoFarmSafely do
+        while wait() and Settings.AutoFarmSafely do wait()
             pcall(
                 function()
-                    repeat
-                        wait()
-                        if Settings.Options == "Matter" then
-                            if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
-                                if isnetworkowner(getNearestiii().PrimaryPart) then
-                                    getNearestiii().PrimaryPart.CFrame =
-                                        CFrame.new(math.random(-673, -450), -288, math.random(-648, -450))
+                    if Settings.Options == "Matter" then
+                        if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
+                            if isnetworkowner(getNearestiii().PrimaryPart) then
+                                getNearestiii().PrimaryPart.CFrame =
+                                    CFrame.new(math.random(-673, -450), -288, math.random(-648, -450))
 
-                                    game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
-                                    game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
-                                end
-                                CheckMate()
+                                game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
+                                game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
+                            end
+                            CheckMate()
+                            game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
+                                getNearestiii().PrimaryPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
+
+                            if getNearestiii().Humanoid.Health < 5 then
                                 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                    getNearestiii().PrimaryPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
-
-                                if getNearestiii().Humanoid.Health < 5 then
-                                    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                        getNearestiii().PrimaryPart.CFrame * CFrame.new(0, 0, 0) *
-                                        CFrame.Angles(0, 0, 0)
-                                end
+                                    getNearestiii().PrimaryPart.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
                             end
                         end
+                    end
 
-                        if Settings.Options == "Away" then
-                            if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
-                                if isnetworkowner(getNearesti().PrimaryPart) then
-                                    getNearesti().PrimaryPart.CFrame = CFrame.new(10000, 10000, 0)
-                                    getNearesti().Humanoid:ChangeState(11)
-                                    game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
-                                    game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
-                                end
-                                CheckMate()
+                    if Settings.Options == "Away" then
+                        if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
+                            if isnetworkowner(getNearesti().PrimaryPart) then
+                                getNearesti().PrimaryPart.CFrame = CFrame.new(10000, 10000, 0)
+                                getNearesti().Humanoid:ChangeState(11)
+                                game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
+                                game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
+                            end
+                            CheckMate()
+                            game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
+                                getNearesti().PrimaryPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
+
+                            if getNearesti().Humanoid.Health < 5 then
                                 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                    getNearesti().PrimaryPart.CFrame * CFrame.new(0, -7, 0) * CFrame.Angles(90, 0, 0)
-
-                                if getNearesti().Humanoid.Health < 5 then
-                                    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
-                                        getNearesti().PrimaryPart.CFrame * CFrame.new(0, 0, 0) *
-                                        CFrame.Angles(0, 0, 0)
-                                end
+                                    getNearesti().PrimaryPart.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
                             end
                         end
-                    until getNearestiii().Humanoid.Health == 0 or getNearestMob().Humanoid.Health == 0 or getNearesti().Humanoid.Health == 0 or
-                        Settings.AutoFarmSafely == false 
+                    end
                 end
             )
         end
