@@ -550,7 +550,7 @@ spawn(
                     if Settings.Options == "Away" then
                         if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
                             if isnetworkowner(getNearesti().PrimaryPart) then
-                                getNearesti().PrimaryPart.CFrame = CFrame.new(10000, 10000, 0)
+                                getNearesti().PrimaryPart.CFrame = CFrame.new(math.random(10000,10050), math.random(10000,10050), 0)
                                 getNearesti().Humanoid:ChangeState(11)
                                 game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
                                 game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
