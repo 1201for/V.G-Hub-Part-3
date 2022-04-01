@@ -274,7 +274,7 @@ local function getNearestMob()
                             Settings.Mobs == "Demons" and v:IsA("Model") and
                                     v:FindFirstChild("HumanoidRootPart") and
                                     v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                                    v:FindFirstChild("Demon") and (v.PrimaryPart.Position - GetAwayAssHats().Character.HumanoidRootPart.Position).Magnitude >= 15
+                                    v:FindFirstChild("Demon") and (v.PrimaryPart.Position - GetAwayAssHats().Character.HumanoidRootPart.Position).Magnitude >= 25
                          then
                             local Mag =
                                 (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
@@ -287,7 +287,7 @@ local function getNearestMob()
                         elseif
                                 Settings.Mobs == "Demon Slayers" and not v:FindFirstChild("Demon") and v:IsA("Model") and
                                     v:FindFirstChild("HumanoidRootPart") and
-                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and  (v.PrimaryPart.Position - GetAwayAssHats().Character.HumanoidRootPart.Position).Magnitude >= 15
+                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and  (v.PrimaryPart.Position - GetAwayAssHats().Character.HumanoidRootPart.Position).Magnitude >= 25
                          then
                             local Mag =
                                 (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
@@ -318,7 +318,7 @@ local function getNearestiii()
                             Settings.Mobs == "Demons"  and v:IsA("Model") and
                                     v:FindFirstChild("HumanoidRootPart") and
                                     v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                                    v:FindFirstChild("Demon") and (v.PrimaryPart.Position - GetAwayAssHats().Character.PrimaryPart.Position).Magnitude >= 15
+                                    v:FindFirstChild("Demon") and (v.PrimaryPart.Position - GetAwayAssHats().Character.PrimaryPart.Position).Magnitude >= 25
                          then
                             local Mag =
                                 (Vector3.new(-673, -288, -647) - v.PrimaryPart.Position).Magnitude
@@ -328,7 +328,7 @@ local function getNearestiii()
                             end
                         elseif  Settings.Mobs == "Demon Slayers" and not v:FindFirstChild("Demon") and v:IsA("Model") and
                                     v:FindFirstChild("HumanoidRootPart") and
-                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and (v.PrimaryPart.Position - GetAwayAssHats().Character.PrimaryPart.Position).Magnitude >= 15
+                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and (v.PrimaryPart.Position - GetAwayAssHats().Character.PrimaryPart.Position).Magnitude >= 25
                          then
                             local Mag =
                                 (Vector3.new(-673, -288, -648) - v.PrimaryPart.Position).Magnitude
@@ -357,7 +357,7 @@ local function getNearesti()
                             Settings.Mobs == "Demons"  and v:IsA("Model") and
                                     v:FindFirstChild("HumanoidRootPart") and
                                     v:FindFirstChildOfClass("Humanoid").Health ~= 0 and
-                                    v:FindFirstChild("Demon") and (v.PrimaryPart.Position - GetAwayAssHats().Character.PrimaryPart.Position).Magnitude >= 15
+                                    v:FindFirstChild("Demon") and (v.PrimaryPart.Position - GetAwayAssHats().Character.PrimaryPart.Position).Magnitude >= 25
                          then
                             local Mag =
                                 (Vector3.new(10000, 10000,0) - v.PrimaryPart.Position).Magnitude
@@ -367,7 +367,7 @@ local function getNearesti()
                             end
                         elseif  Settings.Mobs == "Demon Slayers" and not v:FindFirstChild("Demon") and v:IsA("Model") and
                                     v:FindFirstChild("HumanoidRootPart") and
-                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and (v.PrimaryPart.Position - GetAwayAssHats().Character.PrimaryPart.Position).Magnitude >= 15
+                                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 and (v.PrimaryPart.Position - GetAwayAssHats().Character.PrimaryPart.Position).Magnitude >= 25
                          then
                             local Mag =
                                 (Vector3.new(10000, 10000,0) - v.PrimaryPart.Position).Magnitude
@@ -547,7 +547,7 @@ spawn(
                     if Settings.Options == "Away" then 
                         if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
                             if isnetworkowner(getNearesti().PrimaryPart) then
-                                getNearesti().PrimaryPart.CFrame = CFrame.new(math.random(10000,10050), 10000, math.random(0,50))
+                                getNearesti().PrimaryPart.CFrame = CFrame.new(math.random(10000,10020), 10000, math.random(0,20))
                                 getNearesti().Humanoid:ChangeState(11)
                                 game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
                                 game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
