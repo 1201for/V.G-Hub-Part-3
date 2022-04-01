@@ -400,7 +400,7 @@ pcall(
         end
     end
 )
-local function CheckMate()
+local function CheckMate() wait()
     if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Katana") then
         wait(1)
         game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):EquipTool(
@@ -409,9 +409,6 @@ local function CheckMate()
     end
     if not game:GetService("Players").LocalPlayer.states:FindFirstChild("exeing") then
         game:GetService("VirtualInputManager"):SendKeyEvent(true, "B", false, game)
-    end
-    if not game:GetService("Players").LocalPlayer.states:FindFirstChild("selfstun") then
-        game:GetService("VirtualInputManager"):SendKeyEvent(true, "R", false, game)
     end
 end
 
@@ -527,7 +524,7 @@ spawn(
         while wait() and Settings.AutoFarmSafely do wait()
             pcall(
                 function()
-                    if Settings.Options == "Matter" then
+                    if Settings.Options == "Matter" then 
                         if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
                             if isnetworkowner(getNearestiii().PrimaryPart) then
                                 getNearestiii().PrimaryPart.CFrame =
@@ -547,7 +544,7 @@ spawn(
                         end
                     end
 
-                    if Settings.Options == "Away" then
+                    if Settings.Options == "Away" then 
                         if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
                             if isnetworkowner(getNearesti().PrimaryPart) then
                                 getNearesti().PrimaryPart.CFrame = CFrame.new(math.random(10000,10050), math.random(10000,10050), 0)
