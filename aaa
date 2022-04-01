@@ -541,6 +541,9 @@ spawn(
                                 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
                                     getNearestiii().PrimaryPart.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
                             end
+                             if getNearestiii().Humanoid.Health == 0 then
+                                getNearestiii():Destroy()
+                            end 
                         end
                     end
 
@@ -560,6 +563,9 @@ spawn(
                                 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame =
                                     getNearesti().PrimaryPart.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
                             end
+                            if getNearesti().Humanoid.Health == 0 then
+                                getNearesti():Destroy()
+                            end 
                         end
                     end
                 end
@@ -838,26 +844,6 @@ game:GetService("UserInputService").JumpRequest:connect(
 end)
 
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/Karrot-Esp"))()
-ESP:AddObjectListener(game:GetService("Workspace").npc, {
-    Color =  Color3.new(255,0,0),
-    Type = "Model",
-    PrimaryPart = function(v)
-        local H = v:FindFirstChild("HumanoidRootPart")
-        while not H do
-            wait()
-            H = v:FindFirstChild("HumanoidRootPart")
-        end
-        return H
-    end,
-    Validator = function(v)
-        return not game.Players:GetPlayerFromCharacter(v)
-    end,
-    CustomName = function(v)
-        return  v.Name
-    end,
-    IsEnabled = "NPC",
-})
-
 
 
 
@@ -914,10 +900,7 @@ game:GetService("Workspace").map.Stuff.DescendantAdded:Connect(
     end
 )
 end)
-local Toggle1 = Section1:CreateToggle("Mob Esp", Settings.NPC, function(State)
-    Settings.NPC = State
-    ESP.NPC = Settings.NPC
-end)
+
 local Toggle1 = Section1:CreateToggle("PLayer Esp", Settings.PlayerEsp, function(State)
     Settings.PlayerEsp = State
     ESP.Players = Settings.PlayerEsp
