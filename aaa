@@ -236,7 +236,7 @@ game:GetService("RunService").Stepped:connect(
     end
 )
 
-
+if game.PlaceId == 2483973525 then
 Areas = {}
 for i, v in pairs(game:GetService("ReplicatedStorage").Areas:GetChildren()) do
     if v:IsA("BasePart") then
@@ -244,6 +244,19 @@ for i, v in pairs(game:GetService("ReplicatedStorage").Areas:GetChildren()) do
     end
 end
 
+Breathings1 = {}
+for i, v in pairs(game:GetService("Workspace").chatnpcs.breath:GetChildren()) do
+    if v:IsA("Model") then
+        table.insert(Breathings1, v.Name)
+    end
+end
+NPCS = {}
+for i, v in pairs(game:GetService("Workspace").chatnpcs:GetChildren()) do
+    if v:IsA("Model") then
+        table.insert(NPCS, v.Name)
+    end
+end
+end 
 Mobs = {"Demons", "Demon Slayers"}
 
 
@@ -550,7 +563,7 @@ spawn(
                     if Settings.Options == "Away" then 
                         if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("ForceField") then
                             if isnetworkowner(getNearesti().PrimaryPart) then
-                                getNearesti().PrimaryPart.CFrame = CFrame.new(math.random(10000,10020), 10000, math.random(0,20))
+                                getNearesti().PrimaryPart.CFrame = CFrame.new(10000, 10000, math.random(0,20))
                                 getNearesti().Humanoid:ChangeState(11)
                                 game:GetService("VirtualUser"):ClickButton1(Vector2.new(0, 300))
                                 game:GetService("ReplicatedStorage").events.remote:FireServer("NormalAttack")
@@ -820,6 +833,7 @@ spawn(
     end
 )
 end)
+if game.PlaceId == 2483973525 then
 local Button1 = Section2:CreateButton("Teleport To Area", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("ReplicatedStorage").Areas[Areas].CFrame
 end)
@@ -829,7 +843,22 @@ local Dropdown1 = Section2:CreateDropdown("Areas", Areas, function(String)
 end)
 
 
+local Button1 = Section2:CreateButton("Teleport To Breathing Teacher", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").chatnpcs.breath[Breathings1].HumanoidRootPart.CFrame
+end)
 
+local Dropdown1 = Section2:CreateDropdown("Breathing Teachers", Breathings1, function(String)
+	Breathings1 = String
+end)
+
+local Button1 = Section2:CreateButton("Teleport To NPC", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").chatnpcs[NPCS].HumanoidRootPart.CFrame
+end)
+
+local Dropdown1 = Section2:CreateDropdown("NPCS", NPCS, function(String)
+	NPCS = String
+end)
+end
 
 
 local Toggle1 = Section2:CreateToggle("Infinite Jump", Settings.InfiniteJump, function(State)
