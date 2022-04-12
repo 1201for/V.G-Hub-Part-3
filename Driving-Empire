@@ -85,7 +85,7 @@ end
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
-local Tab1 = Window:CreateTab("Driving Empire")
+local Tab1 = Window:CreateTab("Demon Slayer-Burning Ashes")
 local Tab2 = Window:CreateTab("UI Settings")
 
 local Section1 = Tab1:CreateSection("")
@@ -100,19 +100,11 @@ Settings.Speed = State
 spawn(
     function()
         while wait() and Settings.Speed do
-            wait()
+            wait(Settings.Speeds)
             pcall(
                 function()
-                    ReturnCar():SetPrimaryPartCFrame(CFrame.new(0, 500, 0))
-                    bodyvel(
-                        game.Players.LocalPlayer.Character.Head,
-                        Settings.Speeds,
-                        Vector3.new(0, 500, 500),
-                        math.huge,
-                        math.huge,
-                        math.huge,
-                        2
-                    )
+                  game:GetService("VirtualInputManager"):SendKeyEvent(true, "W", false, game)
+                  ReturnCar():SetPrimaryPartCFrame(CFrame.new(-1179, 19, -2964))
                 end
             )
         end
@@ -121,8 +113,7 @@ spawn(
 end)
 
 
-
-local Slider3 = Section1:CreateSlider("AutoFarm Speed",0,1000,Settings.Speeds,false, function(Value)
+local Slider3 = Section1:CreateSlider("AutoFarm Speed",0,7,Settings.Speeds,false, function(Value)
 	Settings.Speeds = Value
 end)
 
@@ -141,6 +132,8 @@ game:GetService("RunService").Stepped:connect(
 )
 
 end)
+
+
 
 local TextBox1 = Section2:CreateTextBox("Fps Cap", "Only numbers", true, function(Value)
     Settings.Fps = Value
