@@ -67,7 +67,9 @@ local function Invis()
 local Save = game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame 
 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-378, 60, -10243)
 wait(0.5)
+if game.Players.LocalPlayer.Character:WaitForChild("Stand"):FindFirstChildWhichIsA("BasePart") then
 game.Players.LocalPlayer.Character:WaitForChild("Stand"):WaitForChild("LowerTorso"):WaitForChild("Root"):Destroy()
+end 
 game.Players.LocalPlayer.Character:WaitForChild("LowerTorso"):WaitForChild("Root"):Destroy() wait(0.5)
 wait(0.5)
 game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = Save
