@@ -71,7 +71,7 @@ game:GetService("RunService").Stepped:connect(function()
     end
 )
 
-
+local ASSHOLE = require(game:GetService("ReplicatedStorage").SpellLibrary)
 
 Common = {"Fire", "Water", "Lightning"}
 Uncommon = {"Wind", "Earth"}
@@ -100,7 +100,7 @@ end)
 local Toggle1 = Section1:CreateToggle("Auto Levels", Settings.AutoLevels, function(State)
 Settings.AutoLevels = State
 spawn(function()
-while wait(1) and Settings.AutoLevels do
+while wait() and Settings.AutoLevels do
     pcall(
         function()
             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, 50003, 0)
@@ -113,6 +113,9 @@ while wait(1) and Settings.AutoLevels do
                 Respawn()
             end 
             game:GetService("VirtualUser"):ClickButton1(Vector2.new(9e9, 9e9))
+            for i,v in pairs(ASSHOLE) do
+                v.CastTime = 0
+            end 
         end
     )
 end
