@@ -34,26 +34,12 @@ end
 local function Save()
     writefile("V.G Hub//" .. Name, game:GetService("HttpService"):JSONEncode(Settings))
 end
+repeat wait() until game.Players.LocalPlayer.Character.Humanoid 
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Character.Humanoid.Changed)) do
+   v:Disable()
+end
 
 
-
-local OldNameCall = nil
-OldNameCall = hookmetamethod(game, "__namecall", function(A,B,C,...)
-    local Args = {...}
-        if not checkcaller() and A == "WalkSpeed" or A == "JumpPower" and B:IsA("Humanoid") then
-            return 
-        end
-    return OldNameCall(A,B,C,...)
-end)
-local OldNameCall = nil
-OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
-    local Args = {...}
-        if self.Name == "HRPCF" then
-                return wait(math.huge)
-
-        end
-    return OldNameCall(self, unpack(Args))
-end)
 
 game:GetService("RunService").Stepped:connect(
     function()
@@ -106,7 +92,7 @@ local function Tween(A, B, C, D, E, F)
         game:GetService("TweenService"):Create(
         A,
         TweenInfo.new((B - A.Position).Magnitude / C, Enum.EasingStyle.Linear),
-        {CFrame = CFrame.new(B)}
+        {CFrame = CFrame.new(B + Vector3.new(0,0,3))}
     )
     Hentai:Play()
     Hentai.Completed:Wait()
@@ -165,7 +151,7 @@ spawn(
                         game:GetService("VirtualInputManager"):SendKeyEvent(true, 49, false, game)
                     end
 
-                    if not game:GetService("Players").DownSideSpin.PlayerGui:FindFirstChild("SpawnSelection") then
+                    if not game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("SpawnSelection") then
                         if getNearestMob().Humanoid.Health == 0 then
                             repeat
                                 wait(5)
@@ -278,9 +264,13 @@ local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", Settings.Go,
 Settings.Go = State
 game:GetService("RunService").Stepped:connect(
     function()
-        if Settings.Go then
+        if Settings.Go and game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Health ~= 0 and not Settings.AutoMob then
+            if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed ~= Settings.WalkSpeed then
             game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = Settings.WalkSpeed
+            end 
+            if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower ~= Settings.JumpPower then
             game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = Settings.JumpPower
+            end 
             if game:GetService("UserInputService").WindowFocused and not game:GetService("UserInputService").WindowFocusReleased then
                 setfpscap(Settings.Fps)
             end
@@ -690,3 +680,4 @@ spawn(function()
 while wait() do
 Save()
 end end)
+
