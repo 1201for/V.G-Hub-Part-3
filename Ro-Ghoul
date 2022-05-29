@@ -33,11 +33,29 @@ end
 local function Save()
     writefile("V.G Hub//" .. Name, game:GetService("HttpService"):JSONEncode(Settings))
 end
-repeat wait() until game.Players.LocalPlayer.Character.Humanoid 
-for i,v in pairs(getconnections(game.Players.LocalPlayer.Character.Humanoid.Changed)) do
-   v:Disable()
+game.Players.LocalPlayer.Character:WaitForChild("Humanoid") 
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Character:WaitForChild("Humanoid").StateChanged)) do
+    v:Disable()
 end
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Changed)) do
+    v:Disable()
+end
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Character:WaitForChild("Humanoid").AncestryChanged)) do
+    v:Disable()
+end
+game.Players.LocalPlayer.CharacterAdded:connect(function()
+repeat wait(1) until game.Players.LocalPlayer.Character
 
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Character:WaitForChild("Humanoid").StateChanged)) do
+    v:Disable()
+end
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Changed)) do
+    v:Disable()
+end
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Character:WaitForChild("Humanoid").AncestryChanged)) do
+    v:Disable()
+end
+end)
 
 
 game:GetService("RunService").Stepped:connect(
@@ -91,7 +109,7 @@ local function getNearestMob()
     for i, v in ipairs(game:GetService("Workspace").NPCSpawns:GetChildren()) do
         for i, v in pairs(v:GetChildren()) do
             if v.Name == Settings.Mob  and  v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
-                    v:FindFirstChildOfClass("Humanoid").Health ~= 0
+                    v:FindFirstChildOfClass("Humanoid").Health ~= 0 
              then
                 local Mag =
                     (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.PrimaryPart.Position).Magnitude
@@ -154,10 +172,11 @@ game:GetService("RunService").Stepped:connect(
         if Settings.AutoMob then
             pcall(
                 function()
-                    for i, v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-                        if v:IsA("BasePart") then
-                            v.CanCollide = false
-                        end
+                    if game.Players.LocalPlayer.Character.Humanoid.Health == 0 then
+                    game.Players.LocalPlayer.CharacterAdded:wait(5)
+                    end 
+                    if not game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("SpawnSelection") then
+                        game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
                     end
                 end
             )
@@ -173,7 +192,10 @@ spawn(
                     if not game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Model") then
                         game:GetService("VirtualInputManager"):SendKeyEvent(true, 49, false, game)
                     end
-
+                    if game.Players.LocalPlayer.Character.Humanoid.Health == 0 then
+                        
+                    game.Players.LocalPlayer.CharacterAdded:wait(5)
+                    end 
                     if not game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("SpawnSelection") then
                         if getNearestMob().Humanoid.Health == 0 then
                             repeat
@@ -185,8 +207,8 @@ spawn(
                             getNearestMob().HumanoidRootPart.Position,
                             Settings.Speed,
                             Settings.Time,
-                            true,
-                            0
+                            nil,
+                            nil
                         )
                         if isnetworkowner and  isnetworkowner(getNearestMob().HumanoidRootPart) and 
                             getNearestMob():FindFirstChildWhichIsA("Humanoid").Health < getNearestMob():FindFirstChildWhichIsA("Humanoid").MaxHealth and Settings.InstantKill
@@ -219,6 +241,90 @@ end)
 
 local Dropdown1 = Section1:CreateDropdown("Mobs", Gamble, function(String)
 	Settings.Mob = String
+end)
+
+
+local Toggle1 = Section1:CreateToggle("Auto All Bosses", Settings.AutoAllBoss, function(State)
+Settings.AutoAllBoss = State
+
+game:GetService("RunService").Stepped:connect(
+    function()
+        if Settings.AutoAllBoss then
+            pcall(
+                function()
+                    if game.Players.LocalPlayer.Character.Humanoid.Health == 0 then
+                    game.Players.LocalPlayer.CharacterAdded:wait(5)
+                    end 
+                if not game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("SpawnSelection") then
+                        game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+                end 
+                end
+            )
+        end
+    end
+)
+
+spawn(
+    function()
+        while wait() and Settings.AutoAllBoss do
+            pcall(
+                function()
+                    if not game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Model") then
+                        game:GetService("VirtualInputManager"):SendKeyEvent(true, 49, false, game)
+                    end
+                    game.Players.LocalPlayer.CharacterAdded:wait(5)
+                    for i, v in ipairs(game:GetService("Workspace").NPCSpawns:GetChildren()) do
+                        if v.Name:find("Boss") then
+                        for i, v in pairs(v:GetChildren()) do
+                            
+                                if
+                                    v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and
+                                        v:FindFirstChildOfClass("Humanoid").Health ~= 0
+                                 then
+                                    Tween(
+                                        game.Players.LocalPlayer.Character.HumanoidRootPart,
+                                        v.HumanoidRootPart.Position,
+                                        Settings.Speed,
+                                        Settings.Time,
+                                        nil,
+                                        nil
+                                    )
+                                end
+                                if
+                                    isnetworkowner and isnetworkowner(getNearestMob().HumanoidRootPart) and
+                                        getNearestMob():FindFirstChildWhichIsA("Humanoid").Health <
+                                            getNearestMob():FindFirstChildWhichIsA("Humanoid").MaxHealth and
+                                        Settings.InstantKill
+                                 then
+                                    getNearestMob().Humanoid.Health = 0
+                                elseif
+                                    not isnetworkowner and
+                                        getNearestMob():FindFirstChildWhichIsA("Humanoid").Health <
+                                            getNearestMob():FindFirstChildWhichIsA("Humanoid").MaxHealth and
+                                        Settings.InstantKill
+                                 then
+                                    getNearestMob().Humanoid.Health = 0
+                                end
+                            end
+                        end
+                    end
+                end
+            )
+        end
+    end
+)
+spawn(
+    function()
+        while wait(0.5) and Settings.AutoAllBoss do
+            pcall(
+                function()
+                    game:GetService("VirtualInputManager"):SendMouseButtonEvent(0, 0, 0, true, game, 1)
+                end
+            )
+        end
+    end
+)
+
 end)
 
 local Slider3 = Section1:CreateSlider("TweenSpeed",0,300,Settings.Speed,false, function(Value)
