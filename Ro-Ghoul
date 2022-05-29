@@ -1,4 +1,3 @@
-
 local Config = {
     WindowName = "V.G Hub",
 	Color = Color3.fromRGB(255,128,64),
@@ -54,7 +53,31 @@ game:GetService("RunService").Stepped:connect(
     end
 )
 
+--game:GetService("Workspace").NPCSpawns.CCGSpawns["Rank 1 Investigator"]
+--game:GetService("Workspace").NPCSpawns.CCGSpawns["First Class Investigator"]
+--game:GetService("Workspace").NPCSpawns.CCGSpawns["Rank 2 Investigator"]
+--game:GetService("Workspace").NPCSpawns.GhoulSpawns["High Rank Aogiri Member"]
+game:GetService("RunService").Stepped:connect(
+    function()
+        pcall(
+            function()
+                for i, v in pairs(game:GetService("Workspace").NPCSpawns:GetChildren()) do
+                    for i, v in pairs(v:GetChildren()) do
+                        if v:IsA("Model") and v.Name:find("Investigator") then
+                            v.Name = "Investigator"
+                        elseif v:IsA("Model") and v.Name:find("Aogiri Member") then
+                            v.Name = "Aogiri Member"
+                        elseif v:IsA("Model") and v.Name:find("Athlete") then
+                            v.Name = "Human"
+                        end
+                    end
+                end
+            end
+        )
+    end
+)
 
+wait(1)
 Gamble = {}
 for i, v in pairs(game:GetService("Workspace").NPCSpawns:GetDescendants()) do
     if v:IsA("Model") and v:FindFirstChildWhichIsA("Humanoid") and not table.find(Gamble,v.Name) then
@@ -165,13 +188,13 @@ spawn(
                             true,
                             0
                         )
-                        if
-                            (getNearestMob():FindFirstChildWhichIsA("Humanoid").Health /
-                                getNearestMob():FindFirstChildWhichIsA("Humanoid").MaxHealth *
-                                100) <=
-                                95 and Settings.InstantKill
+                        if isnetworkowner and  isnetworkowner(getNearestMob().HumanoidRootPart) and 
+                            getNearestMob():FindFirstChildWhichIsA("Humanoid").Health < getNearestMob():FindFirstChildWhichIsA("Humanoid").MaxHealth and Settings.InstantKill
                          then
                             getNearestMob().Humanoid.Health = 0
+                         elseif not isnetworkowner and 
+                            getNearestMob():FindFirstChildWhichIsA("Humanoid").Health < getNearestMob():FindFirstChildWhichIsA("Humanoid").MaxHealth and Settings.InstantKill then
+                            getNearestMob().Humanoid.Health = 0 
                         end
                     end
                 end
@@ -208,10 +231,31 @@ end)
 
 
 local Toggle1 = Section1:CreateToggle("InstantKill", Settings.InstantKill, function(State)
-    Settings.InstantKill = State
+Settings.InstantKill = State
+spawn(
+    function()
+        while wait() and Settings.InstantKill do
+            pcall(
+                function()
+                    for i, v in ipairs(game:GetService("Workspace").NPCSpawns:GetChildren()) do
+                        for i, v in pairs(v:GetChildren()) do
+                            if
+                                v:IsA("Model") and v:FindFirstChildWhichIsA("Humanoid") and
+                                    v:FindFirstChildWhichIsA("Humanoid").Health <
+                                        v:FindFirstChildWhichIsA("Humanoid").MaxHealth and
+                                    isnetworkowner(v.HumanoidRootPart)
+                             then
+                                v.Humanoid.Health = 0
+                            end
+                        end
+                    end
+                end
+            )
+        end
+    end
+)
 end)
-
-local Toggle1 = Section2:CreateToggle("Auto FocusSpeed", Settings.W, function(State)
+local Toggle1 = Section1:CreateToggle("Auto FocusSpeed", Settings.W, function(State)
 Settings.W = State
 spawn(
     function()
@@ -222,7 +266,7 @@ spawn(
 )
 end)
 
-local Toggle1 = Section2:CreateToggle("Auto FocusDurability", Settings.W1, function(State)
+local Toggle1 = Section1:CreateToggle("Auto FocusDurability", Settings.W1, function(State)
 Settings.W1 = State
 spawn(
     function()
@@ -233,7 +277,7 @@ spawn(
 )
 end)
 
-local Toggle1 = Section2:CreateToggle("Auto FocusWeapon", Settings.W2, function(State)
+local Toggle1 = Section1:CreateToggle("Auto FocusWeapon", Settings.W2, function(State)
 Settings.W2 = State
 spawn(
     function()
@@ -244,7 +288,7 @@ spawn(
 )
 end)
 
-local Toggle1 = Section2:CreateToggle("Auto FocusPhysical", Settings.W3, function(State)
+local Toggle1 = Section1:CreateToggle("Auto FocusPhysical", Settings.W3, function(State)
 Settings.W3 = State
 spawn(
     function()
@@ -680,4 +724,5 @@ spawn(function()
 while wait() do
 Save()
 end end)
+
 
