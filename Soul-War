@@ -42,8 +42,11 @@ local function GetPlayers()
     end 
 
 end
-
-
+game:GetService("RunService").Stepped:connect(function()
+    workspace.FallenPartsDestroyHeight = 0 / 0
+    sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", 1000)
+end
+)
 local function getNearestHollow()
     local TargetDistance = math.huge
     local Target
@@ -106,7 +109,7 @@ local function getNearestHollow1()
     local Target
     for i, v in ipairs(game:GetService("Workspace").Alive:GetChildren()) do
         if v.ClassName == "Model" and v.Name:find("Hollow") and v:FindFirstChild("HumanoidRootPart")  then
-            if v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v:FindFirstChild("Head") and v.Head.CFrame.Y > -2000  then
+            if v:FindFirstChildOfClass("Humanoid").Health ~= 0 and v:FindFirstChild("Head") and v.Humanoid.Health ~= math.huge then
             local Mag =
                     (game.Players.LocalPlayer.Character.HumanoidRootPart.Position -
                     v.PrimaryPart.Position).Magnitude
@@ -130,6 +133,18 @@ elseif Settings.Amount == nil then
     Settings.Amount = 1 
 end
 
+local Objects = {}
+for i,v in pairs(game:GetService("Workspace").Map:GetChildren()) do
+if v:IsA("Model") and v:FindFirstChild("Head") and v:FindFirstChild("Humanoid") then
+v.Name = v.Humanoid.DisplayName
+end 
+end
+for i,v in pairs(game:GetService("Workspace").Map:GetChildren()) do
+if v:IsA("Model") and v:FindFirstChild("Head") and v:FindFirstChild("Humanoid") then
+    table.insert(Objects,v.Name)
+end
+end 
+ 
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
@@ -174,9 +189,10 @@ spawn(
                         game:GetService("TweenService"):Create(
                         game.Players.LocalPlayer.Character.HumanoidRootPart,
                         Info,
-                        {CFrame = getNearestHollow().HumanoidRootPart.CFrame * CFrame.new(0, getNearestHollow().HumanoidRootPart.Size.Y / game:GetService("Workspace").Terrain.Size.Y  - 7, Settings.Distance)}
+                        {CFrame = getNearestHollow().HumanoidRootPart.CFrame * CFrame.new(0, -7, Settings.Distance)}
                     )
                     Tween:Play()
+                    game.Players.LocalPlayer.Character.Humanoid:SetStateEnabled(0, false)
                     if
                         not game:GetService("Players").LocalPlayer.PlayerGui.NonResetGui.Quest.Visible and
                             Settings.AutoQuest
@@ -206,11 +222,44 @@ spawn(
             pcall(
                 function()
                     game:GetService("ReplicatedStorage").Remotes.Combat:FireServer("M1")
+                    game:GetService("ReplicatedStorage").Remotes.Combat:FireServer("Block")
                 end
             )
         end
     end
 )
+
+end)
+end
+if isnetworkowner then
+local Toggle1 = Section1:CreateToggle("InstantKill", Settings.InstantKill, function(State)
+Settings.InstantKill = State
+spawn(function()
+while Settings.InstantKill do
+    wait()
+    pcall(
+        function()
+            for i, v in pairs(game:GetService("Workspace").Alive:GetChildren()) do
+                if v:FindFirstChild("Humanoid") and 
+                    v.Humanoid.Health ~= 0  and
+                        v.Humanoid.Health < v.Humanoid.MaxHealth and isnetworkowner(v.HumanoidRootPart) and v.Name ~= game.Players.LocalPlayer.Name
+                 then
+                    v.Humanoid.Health = 0
+                end
+            end
+        end
+    )
+end
+if Settings.InstantKill then
+    game.StarterGui:SetCore(
+        "SendNotification",
+        {
+            Title = "if it dosen't work",
+            Text = "Minmize the roblox tab and then reopen it should work again"
+        }
+    )
+end
+end)
 
 end)
 end
@@ -294,6 +343,8 @@ spawn(
             pcall(
                 function()
                     game:GetService("ReplicatedStorage").Remotes.Combat:FireServer("M1")
+                    game:GetService("ReplicatedStorage").Remotes.Combat:FireServer("Block")
+
                 end
             )
         end
@@ -375,9 +426,29 @@ spawn(
 
 end)
 
+
+
 local Dropdown1 = Section1:CreateDropdown("Trainings Tools", Trainings, function(String)
 	Settings.Trainings = String
 end)
+
+
+if game.PlaceId == 9187108855 then
+    
+local Button1 = Section1:CreateButton("Auto Buy Selected Buyable", function()
+for i,v in pairs(game:GetService("Workspace").Map:GetChildren()) do
+
+if v.Name:find(Objects) then
+    fireclickdetector(v.Head.ClickDetector)
+
+end
+end
+end)
+local Dropdown1 = Section1:CreateDropdown("Buyables", Objects, function(String)
+	Objects = String
+end) 
+
+end
 end
 
 local Slider3 = Section1:CreateSlider("TweenTime",0,5,Settings.Time,false, function(Value)
