@@ -183,6 +183,9 @@ spawn(
                      then
                         fireclickdetector(game:GetService("Workspace").Map.Board.Main.ClickDetector)
                      end
+                     if game:GetService("Workspace").Alive:FindFirstChild("Soul") and Setting.AutoQuest and game.PlaceId == 9187108855 then
+                         fireclickdetector(game:GetService("Workspace").Alive.Soul.HumanoidRootPart.ClickDetector)
+                    end
                     if
                         not Settings.Start or
                             not game:GetService("Players").LocalPlayer.PlayerGui.NonResetGui.Quest.Visible and
