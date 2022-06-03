@@ -89,27 +89,27 @@ local Section4 = Tab2:CreateSection("Background")
 local Toggle1 = Section1:CreateToggle("RainBow Message", Settings.RainBow, function(State)
 Settings.RainBow = State
 spawn(function()
-while Settings.RainBow do pcall(function()
+while Settings.RainBow do
     wait()
-    Event[solveRemote("EditBooth")]:FireServer('<font color="#9400D3">' .. 
+    Event[solveRemote("SetBoothText")]:FireServer('<font color="#9400D3">' .. 
         tostring(Settings.Text) .. "</font>", "booth")
     wait(2)
-    Event[solveRemote("EditBooth")]:FireServer('<font color="#0000FF">' .. 
-        tostring(Settings.Text) .. "</font>", "booth")
-    wait(2)
-
-    Event[solveRemote("EditBooth")]:FireServer('<font color="#FFFF00">' .. 
+    Event[solveRemote("SetBoothText")]:FireServer('<font color="#0000FF">' .. 
         tostring(Settings.Text) .. "</font>", "booth")
     wait(2)
 
-    Event[solveRemote("EditBooth")]:FireServer('<font color="#FF7F00">' .. 
+    Event[solveRemote("SetBoothText")]:FireServer('<font color="#FFFF00">' .. 
         tostring(Settings.Text) .. "</font>", "booth")
     wait(2)
 
-    Event[solveRemote("EditBooth")]:FireServer('<font color="#FF0000">' .. 
+    Event[solveRemote("SetBoothText")]:FireServer('<font color="#FF7F00">' .. 
         tostring(Settings.Text) .. "</font>", "booth")
     wait(2)
-    end)
+
+    Event[solveRemote("SetBoothText")]:FireServer('<font color="#FF0000">' .. 
+        tostring(Settings.Text) .. "</font>", "booth")
+    wait(2)
+
 end
 end)
 end)
@@ -122,7 +122,7 @@ while Settings.NeverGonna do pcall(function()
     wait()
     for i,v in pairs(Table) do
     if Settings.NeverGonna then
-    Event[solveRemote("EditBooth")]:FireServer(v, "booth") wait(3.5)
+    Event[solveRemote("SetBoothText")]:FireServer(v, "booth") wait(3.5)
     end 
     end 
     end)
