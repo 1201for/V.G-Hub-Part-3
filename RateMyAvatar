@@ -1,11 +1,3 @@
-local Saw = {
-    6708206173,
-    
-}
-if not table.find(Saw,game.PlaceId) then
-repeat wait(math.huge) until Never
-end 
-
 local Config = {
     WindowName = "V.G Hub",
 	Color = Color3.fromRGB(255,128,64),
@@ -577,3 +569,4 @@ spawn(function()
 while wait() do
 Save()
 end end)
+
