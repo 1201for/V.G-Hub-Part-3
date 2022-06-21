@@ -97,7 +97,7 @@ local Section4 = Tab2:CreateSection("Background")
 
 
 
-local Toggle1 = Section1:CreateToggle("Ore AutoFarm", Settings.Start, function(State) 
+local Toggle1 = Section1:CreateToggle("AutoFarm", Settings.Start, function(State) 
 Settings.Start = State
 
 spawn(
