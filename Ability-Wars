@@ -56,7 +56,7 @@ end
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
-local Tab1 = Window:CreateTab("Demon Slayer-Burning Ashes")
+local Tab1 = Window:CreateTab("Ability Wars")
 local Tab2 = Window:CreateTab("UI Settings")
 
 local Section1 = Tab1:CreateSection("")
@@ -595,4 +595,3 @@ spawn(
         end
     end
 )
-
