@@ -44,6 +44,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Value = Player.SaveVars
 local Events = ReplicatedStorage.Events
+local Debris = game:GetService("Workspace").Debris
+local Auctions = Debris.Auctions
+
 
 local v1 = require(ReplicatedStorage.Modules.UIModule)
 local v2 = require(ReplicatedStorage.Modules.Repairs)
@@ -53,6 +56,31 @@ local v5 = require(ReplicatedStorage.Modules.Garages)
 for i,v in pairs(v2.Thresholds) do
     v.RepairTime = 0
 end 
+local Say = function()
+    local Egg = 0
+    for i, v in pairs(Auctions:GetChildren()) do
+        if tostring(Auctions[v.Name]:GetAttribute("GarageLocation")) == game:GetService("Players").LocalPlayer.NonSaveVars.OwnsPlot.Value then
+        for i, A in pairs(v.Items:GetChildren()) do
+            if A.Name ~= nil then
+                local Number = tonumber(v4[v.Name].Price)
+                Egg = Egg + Number
+            end
+        end
+        Egg2 = Egg2 + 1
+        print("Box Price = " .. Egg)
+        game:GetService("StarterGui"):SetCore(
+            "SendNotification",
+            {
+                Title = "Auction " .. Egg2,
+                Text = "$" .. Egg .. " its worth Credits to Uae#3623 for this feature"
+            }
+        )
+        Egg = 0
+        end
+end 
+end
+
+
 
 for i,v in pairs(v3) do
     v = 0 
@@ -112,12 +140,10 @@ v1:Notify(game.Players.LocalPlayer,"V.G hub Is Loading")
 wait()
 pcall(
     function()
-
-        Gamepasses()
-
         Events.Data.SetStoreAccess:FireServer("Me")
     end
 )
+wait(0.2)
 v1:Notify(game.Players.LocalPlayer,"V.G hub Is Loaded Thank Your For waiting")
 
 
@@ -125,7 +151,9 @@ local function UpdateAuctioneerText(v)
     Events.UI.UpdateAuctioneerText:Fire(v)
 end 
 
-
+Auctions.ChildAdded:Connect(function()
+    Say()
+end)
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -147,7 +175,7 @@ spawn(
             pcall(
                 function()
                     wait(1)
-
+                    
                     if
                         not Player.PlayerGui:FindFirstChild("Auctions") and
                             not Player.PlayerGui:FindFirstChild("Bidding") and
@@ -165,6 +193,7 @@ spawn(
                             wait(1)
                      then
                         for i, v in pairs(getconnections(Player.PlayerGui.Bidding.Buttons.BidButton.MouseButton1Click)) do
+                            wait(nil) wait(1)
                             v:Fire()
                         end
                     end
@@ -173,6 +202,7 @@ spawn(
                         for i, v in pairs(
                             getconnections(Player.PlayerGui.ItemsWon.ItemsFrame.ConfirmButton.MouseButton1Click)
                         ) do
+                            wait(nil)
                             v:Fire()
                         end
                         Events.Auctions.SellAllItems:InvokeServer("Default",{})
@@ -191,12 +221,34 @@ local Dropdown1 = Section1:CreateDropdown("Auctions", Actions, function(String)
 	Settings.Actions = String
 end)
 
+if Settings.Text == nil then
+    Settings.Text = "Sex"
+end 
+local Toggle1 = Section1:CreateToggle("Spam Auctioner Message Box", Settings.Spam, function(State)
+Settings.Spam = State
+spawn(
+    function()
+        while wait(1) and Settings.Spam do
+            pcall(
+                function()
+                    UpdateAuctioneerText(Settings.Text)
+                end
+            )
+        end
+    end
+)
+end)
+
+
+Section1:CreateTextBox("Auctioner Message", "Text Here", false, function(String)
+	Settings.Text = String
+end)
 
 local Button1 = Section1:CreateButton("Pop up Gui", function()
-v1:AddUI(Player, ReplicatedStorage.GUIs[Settings.Gui])
+    v1:AddUI(Player, ReplicatedStorage.GUIs[Settings.Gui])
 end)
 local Button1 = Section1:CreateButton("Remove Gui", function()
-v1:RemoveUI(Player, ReplicatedStorage.GUIs[Settings.Gui])
+    v1:RemoveUI(Player, ReplicatedStorage.GUIs[Settings.Gui])
 end)
 local Dropdown1 = Section1:CreateDropdown("Gui's", Guis, function(String)
 	Settings.Gui = String
@@ -321,7 +373,7 @@ RunService.Stepped:connect(
                     v.CanCollide = false
                     end)
                 end
-            end
+            end 
         end
     end
 )
