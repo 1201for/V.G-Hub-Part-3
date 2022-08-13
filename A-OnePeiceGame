@@ -1,8 +1,6 @@
 local Table = {8396586868,9264222904,9432106399,9551614839,9572329421,9812430518}
-for i, v in pairs(Games) do
-    if table.find(Table,game.PlaceId) then
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub-Part-3/main/A-OnePeiceGame"))()
-    end
+if table.find(Table,game.PlaceId) then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub-Part-3/main/A-OnePeiceGame"))()
 end
 
 
@@ -636,7 +634,6 @@ spawn(
         end
     end
 )
-
 
 
 
