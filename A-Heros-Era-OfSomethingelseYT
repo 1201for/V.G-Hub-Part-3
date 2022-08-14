@@ -83,14 +83,11 @@ OldNameCall =
 )
 
 
-
+local function Click() wait(0.2)
+game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,0,0, true, game, 1)
+end
 local FuckDekuDimz = function()
-    wait(1.5)
-    for i = 1, 10 do
-        local a = getsenv(game:GetService("Players").LocalPlayer.Character.Client)
-        local b = a.Swing
-        b(a, b)
-    end
+    Click()
     if not Player.Character.Config.CombatMode.Value then
         VirtualInputManager:SendKeyEvent(true, "R", false, game)
     end 
@@ -180,48 +177,8 @@ end)
 local Dropdown1 = Section1:CreateDropdown("Farm Method", {"Nothing","Under","Behind","Above"}, function(Name)
 	Settings.Method = Name
 end)
---[[local Toggle1 = Section1:CreateToggle("Auto Mobs", Settings.HitBox, function(State)
-Settings.HitBox = State
-RunService.Stepped:Connect(
-    function()
-        if Settings.HitBox then
-            for i, v in pairs(npcs:GetChildren()) do
-                if v:IsA("Model") and v:FindFirstChild("Torso") then
-                    v.Torso.CanCollide = false
-                    v.Torso.Transparency = Settings.Transparency
-                    if not Settings.Rainbow then
-                        v.Torso.Color = Color3.fromHSV(getgenv().Color)
-                    end
-                    if Settings.Rainbow then
-                        v.Torso.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-                    end
-                    v.Torso.Size = Vector3.new(Settings.Size,Settings.Size,Settings.Size)
-                end
-            end
-        end
-    end
-)
 
-
-end)
-
-local Colorpicker = Section1:CreateColorpicker("HitBox Color", function(Color)
-	getgenv().Color = Color
-end)
-
-
-local Slider = Section1:CreateSlider("HitBox Transparency",0,1,Settings.Transparency,false, function(Value)
-	Settings.Transparency = Value
-end)
-local Slider = Section1:CreateSlider("HitBox Size",0,50,Settings.Size,false, function(Value)
-	Settings.Size = Value
-end)
-
-local Toggle1 = Section1:CreateToggle("Rainbow HitBox", Settings.Rainbow, function(State)
-    Settings.Rainbow = State
-end)
-]]---
-local Toggle1 = Section1:CreateToggle("Kill Aura", Settings.KillAura, function(State)
+local Toggle1 = Section1:CreateToggle("Auto Mobs", Settings.AutoFarm, function(State)
 Settings.KillAura = State    
 spawn(function()
     while Settings.KillAura do wait()
