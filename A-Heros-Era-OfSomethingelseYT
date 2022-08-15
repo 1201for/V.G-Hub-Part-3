@@ -1,7 +1,7 @@
 repeat wait() until game:IsLoaded()
 local ABC = function(v)
     return game:GetService(v)
-end
+end 
 
 local RunService = ABC("RunService")
 local Players = ABC("Players")
@@ -61,10 +61,36 @@ for i,v in pairs(npcs:GetChildren()) do
         table.insert(Sus,v.Name)
     end
 end 
+
+spawn(
+    function()
+        while wait() do
+            pcall(function()
+            for i, v in pairs(Workspace:GetChildren()) do
+                if v.Name == "Quest Board" then
+                    v.Parent = Workspace.Map
+                end
+            end
+            end)
+        end
+    end
+)
+local Quests = {}
+for i, v in pairs(Workspace.Map:GetChildren()) do
+    if v.Name == "Quest Board" then
+        for i, v in pairs(v.Papers:GetChildren()) do
+            if v.Name == "Part" then
+               table.insert(Quests,v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text)
+            end
+        end
+    end
+end
+
+
 local Char = Player.Character or Player.CharacterAdded:Wait()
 
 local Table = {Player}
-local Table2 = {"ClearAllChildren", "Kick","kick","Destroy"}
+local Table2 = {"ClearAllChildren", "Kick","kick","Destroy","FireServer"}
 local OldNameCall = nil
 OldNameCall =
     hookmetamethod(
@@ -78,14 +104,43 @@ OldNameCall =
         if getnamecallmethod() == "ClearAllChildren" then
             return wait(9e9)
         end 
+        if self.Name == "LightAttack" and Args[1] == "Yes" then
+            return wait(9e9) and "No"
+        end 
         return OldNameCall(self, ...)
     end
 )
 
+local OldNameCall = nil
+OldNameCall = hookmetamethod(game, "__namecall", function(self,t,k,...)
+    local Args = {...}
+    if not checkcaller() and k == "WalkSpeed" and t:IsA("Humanoid") then
+        return
+    end
+    if not checkcaller() and k == "WalkSpeed" and t:IsA("Humanoid") then
+        return 16
+    end
+    
+    return OldNameCall(self,t,k,...)
+end)
+
+local function RaduisCheck(A,B,C)
+    if (A.Position - B.Position).Mag < C then
+        return A,B,C
+    end 
+end 
+    
+local Areas = {}
+for i,v in pairs(Workspace.Areas:GetChildren()) do
+    if v:IsA("BasePart") and not table.find(Areas,v.Name) then
+        table.insert(Areas,v.Name)
+    end 
+end 
 
 local function Click() wait(0.2)
-game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,0,0, true, game, 1)
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,0,0, true, game, 1)
 end
+
 local FuckDekuDimz = function()
     Click()
     if not Player.Character.Config.CombatMode.Value then
@@ -122,21 +177,21 @@ RunService.Stepped:Connect(
 )
 spawn(
     function()
-        while wait() and Settings.AutoFarm do
+        while wait(0.5) and Settings.AutoFarm do
             pcall(
                 function()
-                    FuckDekuDimz()
+                    
                     for i, v in pairs(npcs:GetChildren()) do
-                        if v.Name == (Settings.Mob) and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health ~= 0 then
+                        if v.Name == (Settings.Mob) and not Settings.AutoQuest and v:FindFirstChild("HumanoidRootPart") and  v.Health.Value ~= 0 or Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and Player.PlayerGui:FindFirstChild("Quest") and string.find(Player.PlayerGui:FindFirstChild("Quest").MobProgress.Text,v.Name) then
+                            
                             if Settings.Method == "Under" then
-                                Player.Character.HumanoidRootPart.CFrame =
-                                    CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, -8, 0) *
-                                    CFrame.Angles(math.rad(90), 0, 0)
+                                game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.01, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, -8, 0) *
+                                    CFrame.Angles(math.rad(90), 0, 0)}):Play()
+                         
                             end
                             if Settings.Method == "Above" then
-                                Player.Character.HumanoidRootPart.CFrame =
-                                    CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 8, 0) *
-                                    CFrame.Angles(0, 0, math.rad(90))
+                            game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.01, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 8, 0) *
+                                    CFrame.Angles(0, 0, math.rad(-90))}):Play()
                             end
 
                             if Settings.Method == "Nothing" and isnetworkowner then
@@ -156,12 +211,13 @@ spawn(
                                     CFrame.Angles(math.rad(90), 0, 0)
                             end
                             if Settings.Method == "Behind" then
-                                Player.Character.HumanoidRootPart.CFrame =
-                                    CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 0, 5) *
-                                    CFrame.Angles(0, 0, 0)
+                                     game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.01, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 0, 5) *
+                                    CFrame.Angles(0, 0, 0)}):Play()
                             end
-                        end
+                            end 
+                        
                     end
+                    FuckDekuDimz()
                 end
             )
         end
@@ -170,6 +226,8 @@ spawn(
 
 end)
 
+
+
 local Dropdown1 = Section1:CreateDropdown("Mobs", Sus, function(Name)
 	Settings.Mob = Name
 end)
@@ -177,8 +235,37 @@ end)
 local Dropdown1 = Section1:CreateDropdown("Farm Method", {"Nothing","Under","Behind","Above"}, function(Name)
 	Settings.Method = Name
 end)
+local Toggle1 = Section1:CreateToggle("AutoQuest", Settings.AutoQuest, function(State)
+Settings.AutoQuest = State
 
-local Toggle1 = Section1:CreateToggle("Auto Mobs", Settings.AutoFarm, function(State)
+spawn(
+    function()
+        while wait() and Settings.AutoQuest do
+            for i, v in pairs(Workspace.Map:GetChildren()) do
+                if v.Name == "Quest Board" then
+                    for i, v in pairs(v.Papers:GetChildren()) do
+                        if v.Name == "Part" then
+                            if
+                                v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text ==
+                                    Settings.Quest and not Player.PlayerGui:FindFirstChild("Quest")
+                             then
+                                Player.Character.HumanoidRootPart.CFrame = v.CFrame
+                                fireclickdetector(v.ClickDetector,10)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+)
+
+end)
+local Dropdown1 = Section1:CreateDropdown("Quests", Quests, function(Name)
+    Settings.Quest = Name
+end)
+
+local Toggle1 = Section1:CreateToggle("KillAura", Settings.AutoFarm, function(State)
 Settings.KillAura = State    
 spawn(function()
     while Settings.KillAura do wait()
@@ -189,6 +276,23 @@ spawn(function()
 end)
 end)
 
+local Toggle1 = Section1:CreateToggle("No Trees", Settings.Tree, function(State)
+Settings.Tree = State
+for i,v in pairs(game:GetService("Workspace").Trees:GetDescendants()) do
+    if v:IsA("BasePart") and Settings.Tree then
+        v.CanCollide = false 
+        v.Transparency = 1 
+        elseif v:IsA("BasePart") and not Settings.Tree then
+        v.CanCollide = true
+        v.Transparency = 0
+    end 
+end 
+end)
+
+
+local Dropdown1 = Section1:CreateDropdown("Area Teleports", Areas, function(Name)
+	Player.Character.HumanoidRootPart.CFrame = Workspace.Areas[Name].CFrame
+end)
 
 local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", Settings.Go, function(State)
 Settings.Go = State
