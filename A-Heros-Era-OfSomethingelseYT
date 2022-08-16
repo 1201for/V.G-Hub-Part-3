@@ -75,6 +75,7 @@ spawn(
         end
     end
 )
+wait(1)
 local Quests = {}
 for i, v in pairs(Workspace.Map:GetChildren()) do
     if v.Name == "Quest Board" then
@@ -148,6 +149,22 @@ local FuckDekuDimz = function()
     end 
 end
 
+local function getNearestMob()
+    local TargetDistance = math.huge
+    local Target
+    for i, v in ipairs(npcs:GetChildren()) do
+        if v.Name == (Settings.Mob) and not Settings.AutoQuest and v:FindFirstChild("HumanoidRootPart") and  v.Health.Value ~= 0 or Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and Player.PlayerGui:FindFirstChild("Quest") and string.find(Player.PlayerGui:FindFirstChild("Quest").MobProgress.Text,v.Name) then
+            local Mag =
+                (v.PrimaryPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+            if Mag < TargetDistance then
+                TargetDistance = Mag
+                Target = v
+            end
+        end
+    end
+    return Target
+end
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -177,20 +194,17 @@ RunService.Stepped:Connect(
 )
 spawn(
     function()
-        while wait(0.5) and Settings.AutoFarm do
+        while wait() and Settings.AutoFarm do
             pcall(
                 function()
-                    
-                    for i, v in pairs(npcs:GetChildren()) do
-                        if v.Name == (Settings.Mob) and not Settings.AutoQuest and v:FindFirstChild("HumanoidRootPart") and  v.Health.Value ~= 0 or Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and Player.PlayerGui:FindFirstChild("Quest") and string.find(Player.PlayerGui:FindFirstChild("Quest").MobProgress.Text,v.Name) then
-                            
+                    local v = getNearestMob()
                             if Settings.Method == "Under" then
-                                game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.01, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, -8, 0) *
+                                game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, -8, 0) *
                                     CFrame.Angles(math.rad(90), 0, 0)}):Play()
                          
                             end
                             if Settings.Method == "Above" then
-                            game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.01, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 8, 0) *
+                            game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 8, 0) *
                                     CFrame.Angles(0, 0, math.rad(-90))}):Play()
                             end
 
@@ -211,10 +225,9 @@ spawn(
                                     CFrame.Angles(math.rad(90), 0, 0)
                             end
                             if Settings.Method == "Behind" then
-                                     game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.01, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 0, 5) *
+                                     game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 0, 5) *
                                     CFrame.Angles(0, 0, 0)}):Play()
-                            end
-                            end 
+                      
                         
                     end
                     FuckDekuDimz()
