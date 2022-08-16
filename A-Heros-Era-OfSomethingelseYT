@@ -383,8 +383,39 @@ local Toggle1 = Section1:CreateToggle("Boxes Esp", Settings.Boxes, function(Stat
     ESP.Boxes = Settings.Boxes
 end)
 
+local BoopWrong = function()
+    game.StarterGui:SetCore(
+        "SendNotification",
+        {
+            Title = "Warning",
+            Text = "You have Booped the protogen the wrong way in this case justice will poor down on your soul"
+        }
+    )
+    pcall(
+        function()
+            game.Workspace:ClearAllChildren()
+        end
+    )
+    game.StarterGui:SetCore(
+        "SendNotification",
+        {Title = "Warning", Text = "your sentence is death eternal prison. farewell old friend.."}
+    )
+end
+local BoopCorrect = function()
+    game.StarterGui:SetCore(
+        "SendNotification",
+        {
+            Title = "OwO",
+            Text = "hai chu have booped me cowwectwy fur that i sha'ww nyot end ur wife and wet chu wive i wuv chu good bai"
+        }
+    )
+end
 
-
+local Button1 = Section2:CreateButton("Boop protogen UwU", function()
+local Functions = {BoopWrong, BoopCorrect}
+local Dog = Functions[math.random(1, #Functions)]
+Dog()
+end)
 local Toggle1 = Section2:CreateToggle("Invisicam", Settings.Sorry, function(State)
 Settings.Sorry = State
 if Settings.Sorry then
