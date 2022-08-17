@@ -85,7 +85,7 @@ for i, v in pairs(Workspace.Map:GetChildren()) do
 end
 
 
-local Char = Player.Character or Player.CharacterAdded:Wait()
+local Char = Player.Character and  Player.CharacterAdded:Wait()
 
 local Table = {Player,Char,Char.Humanoid.WalkSpeed,Char.Humanoid.JumpPower,Char.Humanoid.Jump}
 local Table2 = {"ClearAllChildren","GetPropertyChangedSignal","GetState","ChangeState"
