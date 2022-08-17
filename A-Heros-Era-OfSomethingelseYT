@@ -90,7 +90,7 @@ for i, v in pairs(Workspace.Map:GetChildren()) do
     end
 end
 
-local Char = Player.Character and Player.CharacterAdded:Wait()
+local Char = Player.Character or Player.CharacterAdded:Wait()
 
 local Table = {Player, Char, Char.Humanoid.WalkSpeed, Char.Humanoid.JumpPower, Char.Humanoid.Jump}
 local Table2 = {
@@ -119,6 +119,14 @@ OldNameCall =
 local function RaduisCheck(A, B, C)
     if (A.Position - B.Position).Mag < C then
         return A, B, C
+    end
+end
+local function Tween(A, B, C)
+    if A then
+        local Time = (B.p - A.Position).magnitude / C
+        local Info = TweenInfo.new(Time, Enum.EasingStyle.Linear)
+        local Tween = game:GetService("TweenService"):Create(A, Info, {CFrame = B})
+        Tween:Play()
     end
 end
 
@@ -181,7 +189,7 @@ end
 if Settings.FightMethod == nil then
     Settings.FightMethod = "Fists"
 end
-
+print("HI")
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
