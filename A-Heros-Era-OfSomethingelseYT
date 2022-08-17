@@ -1,4 +1,6 @@
-repeat wait() until game:IsLoaded()
+repeat
+    wait()
+until game:IsLoaded()
 
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -10,22 +12,22 @@ local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
 local npcs = Workspace.NPCS
 local Player = Players.LocalPlayer
-local wait = task.wait 
+local wait = task.wait
 local spawn = task.spawn
 
 local Config = {
     WindowName = "V.G Hub",
-	Color = Color3.fromRGB(255,128,64),
-	Keybind = Enum.KeyCode.RightControl
+    Color = Color3.fromRGB(255, 128, 64),
+    Keybind = Enum.KeyCode.RightControl
 }
 
 repeat
     wait()
 until Player.Character
 wait()
-for i,v in pairs(getconnections(Player.Idled)) do
+for i, v in pairs(getconnections(Player.Idled)) do
     v:Disable()
-end 
+end
 local Name = "Era Of Alt.json"
 
 Des = {}
@@ -51,24 +53,25 @@ local function Save()
     writefile("V.G Hub//" .. Name, HttpService:JSONEncode(Settings))
 end
 
-
 local Sus = {}
-for i,v in pairs(npcs:GetChildren()) do
-    if v:IsA("Model") and not table.find(Sus,v.Name) then
-        table.insert(Sus,v.Name)
+for i, v in pairs(npcs:GetChildren()) do
+    if v:IsA("Model") and not table.find(Sus, v.Name) then
+        table.insert(Sus, v.Name)
     end
-end 
+end
 
 spawn(
     function()
         while wait() do
-            pcall(function()
-            for i, v in pairs(Workspace:GetChildren()) do
-                if v.Name == "Quest Board" then
-                    v.Parent = Workspace.Map
+            pcall(
+                function()
+                    for i, v in pairs(Workspace:GetChildren()) do
+                        if v.Name == "Quest Board" then
+                            v.Parent = Workspace.Map
+                        end
+                    end
                 end
-            end
-            end)
+            )
         end
     end
 )
@@ -78,17 +81,23 @@ for i, v in pairs(Workspace.Map:GetChildren()) do
     if v.Name == "Quest Board" then
         for i, v in pairs(v.Papers:GetChildren()) do
             if v.Name == "Part" then
-               table.insert(Quests,v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text)
+                table.insert(
+                    Quests,
+                    v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text
+                )
             end
         end
     end
 end
 
+local Char = Player.Character and Player.CharacterAdded:Wait()
 
-local Char = Player.Character and  Player.CharacterAdded:Wait()
-
-local Table = {Player,Char,Char.Humanoid.WalkSpeed,Char.Humanoid.JumpPower,Char.Humanoid.Jump}
-local Table2 = {"ClearAllChildren","GetPropertyChangedSignal","GetState","ChangeState"
+local Table = {Player, Char, Char.Humanoid.WalkSpeed, Char.Humanoid.JumpPower, Char.Humanoid.Jump}
+local Table2 = {
+    "ClearAllChildren",
+    "GetPropertyChangedSignal",
+    "GetState",
+    "ChangeState"
 }
 local OldNameCall = nil
 OldNameCall =
@@ -100,42 +109,52 @@ OldNameCall =
         if table.find(Table2, getnamecallmethod()) and table.find(Table, self) then
             return wait(9e9)
         end
-        if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih")  then
-            return wait(9e9) 
-        end 
+        if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih") then
+            return wait(9e9)
+        end
         return OldNameCall(self, ...)
     end
 )
 
-local function RaduisCheck(A,B,C)
+local function RaduisCheck(A, B, C)
     if (A.Position - B.Position).Mag < C then
-        return A,B,C
-    end 
-end 
-    
-local Areas = {}
-for i,v in pairs(Workspace.Areas:GetChildren()) do
-    if v:IsA("BasePart") and not table.find(Areas,v.Name) then
-        table.insert(Areas,v.Name)
-    end 
-end 
+        return A, B, C
+    end
+end
 
-local function Click() wait(0.2)
-    game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,0,0, true, game, 1)
+local Areas = {}
+for i, v in pairs(Workspace.Areas:GetChildren()) do
+    if v:IsA("BasePart") and not table.find(Areas, v.Name) then
+        table.insert(Areas, v.Name)
+    end
+end
+
+local function Click()
+    wait(0.2)
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(0, 0, 0, true, game, 1)
 end
 
 local FuckDekuDimz = function()
     Click()
-    if not Player.Character.Config.CombatMode.Value then
+    if not Player.Character.Config.CombatMode.Value and Settings.FightMethod == "Fists" then
         VirtualInputManager:SendKeyEvent(true, "R", false, game)
-    end 
+    end
+    if not Player.Character.Config.CombatMode.Value and Settings.FightMethod == "Sword" then
+        VirtualInputManager:SendKeyEvent(true, "F", false, game)
+    end
 end
 
 local function getNearestMob()
     local TargetDistance = math.huge
     local Target
     for i, v in ipairs(npcs:GetChildren()) do
-        if v.Name == (Settings.Mob) and not Settings.AutoQuest and v:FindFirstChild("HumanoidRootPart") and  v.Health.Value ~= 0 or Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and Player.PlayerGui:FindFirstChild("Quest") and string.find(Player.PlayerGui:FindFirstChild("Quest").MobProgress.Text,v.Name) then
+        if
+            v.Name == (Settings.Mob) and not Settings.AutoQuest and v:FindFirstChild("HumanoidRootPart") and
+                v.Health.Value ~= 0 or
+                Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and
+                    Player.PlayerGui:FindFirstChild("Quest") and
+                    string.find(Player.PlayerGui:FindFirstChild("Quest").MobProgress.Text, v.Name)
+         then
             local Mag =
                 (v:GetModelCFrame().Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
@@ -148,17 +167,21 @@ local function getNearestMob()
 end
 
 if Settings.Speed == nil then
-Settings.Speed = 300
-end 
+    Settings.Speed = 300
+end
 if Settings.TeleportMethod == nil then
     Settings.TeleportMethod = "Tween"
-end 
+end
 if Settings.Angle == nil then
-    Settings.Angle = 0 
-end 
+    Settings.Angle = 0
+end
 if Settings.Height == nil then
-    Settings.Height = 8 
-end 
+    Settings.Height = 8
+end
+if Settings.FightMethod == nil then
+    Settings.FightMethod = "Fists"
+end
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -243,6 +266,10 @@ end)
 
 local Dropdown1 = Section1:CreateDropdown("Farm Method", {"Nothing","Under","Behind","Above"}, function(Name)
 	Settings.Method = Name
+end)
+
+local Dropdown1 = Section1:CreateDropdown("Fight Method", {"Fists","Sword"}, function(Name)
+	Settings.FightMethod = Name
 end)
 
 local Dropdown1 = Section1:CreateDropdown("Teleport Method", {"InstantTP","Tween"}, function(Name)
