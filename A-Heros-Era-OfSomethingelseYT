@@ -1,16 +1,13 @@
 repeat wait() until game:IsLoaded()
-local ABC = function(v)
-    return game:GetService(v)
-end 
 
-local RunService = ABC("RunService")
-local Players = ABC("Players")
-local Workspace = ABC("Workspace")
-local ReplicatedStorage = ABC("ReplicatedStorage")
-local Lighting = ABC("Lighting")
-local VirtualInputManager = ABC("VirtualInputManager")
-local HttpService = ABC("HttpService")
-local TeleportService = ABC("TeleportService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lighting = game:GetService("Lighting")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
 local npcs = Workspace.NPCS
 local Player = Players.LocalPlayer
 local wait = task.wait 
@@ -91,7 +88,7 @@ end
 local Char = Player.Character or Player.CharacterAdded:Wait()
 
 local Table = {Player}
-local Table2 = {"ClearAllChildren", "Kick","kick","Destroy","FireServer"}
+local Table2 = {"ClearAllChildren"}
 local OldNameCall = nil
 OldNameCall =
     hookmetamethod(
@@ -125,16 +122,6 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self,t,k,...)
     return OldNameCall(self,t,k,...)
 end)
 
-
-local function Tween(A, B, C)
-    if A then
-        local Time = (B.p - A.Position).magnitude / C
-        local Info = TweenInfo.new(Time, Enum.EasingStyle.Linear)
-        local Tween = game:GetService("TweenService"):Create(A, Info, {CFrame = B})
-        Tween:Play()
-    end
-end
-
 local function RaduisCheck(A,B,C)
     if (A.Position - B.Position).Mag < C then
         return A,B,C
@@ -158,9 +145,7 @@ local FuckDekuDimz = function()
         VirtualInputManager:SendKeyEvent(true, "R", false, game)
     end 
 end
-local function Wait()
-    wait(1)
-end
+
 local function getNearestMob()
     local TargetDistance = math.huge
     local Target
@@ -196,11 +181,6 @@ RunService.Stepped:Connect(
     function()
         if Settings.AutoFarm then
             Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
-            for i, v in pairs(npcs:GetChildren()) do
-                if v:IsA("Humanoid") then
-                    v.ChangeState(11)
-                end
-            end
         end
     end
 )
@@ -211,16 +191,32 @@ spawn(
                 function()
                     local v = getNearestMob()
                     if Settings.Method == "Under" then
-                        Tween(game.Players.LocalPlayer.Character.HumanoidRootPart,
-                            v:GetModelCFrame() * CFrame.new(0, -8, 0) * CFrame.Angles(math.rad(90), 0, 0),500)
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                            v:GetModelCFrame() * CFrame.new(0, -8, 0) * CFrame.Angles(math.rad(90), 0, 0)
                     end
                     if Settings.Method == "Above" then
-                        Tween(game.Players.LocalPlayer.Character.HumanoidRootPart,
-                            v:GetModelCFrame() * CFrame.new(0, 8, 0) * CFrame.Angles(math.rad(90), 0, 0),500)
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                            v:GetModelCFrame() * CFrame.new(0, 8, 0) * CFrame.Angles(math.rad(90), 0, 0)
+                    end
+
+                    if Settings.Method == "Nothing" and isnetworkowner then
+                        if isnetworkowner and not isnetworkowner(v.HumanoidRootPart) then
+                            repeat
+                                wait()
+                                Player.Character.HumanoidRootPart.CFrame =
+                                    CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 0, 0) *
+                                    CFrame.Angles(0, 0, 0)
+                            until isnetworkowner(v.HumanoidRootPart) or not Settings.AutoFarm
+                        end
+                        v.HumanoidRootPart.CFrame =
+                            CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 500, 0) * CFrame.Angles(0, 0, 0)
+                        Player.Character.HumanoidRootPart.CFrame =
+                            CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, -8, 0) *
+                            CFrame.Angles(math.rad(90), 0, 0)
                     end
                     if Settings.Method == "Behind" then
-                        Tween(game.Players.LocalPlayer.Character.HumanoidRootPart,
-                            v:GetModelCFrame() * CFrame.new(0, 0, 8) * CFrame.Angles(0, 0, 0),500)
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                            v:GetModelCFrame() * CFrame.new(0, 5, 0) * CFrame.Angles(0, 0, 0)
                     end
                     FuckDekuDimz()
                 end
@@ -269,7 +265,7 @@ local Dropdown1 = Section1:CreateDropdown("Quests", Quests, function(Name)
     Settings.Quest = Name
 end)
 
-local Toggle1 = Section1:CreateToggle("KillAura", Settings.AutoFarm, function(State)
+local Toggle1 = Section1:CreateToggle("KillAura", nil, function(State)
 Settings.KillAura = State    
 spawn(function()
     while Settings.KillAura do wait()
