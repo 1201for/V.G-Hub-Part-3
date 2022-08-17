@@ -105,8 +105,8 @@ OldNameCall =
         if getnamecallmethod() == "ClearAllChildren" then
             return wait(9e9)
         end 
-        if self.Name == "LightAttack" and Args[1] == "Yes" then
-            return wait(9e9) and "No"
+        if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" then
+            return wait(9e9) 
         end 
         return OldNameCall(self, ...)
     end
@@ -155,7 +155,7 @@ local function getNearestMob()
     for i, v in ipairs(npcs:GetChildren()) do
         if v.Name == (Settings.Mob) and not Settings.AutoQuest and v:FindFirstChild("HumanoidRootPart") and  v.Health.Value ~= 0 or Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and Player.PlayerGui:FindFirstChild("Quest") and string.find(Player.PlayerGui:FindFirstChild("Quest").MobProgress.Text,v.Name) then
             local Mag =
-                (v.PrimaryPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                (v:GetModelCFrame().Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
                 TargetDistance = Mag
                 Target = v
@@ -198,37 +198,33 @@ spawn(
             pcall(
                 function()
                     local v = getNearestMob()
-                            if Settings.Method == "Under" then
-                                game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, -8, 0) *
-                                    CFrame.Angles(math.rad(90), 0, 0)}):Play()
-                         
-                            end
-                            if Settings.Method == "Above" then
-                            game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 8, 0) *
-                                    CFrame.Angles(0, 0, math.rad(-90))}):Play()
-                            end
+                    if Settings.Method == "Under" then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                            v:GetModelCFrame() * CFrame.new(0, -8, 0) * CFrame.Angles(math.rad(90), 0, 0)
+                    end
+                    if Settings.Method == "Above" then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                            v:GetModelCFrame() * CFrame.new(0, 8, 0) * CFrame.Angles(math.rad(90), 0, 0)
+                    end
 
-                            if Settings.Method == "Nothing" and isnetworkowner then
-                                if isnetworkowner and not isnetworkowner(v.HumanoidRootPart) then
-                                    repeat
-                                        wait()
-                                        Player.Character.HumanoidRootPart.CFrame =
-                                            CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 0, 0) *
-                                            CFrame.Angles(0, 0, 0)
-                                    until isnetworkowner(v.HumanoidRootPart) or not Settings.AutoFarm
-                                end
-                                v.HumanoidRootPart.CFrame =
-                                    CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 500, 0) *
-                                    CFrame.Angles(0, 0, 0)
+                    if Settings.Method == "Nothing" and isnetworkowner then
+                        if isnetworkowner and not isnetworkowner(v.HumanoidRootPart) then
+                            repeat
+                                wait()
                                 Player.Character.HumanoidRootPart.CFrame =
-                                    CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, -8, 0) *
-                                    CFrame.Angles(math.rad(90), 0, 0)
-                            end
-                            if Settings.Method == "Behind" then
-                                     game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 0, 5) *
-                                    CFrame.Angles(0, 0, 0)}):Play()
-                      
-                        
+                                    CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 0, 0) *
+                                    CFrame.Angles(0, 0, 0)
+                            until isnetworkowner(v.HumanoidRootPart) or not Settings.AutoFarm
+                        end
+                        v.HumanoidRootPart.CFrame =
+                            CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 500, 0) * CFrame.Angles(0, 0, 0)
+                        Player.Character.HumanoidRootPart.CFrame =
+                            CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, -8, 0) *
+                            CFrame.Angles(math.rad(90), 0, 0)
+                    end
+                    if Settings.Method == "Behind" then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                            v:GetModelCFrame() * CFrame.new(0, 5, 0) * CFrame.Angles(0, 0, 0)
                     end
                     FuckDekuDimz()
                 end
@@ -236,7 +232,6 @@ spawn(
         end
     end
 )
-
 end)
 
 
