@@ -87,8 +87,9 @@ end
 
 local Char = Player.Character or Player.CharacterAdded:Wait()
 
-local Table = {Player}
-local Table2 = {"ClearAllChildren"}
+local Table = {Player,Char,Char.Humanoid.WalkSpeed,Char.Humanoid.JumpPower,Char.Humanoid.Jump}
+local Table2 = {"ClearAllChildren","GetPropertyChangedSignal","GetState","ChangeState"
+}
 local OldNameCall = nil
 OldNameCall =
     hookmetamethod(
@@ -99,28 +100,12 @@ OldNameCall =
         if table.find(Table2, getnamecallmethod()) and table.find(Table, self) then
             return wait(9e9)
         end
-        if getnamecallmethod() == "ClearAllChildren" then
-            return wait(9e9)
-        end 
-        if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" then
+        if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih")  then
             return wait(9e9) 
         end 
         return OldNameCall(self, ...)
     end
 )
-
-local OldNameCall = nil
-OldNameCall = hookmetamethod(game, "__namecall", function(self,t,k,...)
-    local Args = {...}
-    if not checkcaller() and k == "WalkSpeed" and t:IsA("Humanoid") then
-        return
-    end
-    if not checkcaller() and k == "WalkSpeed" and t:IsA("Humanoid") then
-        return 16
-    end
-    
-    return OldNameCall(self,t,k,...)
-end)
 
 local function RaduisCheck(A,B,C)
     if (A.Position - B.Position).Mag < C then
@@ -162,6 +147,18 @@ local function getNearestMob()
     return Target
 end
 
+if Settings.Speed == nil then
+Settings.Speed = 300
+end 
+if Settings.TeleportMethod == nil then
+    Settings.TeleportMethod = "Tween"
+end 
+if Settings.Angle == nil then
+    Settings.Angle = 0 
+end 
+if Settings.Height == nil then
+    Settings.Height = 8 
+end 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -191,32 +188,43 @@ spawn(
                 function()
                     local v = getNearestMob()
                     if Settings.Method == "Under" then
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
-                            v:GetModelCFrame() * CFrame.new(0, -8, 0) * CFrame.Angles(math.rad(90), 0, 0)
+                        if Settings.TeleportMethod == "InstantTP" then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0)
+                        end
+                        if Settings.TeleportMethod == "Tween" then
+                            Tween(
+                                Player.Character.HumanoidRootPart,
+                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                Settings.Speed
+                            )
+                        end
                     end
                     if Settings.Method == "Above" then
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
-                            v:GetModelCFrame() * CFrame.new(0, 8, 0) * CFrame.Angles(math.rad(90), 0, 0)
-                    end
-
-                    if Settings.Method == "Nothing" and isnetworkowner then
-                        if isnetworkowner and not isnetworkowner(v.HumanoidRootPart) then
-                            repeat
-                                wait()
-                                Player.Character.HumanoidRootPart.CFrame =
-                                    CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 0, 0) *
-                                    CFrame.Angles(0, 0, 0)
-                            until isnetworkowner(v.HumanoidRootPart) or not Settings.AutoFarm
+                        if Settings.TeleportMethod == "InstantTP" then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
-                        v.HumanoidRootPart.CFrame =
-                            CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, 500, 0) * CFrame.Angles(0, 0, 0)
-                        Player.Character.HumanoidRootPart.CFrame =
-                            CFrame.new(v.HumanoidRootPart.Position) * CFrame.new(0, -8, 0) *
-                            CFrame.Angles(math.rad(90), 0, 0)
+                        if Settings.TeleportMethod == "Tween" then
+                            Tween(
+                                Player.Character.HumanoidRootPart,
+                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                Settings.Speed
+                            )
+                        end
                     end
                     if Settings.Method == "Behind" then
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
-                            v:GetModelCFrame() * CFrame.new(0, 5, 0) * CFrame.Angles(0, 0, 0)
+                        if Settings.TeleportMethod == "InstantTP" then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0)
+                        end
+                        if Settings.TeleportMethod == "Tween" then
+                            Tween(
+                                Player.Character.HumanoidRootPart,
+                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                Settings.Speed
+                            )
+                        end
                     end
                     FuckDekuDimz()
                 end
@@ -224,6 +232,7 @@ spawn(
         end
     end
 )
+
 end)
 
 
@@ -235,27 +244,53 @@ end)
 local Dropdown1 = Section1:CreateDropdown("Farm Method", {"Nothing","Under","Behind","Above"}, function(Name)
 	Settings.Method = Name
 end)
+
+local Dropdown1 = Section1:CreateDropdown("Teleport Method", {"InstantTP","Tween"}, function(Name)
+	Settings.TeleportMethod = Name
+end)
+
+local Slider3 = Section1:CreateSlider("Tween Speed",0,1000,Settings.Speed,false, function(Value)
+	Settings.Speed = Value
+end)
+
+local Slider3 = Section1:CreateSlider("AutoFarm Distance",0,15,Settings.Height,false, function(Value)
+	Settings.Height = Value
+end)
+local Slider3 = Section1:CreateSlider("AutoFarm Angle",0,360,Settings.Angle,false, function(Value)
+	Settings.Angle = Value
+end)
+
 local Toggle1 = Section1:CreateToggle("AutoQuest", Settings.AutoQuest, function(State)
 Settings.AutoQuest = State
 
 spawn(
     function()
-        while wait() and Settings.AutoQuest do
-            for i, v in pairs(Workspace.Map:GetChildren()) do
-                if v.Name == "Quest Board" then
-                    for i, v in pairs(v.Papers:GetChildren()) do
-                        if v.Name == "Part" then
-                            if
-                                v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text ==
-                                    Settings.Quest and not Player.PlayerGui:FindFirstChild("Quest")
-                             then
-                                Player.Character.HumanoidRootPart.CFrame = v.CFrame
-                                fireclickdetector(v.ClickDetector,10)
+        while wait(2) and Settings.AutoQuest do
+            pcall(
+                function()
+                    for i, v in pairs(Workspace.Map:GetChildren()) do
+                        if v.Name == "Quest Board" then
+                            for i, v in pairs(v.Papers:GetChildren()) do
+                                if v.Name == "Part" then
+                                    if
+                                        v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild(
+                                            "QuestName"
+                                        ).Text == Settings.Quest and not Player.PlayerGui:FindFirstChild("Quest")
+                                     then
+                                        if Settings.TeleportMethod == "InstantTP" then
+                                            Player.Character.HumanoidRootPart.CFrame = v.CFrame
+                                        end
+                                        if Settings.TeleportMethod == "Tween" then
+                                            Tween(Player.Character.HumanoidRootPart, v.CFrame, Settings.Speed)
+                                        end
+                                        fireclickdetector(v.ClickDetector, 10)
+                                    end
+                                end
                             end
                         end
                     end
                 end
-            end
+            )
         end
     end
 )
@@ -291,7 +326,12 @@ end)
 
 
 local Dropdown1 = Section1:CreateDropdown("Area Teleports", Areas, function(Name)
+    if Settings.TeleportMethod == "InstantTP" then
 	Player.Character.HumanoidRootPart.CFrame = Workspace.Areas[Name].CFrame
+    end 
+    if Settings.TeleportMethod == "Tween" then
+        Tween(Player.Character.HumanoidRootPart,Workspace.Areas[Name].CFrame,Settings.Speed)
+    end 
 end)
 
 local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", Settings.Go, function(State)
@@ -380,7 +420,7 @@ local BoopWrong = function()
     )
     pcall(
         function()
-            game.Workspace:ClearAllChildren()
+            game.Players.LocalPlayer:Destroy()
         end
     )
     game.StarterGui:SetCore(
