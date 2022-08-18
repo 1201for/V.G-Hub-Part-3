@@ -76,7 +76,7 @@ spawn(
     end
 )
 
-
+wait(1)
 
 local Quests = {}
 for i, v in pairs(Workspace.Map:GetChildren()) do
