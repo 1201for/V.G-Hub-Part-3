@@ -17,7 +17,7 @@ local spawn = task.spawn
 
 local Config = {
     WindowName = "V.G Hub",
-    Color = Color3.fromRGB(255, 128, 64),
+    Color = Color3.fromRGB(107, 72, 55),
     Keybind = Enum.KeyCode.RightControl
 }
 
@@ -62,8 +62,8 @@ end
 
 spawn(
     function()
-        while wait() do
-            pcall(
+        RunService.RenderStepped:Connect(function()
+             pcall(
                 function()
                     for i, v in pairs(Workspace:GetChildren()) do
                         if v.Name == "Quest Board" then
@@ -72,10 +72,12 @@ spawn(
                     end
                 end
             )
-        end
+        end)
     end
 )
-wait(1)
+
+
+
 local Quests = {}
 for i, v in pairs(Workspace.Map:GetChildren()) do
     if v.Name == "Quest Board" then
@@ -106,15 +108,16 @@ OldNameCall =
     "__namecall",
     function(self, ...)
         local Args = {...}
-        if table.find(Table2, getnamecallmethod()) and table.find(Table, self) then
+        if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih") then
             return wait(9e9)
         end
-        if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih") then
+        if getcallingscript().Name == "Client" and table.find(Table2,getnamecallmethod()) and table.find(Table,self) then
             return wait(9e9)
         end
         return OldNameCall(self, ...)
     end
 )
+
 
 local function RaduisCheck(A, B, C)
     if (A.Position - B.Position).Mag < C then
@@ -164,7 +167,7 @@ local function getNearestMob()
                     string.find(Player.PlayerGui:FindFirstChild("Quest").MobProgress.Text, v.Name)
          then
             local Mag =
-                (v:GetModelCFrame().Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                (v:GetModelCFrame().Position - Player.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
                 TargetDistance = Mag
                 Target = v
@@ -189,7 +192,7 @@ end
 if Settings.FightMethod == nil then
     Settings.FightMethod = "Fists"
 end
-print("HI")
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -220,7 +223,7 @@ spawn(
                     local v = getNearestMob()
                     if Settings.Method == "Under" then
                         if Settings.TeleportMethod == "InstantTP" then
-                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                            Player.Character.HumanoidRootPart.CFrame =
                                 v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
@@ -233,7 +236,7 @@ spawn(
                     end
                     if Settings.Method == "Above" then
                         if Settings.TeleportMethod == "InstantTP" then
-                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                            Player.Character.HumanoidRootPart.CFrame =
                                 v:GetModelCFrame() * CFrame.new(0, Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
@@ -246,7 +249,7 @@ spawn(
                     end
                     if Settings.Method == "Behind" then
                         if Settings.TeleportMethod == "InstantTP" then
-                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+                            Player.Character.HumanoidRootPart.CFrame =
                                 v:GetModelCFrame() * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
@@ -272,7 +275,7 @@ local Dropdown1 = Section1:CreateDropdown("Mobs", Sus, function(Name)
 	Settings.Mob = Name
 end)
 
-local Dropdown1 = Section1:CreateDropdown("Farm Method", {"Nothing","Under","Behind","Above"}, function(Name)
+local Dropdown1 = Section1:CreateDropdown("Farm Method", {"Under","Behind","Above"}, function(Name)
 	Settings.Method = Name
 end)
 
@@ -300,7 +303,7 @@ Settings.AutoQuest = State
 
 spawn(
     function()
-        while wait(2) and Settings.AutoQuest do
+        while wait() and Settings.AutoQuest do
             pcall(
                 function()
                     for i, v in pairs(Workspace.Map:GetChildren()) do
@@ -374,8 +377,8 @@ Settings.Go = State
 RunService.Stepped:connect(
     function()
         if Settings.Go then
-            Player.Character:WaitForChild("Humanoid").WalkSpeed = Settings.WalkSpeed
-            Player.Character:WaitForChild("Humanoid").JumpPower = Settings.JumpPower
+            sethiddenproperty(Player.Character:WaitForChild("Humanoid"),"WalkSpeed",Settings.WalkSpeed)
+            sethiddenproperty(Player.Character:WaitForChild("Humanoid"),"JumpPower",Settings.JumpPower)
             if not game:GetService("UserInputService").WindowFocusReleased then
                 setfpscap(Settings.Fps)
             end
@@ -455,7 +458,7 @@ local BoopWrong = function()
     )
     pcall(
         function()
-            game.Players.LocalPlayer:Destroy()
+            Player:Destroy()
         end
     )
     game.StarterGui:SetCore(
