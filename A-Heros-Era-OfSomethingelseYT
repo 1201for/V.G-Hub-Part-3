@@ -111,7 +111,7 @@ OldNameCall =
         if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih") then
             return wait(9e9)
         end
-        if getcallingscript().Name == "Client" and table.find(Table2,getnamecallmethod()) and table.find(Table,self) then
+        if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) then
             return wait(9e9)
         end
         return OldNameCall(self, ...)
