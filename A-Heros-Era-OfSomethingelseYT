@@ -112,7 +112,7 @@ OldNameCall =
         if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih") then
             return wait(9e9)
         end
-        if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) then
+        if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) or self.Name == game.Players.LocalPlayer.Name and getnamecallmethod() == "ClearAllChildren" then
             return wait(9e9)
         end
         return OldNameCall(self, ...)
