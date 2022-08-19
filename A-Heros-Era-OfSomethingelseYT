@@ -110,10 +110,10 @@ OldNameCall =
     function(self, ...)
         local Args = {...}
         if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih") then
-            return wait(9e9) and print("Char")
+            return wait(9e9)
         end
-        if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) or getnamecallmethod() == "ClearAllChildren" and self.Name == game.Players.LocalPlayer.Name then
-            return wait(9e9)and print("Haha")
+        if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) then
+            return wait(9e9)
         end
         return OldNameCall(self, ...)
     end
@@ -157,6 +157,16 @@ local FuckDekuDimz = function()
 end
 
 
+local Get = function()
+local A
+    for i,v in pairs(Player.PlayerGui:FindFirstChild("Quest"):GetChildren()) do
+        if v:IsA("IntValue") then 
+            A = v.Name 
+        end 
+    end 
+    return A 
+end 
+
 local function getNearestMob()
     local TargetDistance = math.huge
     local Target
@@ -165,8 +175,8 @@ local function getNearestMob()
             v.Name == (Settings.Mob) and not Settings.AutoQuest and v and v:FindFirstChild("HumanoidRootPart") and v.Head.Transparency == 0 and
                 v.Health.Value ~= 0 or
                 Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and v and v.Head.Transparency == 0 and 
-                    Player.PlayerGui:FindFirstChild("Quest") and
-                    string.find(Player.PlayerGui:FindFirstChild("Quest").MobProgress.Text, v.Name)
+                    Player.PlayerGui:FindFirstChild("Quest") and string.match(Get(),v.Name) 
+                    
          then
             local Mag =
                 (v:GetModelCFrame().Position - Player.Character.HumanoidRootPart.Position).Magnitude
@@ -215,7 +225,7 @@ RunService.Stepped:Connect(
         if Settings.AutoFarm then
             pcall(function()
                 if Player.Character or Player.CharacterAdded:Wait(1) then
-                Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+                    Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
                 end 
             end)
         end
@@ -230,12 +240,12 @@ spawn(
                     if Settings.Method == "Under" then
                         if Settings.TeleportMethod == "InstantTP" then
                             Player.Character.HumanoidRootPart.CFrame =
-                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0)
+                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
                             Tween(
                                 Player.Character.HumanoidRootPart,
-                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
                                 Settings.Speed
                             )
                         end
@@ -243,12 +253,12 @@ spawn(
                     if Settings.Method == "Above" then
                         if Settings.TeleportMethod == "InstantTP" then
                             Player.Character.HumanoidRootPart.CFrame =
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0)
+                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
                             Tween(
                                 Player.Character.HumanoidRootPart,
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 0) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
                                 Settings.Speed
                             )
                         end
