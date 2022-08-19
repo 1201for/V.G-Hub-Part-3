@@ -155,6 +155,7 @@ local FuckDekuDimz = function()
     end
 end
 
+
 local function getNearestMob()
     local TargetDistance = math.huge
     local Target
@@ -211,7 +212,11 @@ Settings.AutoFarm = State
 RunService.Stepped:Connect(
     function()
         if Settings.AutoFarm then
-            Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+            pcall(function()
+                if Player.Character or Player.CharacterAdded:Wait(1) then
+                Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+                end 
+            end)
         end
     end
 )
@@ -883,7 +888,7 @@ Slider4:SetValue(0.5)
 
 spawn(
     function()
-        while wait(30) do
+        while wait(3) do
             pcall(
                 function()
                     Save()
