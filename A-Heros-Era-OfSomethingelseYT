@@ -23,7 +23,8 @@ local Config = {
 
 repeat
     wait()
-until Player.Character
+until game:IsLoaded() and Player and Player.Character and
+    Workspace.Camera.CameraSubject == Player.Character:WaitForChild("Humanoid")
 wait()
 for i, v in pairs(getconnections(Player.Idled)) do
     v:Disable()
@@ -62,7 +63,7 @@ end
 
 spawn(
     function()
-        RunService.RenderStepped:Connect(function()
+        while wait(0) do
              pcall(
                 function()
                     for i, v in pairs(Workspace:GetChildren()) do
@@ -72,7 +73,7 @@ spawn(
                     end
                 end
             )
-        end)
+        end
     end
 )
 
@@ -109,10 +110,10 @@ OldNameCall =
     function(self, ...)
         local Args = {...}
         if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih") then
-            return wait(9e9)
+            return wait(9e9) and print("Char")
         end
-        if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) then
-            return wait(9e9)
+        if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) or getnamecallmethod() == "ClearAllChildren" and self.Name == game.Players.LocalPlayer.Name then
+            return wait(9e9)and print("Haha")
         end
         return OldNameCall(self, ...)
     end
@@ -506,7 +507,9 @@ local BoopCorrect = function()
         }
     )
 end
-
+local Button1 = Section2:CreateButton("Reset", function()
+    Player.Character.Head:Destroy()
+end)
 local Button1 = Section2:CreateButton("Boop protogen UwU", function()
 local Functions = {BoopWrong, BoopCorrect}
 local Dog = Functions[math.random(1, #Functions)]
@@ -888,7 +891,7 @@ Slider4:SetValue(0.5)
 
 spawn(
     function()
-        while wait(3) do
+        while wait(30) do
             pcall(
                 function()
                     Save()
