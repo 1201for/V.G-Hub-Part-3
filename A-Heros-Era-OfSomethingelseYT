@@ -78,7 +78,15 @@ spawn(
 )
 
 wait(1)
-
+local OldNameCall = nil
+OldNameCall = hookmetamethod(game, "__newindex", function(t,k,...)
+    local Args = {...}
+    local Self = Args[1]
+    if not checkcaller() and k == "WalkSpeed" or k == "JumpPower" then
+        return 
+    end
+    return OldNameCall(t,k,...)
+end)
 local Quests = {}
 for i, v in pairs(Workspace.Map:GetChildren()) do
     if v.Name == "Quest Board" then
