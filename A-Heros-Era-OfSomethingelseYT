@@ -358,10 +358,10 @@ spawn(
                                         ).Text == Settings.Quest and not Player.PlayerGui:FindFirstChild("Quest")
                                      then
                                         if Settings.TeleportMethod == "InstantTP" then
-                                            Player.Character.HumanoidRootPart.CFrame = v.CFrame
+                                            Player.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,-10,0)
                                         end
                                         if Settings.TeleportMethod == "Tween" then
-                                            Tween(Player.Character.HumanoidRootPart, v.CFrame, Settings.Speed)
+                                            Tween(Player.Character.HumanoidRootPart, v.CFrame * CFrame.new(0,-10,0), Settings.Speed)
                                         end
                                         fireclickdetector(v.ClickDetector, 10)
                                     end
