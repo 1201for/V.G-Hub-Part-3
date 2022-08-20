@@ -180,9 +180,9 @@ local function getNearestMob()
     local Target
     for i, v in ipairs(npcs:GetChildren()) do
         if
-            v.Name == (Settings.Mob) and not Settings.AutoQuest and v and v:FindFirstChild("HumanoidRootPart") and v.Head.Transparency == 0 and
+            v.Name == (Settings.Mob) and not Settings.AutoQuest and v and v:FindFirstChild("HumanoidRootPart") and v.Head.Transparency ~= 1 and
                 v.Health.Value ~= 0 or
-                Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and v and v.Head.Transparency == 0 and 
+                Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and v and v.Head.Transparency ~= 1 and 
                     Player.PlayerGui:FindFirstChild("Quest") and string.match(Get(),v.Name) 
                     
          then
