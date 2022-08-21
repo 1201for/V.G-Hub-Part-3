@@ -10,6 +10,8 @@ local Lighting = game:GetService("Lighting")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
+local UserInputService = game:GetService("UserInputService")
+
 local npcs = Workspace.NPCS
 local Player = Players.LocalPlayer
 local wait = task.wait
@@ -79,7 +81,7 @@ spawn(
 
 wait(1)
 local OldNameCall = nil
-OldNameCall = hookmetamethod(game, "__newindex", function(t,k,...)
+OldNameCall = hookmetamethod(game, "__namecall", function(t,k,...)
     local Args = {...}
     local Self = Args[1]
     if not checkcaller() and k == "WalkSpeed" or k == "JumpPower" then
@@ -124,6 +126,78 @@ OldNameCall =
             return wait(9e9)
         end
         return OldNameCall(self, ...)
+    end
+)
+
+
+local Char = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+local OldNameCall
+OldNameCall =
+    hookmetamethod(
+    game,
+    "__index",
+    function(self, A)
+        if
+            (A == "WalkSpeed" or A == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(Char) and
+                not checkcaller()
+         then
+            return
+        end
+        return OldNameCall(self, A)
+    end
+)
+local OldNameCall
+OldNameCall =
+    hookmetamethod(
+    game,
+    "__newindex",
+    function(self, A, B)
+        if
+            (A == "WalkSpeed" or A == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(Char) and
+                not checkcaller()
+         then
+            return
+        end
+        return OldNameCall(self, A, B)
+    end
+)
+
+local OldNameCall
+OldNameCall =
+    hookmetamethod(
+    game,
+    "__index",
+    function(self, A)
+        if
+            (A == "JumpPower" or A == "jumppower") and self:IsA("Humanoid") and self:IsDescendantOf(Char) and
+                not checkcaller()
+         then
+            return
+        end
+        return OldNameCall(self, A)
+    end
+)
+local OldNameCall
+OldNameCall =
+    hookmetamethod(
+    game,
+    "__newindex",
+    function(self, A, B)
+        if
+            (A == "JumpPower" or A == "jumppower") and self:IsA("Humanoid") and self:IsDescendantOf(Char) and
+                not checkcaller()
+         then
+            return
+        end
+        return OldNameCall(self, A, B)
+    end
+)
+Char.JumpCooldown.Disabled = true
+game.Players.LocalPlayer.CharacterAdded:Connect(
+    function()
+        if Char and wait(3) then
+            Char.JumpCooldown.Disabled = true
+        end
     end
 )
 
@@ -187,7 +261,7 @@ local function getNearestMob()
                     
          then
             local Mag =
-                (v:GetModelCFrame().Position - Player.Character.HumanoidRootPart.Position).Magnitude
+                (v.HumanoidRootPart.Position - Player.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
                 TargetDistance = Mag
                 Target = v
@@ -213,6 +287,20 @@ if Settings.FightMethod == nil then
     Settings.FightMethod = "Fists"
 end
 
+UserInputService.InputBegan:Connect(function(v)
+	if v.KeyCode == Enum.KeyCode.LeftShift then
+		Player.Character.Humanoid.WalkSpeed = 30
+	elseif v.KeyCode == Enum.KeyCode.RightShift then
+			Player.Character.Humanoid.WalkSpeed = 30
+	end
+end)
+UserInputService.InputEnded:Connect(function(v)
+	if v.KeyCode == Enum.KeyCode.LeftShift then
+		Player.Character.Humanoid.WalkSpeed = 16
+	elseif v.KeyCode == Enum.KeyCode.RightShift then
+			Player.Character.Humanoid.WalkSpeed = 16
+	end
+end)
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -348,6 +436,19 @@ game.Lighting.Changed:connect(
 )
 end)
 
+
+local Toggle1 = Section1:CreateToggle("HardReset", Settings.HardReset, function(State)
+Settings.HardReset = State
+spawn(function()
+    while wait() and Settings.HardReset do
+        pcall(function()
+            if Player.Character:FindFirstChildWhichIsA("Humanoid").Health <= 10 then
+                Player.Character.Head:Destroy()
+            end 
+        end) 
+    end 
+end)
+end)
 local Toggle1 = Section1:CreateToggle("AutoQuest", Settings.AutoQuest, function(State)
 Settings.AutoQuest = State
 
