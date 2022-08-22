@@ -190,7 +190,7 @@ local function Click()
         end 
     end 
     if not Player.Character:FindFirstChildWhichIsA("Tool") and not Player.Character.Config.CAttackCooldown.Value and wait(0.5) then
-        Swing()
+        game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,0,0, true, game, 1)
     end 
 end
 
