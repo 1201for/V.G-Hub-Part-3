@@ -98,7 +98,7 @@ end
 local Char = Player.Character or Player.CharacterAdded:Wait()
 local Swing
 for i, v in pairs(getgc(true)) do
-    if type(v) == "function" and getfenv(v).script == Char.Client then
+    if type(v) == "function" and getfenv(v).script == Char:WaitForChild("Client") then
         if debug.getinfo(v).name == "Swing" then
             Swing = v
         end
@@ -174,19 +174,35 @@ for i, v in pairs(Workspace.Areas:GetChildren()) do
     end
 end
 
+local GetTool = function()
+    local Tool 
+    for i,v in pairs(Player.Character:GetChildren()) do
+        if v:IsA('Tool') then 
+            Tool = v 
+        end 
+    end 
+end
+
 local function Click()
-    wait(0.2)
-    game:GetService("VirtualInputManager"):SendMouseButtonEvent(0, 0, 0, true, game, 1)
+    for i,v in pairs(Player.Character:GetChildren()) do
+        if v:IsA("Tool") then
+            v:Activate()
+        end 
+    end 
+    if not Player.Character:FindFirstChildWhichIsA("Tool") and not Player.Character.Config.CAttackCooldown.Value and wait(0.5) then
+        Swing()
+    end 
 end
 
 local FuckDekuDimz = function()
-    Click()
+    
     if not Player.Character.Config.CombatMode.Value and Settings.FightMethod == "Fists" then
         VirtualInputManager:SendKeyEvent(true, "R", false, game)
     end
     if not Player.Character.Config.CombatMode.Value and Settings.FightMethod == "Sword" then
         VirtualInputManager:SendKeyEvent(true, "F", false, game)
     end
+    Click()
 end
 
 
@@ -445,8 +461,8 @@ end)
 local Toggle1 = Section1:CreateToggle("KillAura unstable", nil, function(State)
 Settings.KillAura = State    
 spawn(function()
-    while wait(1) do
-        for i = 1, 5 do
+    while wait(0.5) do
+        for i = 1, 5 do wait()
             if Settings.KillAura then
                 Swing()
             end 
