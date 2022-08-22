@@ -104,13 +104,18 @@ for i, v in pairs(Workspace.Map:GetChildren()) do
 end
 
 local Char = Player.Character or Player.CharacterAdded:Wait()
+local Swing
+for i, v in pairs(getgc(true)) do
+    if type(v) == "function" and getfenv(v).script == Char.Client then
+        if debug.getinfo(v).name == "Swing" then
+            Swing = v
+        end
+    end
+end
 
-local Table = {Player, Char, Char.Humanoid.WalkSpeed, Char.Humanoid.JumpPower, Char.Humanoid.Jump}
+local Table = {Player, Char}
 local Table2 = {
     "ClearAllChildren",
-    "GetPropertyChangedSignal",
-    "GetState",
-    "ChangeState"
 }
 local OldNameCall = nil
 OldNameCall =
@@ -125,78 +130,20 @@ OldNameCall =
         if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) or self.Name == game.Players.LocalPlayer.Name and getnamecallmethod() == "ClearAllChildren" then
             return wait(9e9)
         end
+        if (self == "WalkSpeed" or self == "JumpPower") then
+            return 
+        end 
         return OldNameCall(self, ...)
     end
 )
 
 
-local Char = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-local OldNameCall
-OldNameCall =
-    hookmetamethod(
-    game,
-    "__index",
-    function(self, A)
-        if
-            (A == "WalkSpeed" or A == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(Char) and
-                not checkcaller()
-         then
-            return
-        end
-        return OldNameCall(self, A)
-    end
-)
-local OldNameCall
-OldNameCall =
-    hookmetamethod(
-    game,
-    "__newindex",
-    function(self, A, B)
-        if
-            (A == "WalkSpeed" or A == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(Char) and
-                not checkcaller()
-         then
-            return
-        end
-        return OldNameCall(self, A, B)
-    end
-)
+Player.Character.JumpCooldown.Disabled = true
 
-local OldNameCall
-OldNameCall =
-    hookmetamethod(
-    game,
-    "__index",
-    function(self, A)
-        if
-            (A == "JumpPower" or A == "jumppower") and self:IsA("Humanoid") and self:IsDescendantOf(Char) and
-                not checkcaller()
-         then
-            return
-        end
-        return OldNameCall(self, A)
-    end
-)
-local OldNameCall
-OldNameCall =
-    hookmetamethod(
-    game,
-    "__newindex",
-    function(self, A, B)
-        if
-            (A == "JumpPower" or A == "jumppower") and self:IsA("Humanoid") and self:IsDescendantOf(Char) and
-                not checkcaller()
-         then
-            return
-        end
-        return OldNameCall(self, A, B)
-    end
-)
-Char.JumpCooldown.Disabled = true
 game.Players.LocalPlayer.CharacterAdded:Connect(
     function()
-        if Char and wait(3) then
-            Char.JumpCooldown.Disabled = true
+        if Player.Character and wait(3) then
+            Player.Character.JumpCooldown.Disabled = true
         end
     end
 )
@@ -336,12 +283,12 @@ spawn(
                     if Settings.Method == "Under" then
                         if Settings.TeleportMethod == "InstantTP" then
                             Player.Character.HumanoidRootPart.CFrame =
-                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
                             Tween(
                                 Player.Character.HumanoidRootPart,
-                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
                                 Settings.Speed
                             )
                         end
@@ -349,12 +296,12 @@ spawn(
                     if Settings.Method == "Above" then
                         if Settings.TeleportMethod == "InstantTP" then
                             Player.Character.HumanoidRootPart.CFrame =
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
                             Tween(
                                 Player.Character.HumanoidRootPart,
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
                                 Settings.Speed
                             )
                         end
@@ -362,12 +309,12 @@ spawn(
                     if Settings.Method == "Behind" then
                         if Settings.TeleportMethod == "InstantTP" then
                             Player.Character.HumanoidRootPart.CFrame =
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0)
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
                             Tween(
                                 Player.Character.HumanoidRootPart,
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0),
                                 Settings.Speed
                             )
                         end
@@ -489,14 +436,16 @@ local Dropdown1 = Section1:CreateDropdown("Quests", Quests, function(Name)
     Settings.Quest = Name
 end)
 
-local Toggle1 = Section1:CreateToggle("KillAura", nil, function(State)
+local Toggle1 = Section1:CreateToggle("KillAura unstable", nil, function(State)
 Settings.KillAura = State    
 spawn(function()
-    while Settings.KillAura do wait()
-        pcall(function()
-            FuckDekuDimz()
-        end)
-    end 
+    while wait(1) do
+        for i = 1, 5 do
+            if Settings.KillAura then
+                Swing()
+            end 
+        end
+    end
 end)
 end)
 
@@ -1019,3 +968,4 @@ spawn(
         end
     end
 )
+
