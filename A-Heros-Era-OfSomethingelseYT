@@ -88,7 +88,7 @@ for i, v in pairs(Workspace.Map:GetChildren()) do
             if v.Name == "Part" then
                 table.insert(
                     Quests,
-                    v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text
+                    v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text .. " - " .. v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("LevelReq").Text
                 )
             end
         end
@@ -430,10 +430,9 @@ spawn(
                         if v.Name == "Quest Board" then
                             for i, v in pairs(v.Papers:GetChildren()) do
                                 if v.Name == "Part" then
-                                    if
-                                        v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild(
+                                    if string.match(Settings.Quest,v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild(
                                             "QuestName"
-                                        ).Text == Settings.Quest and not Player.PlayerGui:FindFirstChild("Quest")
+                                        ).Text) and not Player.PlayerGui:FindFirstChild("Quest")
                                      then
                                         if Settings.TeleportMethod == "InstantTP" then
                                             Player.Character.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,-10,0)
