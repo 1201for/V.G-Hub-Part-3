@@ -80,15 +80,7 @@ spawn(
 )
 
 wait(1)
-local OldNameCall = nil
-OldNameCall = hookmetamethod(game, "__namecall", function(t,k,...)
-    local Args = {...}
-    local Self = Args[1]
-    if not checkcaller() and k == "WalkSpeed" or k == "JumpPower" then
-        return 
-    end
-    return OldNameCall(t,k,...)
-end)
+
 local Quests = {}
 for i, v in pairs(Workspace.Map:GetChildren()) do
     if v.Name == "Quest Board" then
@@ -113,6 +105,21 @@ for i, v in pairs(getgc(true)) do
     end
 end
 
+
+if hookmetamethod then
+
+local OldNameCall
+OldNameCall = hookmetamethod(game, "__newindex", function(A, B, ...)
+    if not checkcaller()  and (B == "WalkSpeed") then
+        return game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed or 16
+    end
+    if not checkcaller()  and (B == "JumpPower") then
+        return game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").JumpPower or 50
+    end
+    return OldNameCall(A, B, ...)
+end)
+
+
 local Table = {Player, Char}
 local Table2 = {
     "ClearAllChildren",
@@ -130,13 +137,10 @@ OldNameCall =
         if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) or self.Name == game.Players.LocalPlayer.Name and getnamecallmethod() == "ClearAllChildren" then
             return wait(9e9)
         end
-        if (self == "WalkSpeed" or self == "JumpPower") then
-            return 
-        end 
         return OldNameCall(self, ...)
     end
 )
-
+end
 
 Player.Character.JumpCooldown.Disabled = true
 
@@ -217,6 +221,8 @@ local function getNearestMob()
     end
     return Target
 end
+
+
 
 if Settings.Speed == nil then
     Settings.Speed = 300
@@ -449,6 +455,20 @@ spawn(function()
 end)
 end)
 
+local Toggle1 = Section1:CreateToggle("GodMode", Settings.GodMode, function(State)
+Settings.GodMode = State
+RunService.Stepped:Connect(
+    function()
+        if Settings.GodMode then
+            pcall(function()
+                if Player.Character or Player.CharacterAdded:Wait(1) then
+                    Player.Character:WaitForChild("Config"):FindFirstChild("ManaSkin"):Destroy()
+                end 
+            end)
+        end
+    end
+)
+end)
 local Toggle1 = Section1:CreateToggle("No Trees", Settings.Tree, function(State)
 Settings.Tree = State
 for i,v in pairs(game:GetService("Workspace").Trees:GetDescendants()) do
