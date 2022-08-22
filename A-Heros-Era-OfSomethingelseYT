@@ -189,8 +189,8 @@ local function Click()
             v:Activate()
         end 
     end 
-    if not Player.Character:FindFirstChildWhichIsA("Tool") and not Player.Character.Config.CAttackCooldown.Value and wait(0.5) then
-        game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,0,0, true, game, 1)
+    if not Player.Character:FindFirstChildWhichIsA("Tool") and not Player.Character.Config.CAttackCooldown.Value and wait(0.3) then
+        Swing()
     end 
 end
 
@@ -461,7 +461,7 @@ end)
 local Toggle1 = Section1:CreateToggle("KillAura unstable", nil, function(State)
 Settings.KillAura = State    
 spawn(function()
-    while wait(0.5) do
+    while wait(1.5) do
         for i = 1, 5 do wait()
             if Settings.KillAura then
                 Swing()
