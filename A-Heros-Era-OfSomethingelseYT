@@ -95,6 +95,33 @@ for i, v in pairs(Workspace.Map:GetChildren()) do
     end
 end
 
+
+
+local Armor = {}
+for i, v in pairs(game.Workspace:WaitForChild("Purchases").Armor:GetChildren()) do
+    if not table.find(Armor,v.Name) then
+        table.insert(Armor,v.Name .. " - " .. v.GUI.View.ItemCost.Text)
+    end 
+end 
+local Items = {}
+for i, v in pairs(game.Workspace:WaitForChild("Purchases").Items:GetChildren()) do
+    if not table.find(Items,v.Name) then
+        table.insert(Items,v.Name .. " - " .. v.GUI.View.ItemCost.Text)
+    end 
+end 
+local Pages = {}
+for i, v in pairs(game.Workspace:WaitForChild("Purchases").Pages:GetChildren()) do
+    if not table.find(Pages,v.Name) then
+        table.insert(Pages,v.Name .. " - " .. v.GUI.View.ItemCost.Text)
+    end 
+end 
+local Weapons = {}
+for i, v in pairs(game.Workspace:WaitForChild("Purchases").Weapons:GetChildren()) do
+    if not table.find(Weapons,v.Name) then
+        table.insert(Weapons,v.Name .. " - " .. v.GUI.View.ItemCost.Text)
+    end 
+end 
+
 local Char = Player.Character or Player.CharacterAdded:Wait()
 local Swing
 for i, v in pairs(getgc(true)) do
@@ -505,6 +532,35 @@ local Dropdown1 = Section1:CreateDropdown("Area Teleports", Areas, function(Name
     if Settings.TeleportMethod == "Tween" then
         Tween(Player.Character.HumanoidRootPart,Workspace.Areas[Name].CFrame,Settings.Speed)
     end 
+end)
+
+local Dropdown2 = Section2:CreateDropdown("Buy Armor", Armor, function(Name)
+for i, v in pairs(game.Workspace:WaitForChild("Purchases").Armor:GetChildren()) do
+    if string.find(Name,v.Name) then
+        game.ReplicatedStorage.Events.PurchaseArmor:FireServer(v);
+    end 
+end 
+end)
+local Dropdown2 = Section2:CreateDropdown("Buy Item", Items, function(Name)
+for i, v in pairs(game.Workspace:WaitForChild("Purchases").Items:GetChildren()) do
+     if string.find(Name,v.Name) then
+        game.ReplicatedStorage.Events.PurchaseItem:FireServer(v);
+    end 
+end 
+end)
+local Dropdown2 = Section2:CreateDropdown("Buy Page", Pages, function(Name)
+for i, v in pairs(game.Workspace:WaitForChild("Purchases").Pages:GetChildren()) do
+     if string.find(Name,v.Name) then
+        game.ReplicatedStorage.Events.PurchasePage:FireServer(v);
+    end 
+end 
+end)
+local Dropdown2 = Section2:CreateDropdown("Buy Weapon", Weapons, function(Name)
+for i, v in pairs(game.Workspace:WaitForChild("Purchases").Weapons:GetChildren()) do
+    if string.find(Name,v.Name) then
+        game.ReplicatedStorage.Events.PurchaseWeapon:FireServer(v);
+    end 
+end 
 end)
 
 local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", Settings.Go, function(State)
