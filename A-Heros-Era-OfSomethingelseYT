@@ -301,7 +301,22 @@ local Snaps = {
     "Time",
     "Anti Magic"
 }
-
+local Races = {
+    "Elf",
+    "Jakkon",
+    "Noble",
+    "Liger",
+    "Xoviacs",
+    "Human"
+}
+local Traits = {
+    "Elven Blood",
+    "Blade Master",
+    "Game Addict",
+    "Smith",
+    "Alchemist",
+    "Resilient"
+}
 if Settings.Speed == nil then
     Settings.Speed = 300
 end
@@ -456,10 +471,46 @@ Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.SnapTab
 end)
 end  end end) end)
 
-
 local Dropdown1 = Section1:CreateDropdown("Snaps", Snaps, function(Name)
     Settings.Snap = Name
 end)
+
+local Toggle1 = Section1:CreateToggle("Auto Roll Race", nil, function(State)
+    Settings.Races  = State
+spawn(function()
+while Settings.Races do wait(1)
+
+if not Player.PlayerGui.MenuV2.StatFrame.Race.Text:find(Settings.Race) then
+pcall(function()
+Player.PlayerGui.MenuV2.ShopFrame.RaceTab.Spin.Parent = Player.PlayerGui.MenuV2
+
+Player.PlayerGui.MenuV2.Spin.Size = UDim2.new(9e9,9e9,9e9,9e9) wait(1)
+game.VirtualUser:ClickButton1(Vector2.new(9e9,9e9)) wait()
+Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.RaceTab
+end)
+end  end end) end)
+local Dropdown1 = Section1:CreateDropdown("Races", Races, function(Name)
+    Settings.Race = Name
+end)
+
+local Toggle1 = Section1:CreateToggle("Auto Roll Trait", nil, function(State)
+    Settings.Traits  = State
+spawn(function()
+while Settings.Traits do wait(1)
+
+if not Player.PlayerGui.MenuV2.StatFrame.Trait.Text:find(Settings.Trait) then
+pcall(function()
+Player.PlayerGui.MenuV2.ShopFrame.TraitTab.Spin.Parent = Player.PlayerGui.MenuV2
+
+Player.PlayerGui.MenuV2.Spin.Size = UDim2.new(9e9,9e9,9e9,9e9) wait(1)
+game.VirtualUser:ClickButton1(Vector2.new(9e9,9e9)) wait()
+Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.TraitTab
+end)
+end  end end) end)
+local Dropdown1 = Section1:CreateDropdown("Traits", Traits, function(Name)
+    Settings.Trait = Name
+end)
+
 local Toggle1 = Section1:CreateToggle("FullBright", Settings.FullBright, function(State)
 Settings.FullBright = State
         if Settings.FullBright then
