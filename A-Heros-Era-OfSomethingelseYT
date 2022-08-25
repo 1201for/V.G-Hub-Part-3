@@ -31,6 +31,15 @@ wait()
 for i, v in pairs(getconnections(Player.Idled)) do
     v:Disable()
 end
+for i,v in pairs(getconnections(Player.Character.Config.ToggleRagdoll.Changed)) do
+    v:Disable()
+end 
+Player.CharacterAdded:Connect(function()
+wait(1)
+for i,v in pairs(getconnections(Player.Character.Config.ToggleRagdoll.Changed)) do
+    v:Disable()
+end 
+end)
 local Name = "Era Of Alt.json"
 
 Des = {}
@@ -232,7 +241,7 @@ local FuckDekuDimz = function()
     Click()
 end
 
-
+events = {"MouseButton1Click", "MouseButton1Down", "Activated"}
 local Get = function()
 local A
     for i,v in pairs(Player.PlayerGui:FindFirstChild("Quest"):GetChildren()) do
@@ -265,7 +274,24 @@ local function getNearestMob()
     return Target
 end
 
-
+local Snaps = {
+    "Wind",
+    "Fire",
+    "Water",
+    "Dark",
+    "Light",
+    "Healing",
+    "Frost",
+    "Explosion",
+    "Heavenly Body",
+    "Compose",
+    "Gravity",
+    "Sound",
+    "Demon",
+    "Spatial",
+    "Time",
+    "Anti-Magic"
+}
 
 if Settings.Speed == nil then
     Settings.Speed = 300
@@ -406,6 +432,25 @@ local Slider3 = Section1:CreateSlider("AutoFarm Angle",0,360,Settings.Angle,fals
 	Settings.Angle = Value
 end)
 
+local Toggle1 = Section1:CreateToggle("Auto Roll Snap", nil, function(State)
+    Settings.Snaps  = State
+spawn(function()
+while Settings.Snaps do wait(1)
+
+if not Player.PlayerGui.MenuV2.StatFrame.Element.Text:find(Settings.Snap) then
+pcall(function()
+Player.PlayerGui.MenuV2.ShopFrame.SnapTab.Spin.Parent = Player.PlayerGui.MenuV2
+
+Player.PlayerGui.MenuV2.Spin.Size = UDim2.new(9e9,9e9,9e9,9e9) wait(1)
+game.VirtualUser:ClickButton1(Vector2.new(9e9,9e9)) wait()
+Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.SnapTab
+end)
+end  end end) end)
+
+
+local Dropdown1 = Section1:CreateDropdown("Snaps", Snaps, function(Name)
+    Settings.Snap = Name
+end)
 local Toggle1 = Section1:CreateToggle("FullBright", Settings.FullBright, function(State)
 Settings.FullBright = State
         if Settings.FullBright then
@@ -503,7 +548,7 @@ RunService.Stepped:Connect(
     function()
         if Settings.GodMode then
             pcall(function()
-                if Player.Character or Player.CharacterAdded:Wait(1) then
+                if Player.Character then
                     Player.Character:WaitForChild("Config"):FindFirstChild("ManaSkin"):Destroy()
                 end 
             end)
@@ -1050,7 +1095,7 @@ Slider4:SetValue(0.5)
 
 spawn(
     function()
-        while wait(30) do
+        while wait() do
             pcall(
                 function()
                     Save()
