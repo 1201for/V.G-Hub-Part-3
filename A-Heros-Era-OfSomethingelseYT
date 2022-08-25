@@ -142,7 +142,7 @@ end
 local Char = Player.Character or Player.CharacterAdded:Wait()
 local Swing
 for i, v in pairs(getgc(true)) do
-    if type(v) == "function" and getfenv(v).script == Char:WaitForChild("Client") then
+    if type(v) == "function"  then
         if debug.getinfo(v).name == "Swing" then
             Swing = v
         end
@@ -233,7 +233,7 @@ local function Click()
             v:Activate()
         end 
     end 
-    if not Player.Character:FindFirstChildWhichIsA("Tool") and not Player.Character.Config.CAttackCooldown.Value and wait(0.3) then
+    if not Player.Character:FindFirstChildWhichIsA("Tool") and not Player.Character.Config.CAttackCooldown.Value and Player.Character.Config.CurrentCombo.Value ~= 5 then
         Swing()
     end 
 end
@@ -592,12 +592,12 @@ end)
 local Toggle1 = Section1:CreateToggle("KillAura unstable", nil, function(State)
 Settings.KillAura = State    
 spawn(function()
-    while wait(1.5) do
-        for i = 1, 5 do wait()
-            if Settings.KillAura then
+    while wait() do
+        pcall(function()
+            if Settings.KillAura and Player.Character.Config.CurrentCombo.Value ~= 5  and not Player.Character.Config.CAttackCooldown.Value then
                 Swing()
             end 
-        end
+        end)
     end
 end)
 end)
