@@ -87,7 +87,15 @@ spawn(
         end
     end
 )
-
+spawn(function()
+    while wait() do
+        pcall(function()
+            if Player.PlayerGui.MenuV2.StatFrame.Element.Text:match("Anti") then
+                Player.PlayerGui.MenuV2.StatFrame.Element.Text = "Anti Magic"
+            end 
+        end) 
+    end
+end)
 wait(1)
 
 local Quests = {}
@@ -252,6 +260,7 @@ local A
     return A 
 end 
 
+
 local function getNearestMob()
     local TargetDistance = math.huge
     local Target
@@ -290,7 +299,7 @@ local Snaps = {
     "Demon",
     "Spatial",
     "Time",
-    "Anti-Magic"
+    "Anti Magic"
 }
 
 if Settings.Speed == nil then
@@ -1104,4 +1113,3 @@ spawn(
         end
     end
 )
-
