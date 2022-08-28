@@ -452,7 +452,7 @@ spawn(
         while Settings.Boss and wait() do
                 pcall(function()
                     FuckDekuDimz()
-                     if Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Boss)and wait(4) and not Settings.AllBosses then
+                     if Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Boss)and wait(4) and not Settings.AllBosses and Settings.D then
                             local PlaceID = game.PlaceId
                             local AllIDs = {}
                             local foundAnything = ""
@@ -551,7 +551,7 @@ spawn(
                             -- If you'd like to use a script before server hopping (Like a Automatic Chest collector you can put the Teleport() after it collected everything.
                             Teleport()
                         end
-                        if Settings.ServerhopMethod == "VipServerHop" and not npcs:FindFirstChild(Settings.Boss) and wait(4) and not Settings.AllBosses then
+                        if Settings.ServerhopMethod == "VipServerHop" and not npcs:FindFirstChild(Settings.Boss) and wait(4) and not Settings.AllBosses and Settings.D  then
                             game.ReplicatedStorage.Events.JoinPrivateServer:FireServer(Settings.VipCode)
                         end
                     for i, v in pairs(npcs:GetChildren()) do
@@ -587,6 +587,9 @@ Settings.AllBosses = State
 end)
 local Dropdown1 = Section1:CreateDropdown("Bosses", Sus1, function(Name)
 	Settings.Boss = Name
+end)
+local Toggle1 = Section1:CreateToggle("Serverhop After boss dead", Settings.D, function(State)
+Settings.D = State
 end)
 
 local Dropdown1 = Section1:CreateDropdown("BossServerHop Method", {"VipServerHop","ServerHop"}, function(Name)
