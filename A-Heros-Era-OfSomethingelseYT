@@ -2,6 +2,7 @@ repeat
     wait()
 until game:IsLoaded()
 
+
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
@@ -28,18 +29,14 @@ repeat
 until game:IsLoaded() and Player and Player.Character and
     Workspace.Camera.CameraSubject == Player.Character:WaitForChild("Humanoid")
 wait()
+if Player.PlayerGui:FindFirstChild("Buttons") then
+game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
+Player.PlayerGui.Buttons.Enabled = false
+end 
 for i, v in pairs(getconnections(Player.Idled)) do
     v:Disable()
 end
-for i,v in pairs(getconnections(Player.Character.Config.ToggleRagdoll.Changed)) do
-    v:Disable()
-end 
-Player.CharacterAdded:Connect(function()
-wait(1)
-for i,v in pairs(getconnections(Player.Character.Config.ToggleRagdoll.Changed)) do
-    v:Disable()
-end 
-end)
+
 local Name = "Era Of Alt.json"
 
 Des = {}
@@ -67,8 +64,14 @@ end
 
 local Sus = {}
 for i, v in pairs(npcs:GetChildren()) do
-    if v:IsA("Model") and not table.find(Sus, v.Name) then
+    if v:IsA("Model") and not table.find(Sus, v.Name) and not v:FindFirstChild("Boss") then
         table.insert(Sus, v.Name)
+    end
+end
+local Sus1 = {}
+for i, v in pairs(npcs:GetChildren()) do
+    if v:IsA("Model") and not table.find(Sus1, v.Name) and v:FindFirstChild("Boss") then
+        table.insert(Sus1, v.Name)
     end
 end
 
@@ -139,15 +142,8 @@ for i, v in pairs(game.Workspace:WaitForChild("Purchases").Weapons:GetChildren()
     end 
 end 
 
-local Char = Player.Character or Player.CharacterAdded:Wait()
-local Swing
-for i, v in pairs(getgc(true)) do
-    if type(v) == "function"  then
-        if debug.getinfo(v).name == "Swing" then
-            Swing = v
-        end
-    end
-end
+
+
 
 
 if hookmetamethod then
@@ -185,12 +181,15 @@ OldNameCall =
     end
 )
 end
-
+local R = getsenv(Player.Character:FindFirstChild("Client"))
+local Swing = R.Swing 
 Player.Character.JumpCooldown.Disabled = true
 
 game.Players.LocalPlayer.CharacterAdded:Connect(
     function()
         if Player.Character and wait(3) then
+            local R = getsenv(Player.Character:FindFirstChild("Client"))
+            local Swing = R.Swing 
             Player.Character.JumpCooldown.Disabled = true
         end
     end
@@ -268,7 +267,7 @@ local function getNearestMob()
         if
             v.Name == (Settings.Mob) and not Settings.AutoQuest and v and v:FindFirstChild("HumanoidRootPart") and v.Head.Transparency ~= 1 and
                 v.Health.Value ~= 0 or
-                Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and v and v.Head.Transparency ~= 1 and 
+                Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and v and v.Head.Transparency ~= 1  and 
                     Player.PlayerGui:FindFirstChild("Quest") and string.match(Get(),v.Name) 
                     
          then
@@ -296,6 +295,7 @@ local Snaps = {
     "Compose",
     "Gravity",
     "Sound",
+    "Lightning",
     "Demon",
     "Spatial",
     "Time",
@@ -433,6 +433,169 @@ local Dropdown1 = Section1:CreateDropdown("Mobs", Sus, function(Name)
 	Settings.Mob = Name
 end)
 
+local Toggle1 = Section1:CreateToggle("Auto Bosses", Settings.Boss, function(State)
+Settings.Boss = State
+
+RunService.Stepped:Connect(
+    function()
+        if Settings.Boss then
+            pcall(function()
+                if Player.Character or Player.CharacterAdded:Wait(1) then
+                    Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+                end 
+            end)
+        end
+    end
+)
+spawn(
+    function()
+        while Settings.Boss and wait() do
+                pcall(function()
+                    FuckDekuDimz()
+                     if Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Boss)and wait(4) and not Settings.AllBosses then
+                            local PlaceID = game.PlaceId
+                            local AllIDs = {}
+                            local foundAnything = ""
+                            local actualHour = os.date("!*t").hour
+                            local Deleted = false
+                            local File =
+                                pcall(
+                                function()
+                                    AllIDs = game:GetService("HttpService"):JSONDecode(readfile("NotSameServers.json"))
+                                end
+                            )
+                            if not File then
+                                table.insert(AllIDs, actualHour)
+                                writefile("NotSameServers.json", game:GetService("HttpService"):JSONEncode(AllIDs))
+                            end
+                            function TPReturner()
+                                local Site
+                                if foundAnything == "" then
+                                    Site =
+                                        game.HttpService:JSONDecode(
+                                        game:HttpGet(
+                                            "https://games.roblox.com/v1/games/" ..
+                                                PlaceID .. "/servers/Public?sortOrder=Asc&limit=100"
+                                        )
+                                    )
+                                else
+                                    Site =
+                                        game.HttpService:JSONDecode(
+                                        game:HttpGet(
+                                            "https://games.roblox.com/v1/games/" ..
+                                                PlaceID ..
+                                                    "/servers/Public?sortOrder=Asc&limit=100&cursor=" .. foundAnything
+                                        )
+                                    )
+                                end
+                                local ID = ""
+                                if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
+                                    foundAnything = Site.nextPageCursor
+                                end
+                                local num = 0
+                                for i, v in pairs(Site.data) do
+                                    local Possible = true
+                                    ID = tostring(v.id)
+                                    if tonumber(v.maxPlayers) > tonumber(v.playing) then
+                                        for _, Existing in pairs(AllIDs) do
+                                            if num ~= 0 then
+                                                if ID == tostring(Existing) then
+                                                    Possible = false
+                                                end
+                                            else
+                                                if tonumber(actualHour) ~= tonumber(Existing) then
+                                                    local delFile =
+                                                        pcall(
+                                                        function()
+                                                            delfile("NotSameServers.json")
+                                                            AllIDs = {}
+                                                            table.insert(AllIDs, actualHour)
+                                                        end
+                                                    )
+                                                end
+                                            end
+                                            num = num + 1
+                                        end
+                                        if Possible == true then
+                                            table.insert(AllIDs, ID)
+                                            wait()
+                                            pcall(
+                                                function()
+                                                    writefile(
+                                                        "NotSameServers.json",
+                                                        game:GetService("HttpService"):JSONEncode(AllIDs)
+                                                    )
+                                                    wait()
+                                                    TeleportService:TeleportToPlaceInstance(PlaceID, ID, Player)
+                                                end
+                                            )
+                                            wait(4)
+                                        end
+                                    end
+                                end
+                            end
+
+                            function Teleport()
+                                while wait() do
+                                    pcall(
+                                        function()
+                                            TPReturner()
+                                            if foundAnything ~= "" then
+                                                TPReturner()
+                                            end
+                                        end
+                                    )
+                                end
+                            end
+
+                            -- If you'd like to use a script before server hopping (Like a Automatic Chest collector you can put the Teleport() after it collected everything.
+                            Teleport()
+                        end
+                        if Settings.ServerhopMethod == "VipServerHop" and not npcs:FindFirstChild(Settings.Boss) and wait(4) and not Settings.AllBosses then
+                            game.ReplicatedStorage.Events.JoinPrivateServer:FireServer(Settings.VipCode)
+                        end
+                    for i, v in pairs(npcs:GetChildren()) do
+                        if
+                            v:IsA("Model") and v:FindFirstChild("Head") and v.Head.Transparency ~= 1 and v.Health.Value ~= 0 and v:FindFirstChild("Boss") and
+                                table.find(Sus1, v.Name) and Settings.AllBosses or not Settings.AllBosses and 
+                                v.Name == Settings.Boss and v.Head.Transparency ~= 1 and v.Health.Value ~= 0 and v:FindFirstChild("Boss")
+                         then
+                            if Settings.TeleportMethod == "InstantTP" then
+                                Player.Character.HumanoidRootPart.CFrame =
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 0) *
+                                    CFrame.Angles(Settings.Angle, 0, 0)
+                            end
+                            if Settings.TeleportMethod == "Tween" then
+                                Tween(
+                                    Player.Character.HumanoidRootPart,
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 0) *
+                                        CFrame.Angles(Settings.Angle, 0, 0),
+                                    Settings.Speed
+                                )
+                            end
+                            
+                        end
+                      
+                    end
+            end)
+        end
+    end
+)
+end)
+local Toggle1 = Section1:CreateToggle("AllBosses", Settings.AllBosses, function(State)
+Settings.AllBosses = State
+end)
+local Dropdown1 = Section1:CreateDropdown("Bosses", Sus1, function(Name)
+	Settings.Boss = Name
+end)
+
+local Dropdown1 = Section1:CreateDropdown("BossServerHop Method", {"VipServerHop","ServerHop"}, function(Name)
+	Settings.ServerhopMethod = Name
+end)
+
+Section1:CreateTextBox("Enter Vip Code", "VipCode Here", false, function(String)
+Settings.VipCode = String
+end)
 local Dropdown1 = Section1:CreateDropdown("Farm Method", {"Under","Behind","Above"}, function(Name)
 	Settings.Method = Name
 end)
