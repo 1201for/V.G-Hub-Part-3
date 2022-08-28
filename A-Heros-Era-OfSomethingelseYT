@@ -317,6 +317,61 @@ local Traits = {
     "Alchemist",
     "Resilient"
 }
+
+
+local Table = {
+    "WeekendHair2!",
+    "WeekendHair!",
+    "ICANFLYNOW?",
+    "WeekendUpdate1!",
+    "IHateWalking",
+    "23KLikes1!",
+    "LikeForHair1!",
+    "AltheaDevHouse!",
+    "SpatialUsersAfterGettingHitOnce",
+    "Update2Spins",
+    "Update2Hair",
+    "Update2Hair2",
+    "ExploitersTradingAdoptMePets",
+    "23KLikes!",
+    "DetestFiveSpins",
+    "DamnMyBad",
+    "1MillionVisits",
+    "BugFixes",
+    "RankedMobileUsers—Redeem",
+    "ChadMobileUsers",
+    "16KLikes!",
+    "LikeForSpins1!",
+    "LikeForHair1!",
+    "LikeForEye1!",
+    "NewUpdate??",
+    "AhwokenTwitter!",
+    "MaineEOA",
+    "MyApologies!",
+    "AltheaHype!",
+    "1MVISITS!",
+    "15KLIKES!",
+    "SHUTDOWNADOPTME!",
+    "ShutdownForFixes!",
+    "ShutdownForFixes2!",
+    "E0A",
+    "25LIKES!",
+    "4MILVISITS!",
+    "ShutdownForFixesA!s",
+    "2MVISITS!",
+    "1500Likes",
+    "3000Likes",
+    "6000Likes2",
+    "TrueSupport!",
+    "NewSnapSoon!",
+    "25LIKES!",
+    "4MILVISITS!",
+    "LIGHTNINGISOUT!!",
+    "PROTISSOWEIRD?",
+    "30KMEMBERMILESTONE"
+}
+
+
 if Settings.Speed == nil then
     Settings.Speed = 300
 end
@@ -621,58 +676,93 @@ end)
 local Slider3 = Section1:CreateSlider("AutoFarm Angle",0,360,Settings.Angle,false, function(Value)
 	Settings.Angle = Value
 end)
+local Button1 = Section1:CreateButton("RedeemCodes", function()
+for i, v in pairs(Table) do wait()
+    game:GetService("ReplicatedStorage").Remotes.RedeemCode:InvokeServer(v)
+end
+end)
 
 local Toggle1 = Section1:CreateToggle("Auto Roll Snap", nil, function(State)
-    Settings.Snaps  = State
-spawn(function()
-while Settings.Snaps do wait(1)
+Settings.Snaps = State
+spawn(
+    function()
+        while Settings.Snaps do
+            wait(3)
 
-if not Player.PlayerGui.MenuV2.StatFrame.Element.Text:find(Settings.Snap) then
-pcall(function()
-Player.PlayerGui.MenuV2.ShopFrame.SnapTab.Spin.Parent = Player.PlayerGui.MenuV2
+            if not Player.PlayerGui.MenuV2.StatFrame.Element.Text:find(Settings.Snap) then
+                pcall(
+                    function()
+                        Player.PlayerGui.MenuV2.ShopFrame.SnapTab.Spin.Parent = Player.PlayerGui.MenuV2
 
-Player.PlayerGui.MenuV2.Spin.Size = UDim2.new(9e9,9e9,9e9,9e9) wait(1)
-game.VirtualUser:ClickButton1(Vector2.new(9e9,9e9)) wait()
-Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.SnapTab
+                        Player.PlayerGui.MenuV2.Spin.Size = UDim2.new(9e9, 9e9, 9e9, 9e9)
+                        wait(1)
+                        game.VirtualUser:ClickButton1(Vector2.new(9e9, 9e9))
+                        wait()
+                        Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.SnapTab
+                    end
+                )
+            end
+        end
+    end
+)
 end)
-end  end end) end)
 
 local Dropdown1 = Section1:CreateDropdown("Snaps", Snaps, function(Name)
     Settings.Snap = Name
 end)
 
 local Toggle1 = Section1:CreateToggle("Auto Roll Race", nil, function(State)
-    Settings.Races  = State
-spawn(function()
-while Settings.Races do wait(1)
+Settings.Races = State
+spawn(
+    function()
+        while Settings.Races do
+            wait(3)
 
-if not Player.PlayerGui.MenuV2.StatFrame.Race.Text:find(Settings.Race) then
-pcall(function()
-Player.PlayerGui.MenuV2.ShopFrame.RaceTab.Spin.Parent = Player.PlayerGui.MenuV2
+            if not Player.PlayerGui.MenuV2.StatFrame.Race.Text:find(Settings.Race) then
+                pcall(
+                    function()
+                        Player.PlayerGui.MenuV2.ShopFrame.RaceTab.Spin.Parent = Player.PlayerGui.MenuV2
 
-Player.PlayerGui.MenuV2.Spin.Size = UDim2.new(9e9,9e9,9e9,9e9) wait(1)
-game.VirtualUser:ClickButton1(Vector2.new(9e9,9e9)) wait()
-Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.RaceTab
+                        Player.PlayerGui.MenuV2.Spin.Size = UDim2.new(9e9, 9e9, 9e9, 9e9)
+                        wait(1)
+                        game.VirtualUser:ClickButton1(Vector2.new(9e9, 9e9))
+                        wait()
+                        Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.RaceTab
+                    end
+                )
+            end
+        end
+    end
+)
 end)
-end  end end) end)
 local Dropdown1 = Section1:CreateDropdown("Races", Races, function(Name)
     Settings.Race = Name
 end)
 
 local Toggle1 = Section1:CreateToggle("Auto Roll Trait", nil, function(State)
-    Settings.Traits  = State
-spawn(function()
-while Settings.Traits do wait(1)
+Settings.Traits = State
+spawn(
+    function()
+        while Settings.Traits do
+            wait(3)
 
-if not Player.PlayerGui.MenuV2.StatFrame.Trait.Text:find(Settings.Trait) then
-pcall(function()
-Player.PlayerGui.MenuV2.ShopFrame.TraitTab.Spin.Parent = Player.PlayerGui.MenuV2
+            if not Player.PlayerGui.MenuV2.StatFrame.Trait.Text:find(Settings.Trait) then
+                pcall(
+                    function()
+                        Player.PlayerGui.MenuV2.ShopFrame.TraitTab.Spin.Parent = Player.PlayerGui.MenuV2
 
-Player.PlayerGui.MenuV2.Spin.Size = UDim2.new(9e9,9e9,9e9,9e9) wait(1)
-game.VirtualUser:ClickButton1(Vector2.new(9e9,9e9)) wait()
-Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.TraitTab
+                        Player.PlayerGui.MenuV2.Spin.Size = UDim2.new(9e9, 9e9, 9e9, 9e9)
+                        wait(1)
+                        game.VirtualUser:ClickButton1(Vector2.new(9e9, 9e9))
+                        wait()
+                        Player.PlayerGui.MenuV2.Spin.Parent = Player.PlayerGui.MenuV2.ShopFrame.TraitTab
+                    end
+                )
+            end
+        end
+    end
+)
 end)
-end  end end) end)
 local Dropdown1 = Section1:CreateDropdown("Traits", Traits, function(Name)
     Settings.Trait = Name
 end)
@@ -709,7 +799,7 @@ Settings.HardReset = State
 spawn(function()
     while wait() and Settings.HardReset do
         pcall(function()
-            if Player.Character:FindFirstChildWhichIsA("Humanoid").Health <= 10 then
+            if Player.Character.Health.Value <= 10 then
                 Player.Character.Head:Destroy()
             end 
         end) 
