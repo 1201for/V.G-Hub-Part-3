@@ -29,7 +29,10 @@ repeat
 until game:IsLoaded() and Player and Player.Character and
     Workspace.Camera.CameraSubject == Player.Character:WaitForChild("Humanoid")
 wait()
-
+if Player.PlayerGui:FindFirstChild("Buttons") then
+    game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
+    Player.PlayerGui.Buttons.Enabled = false
+end
 for i, v in pairs(getconnections(Player.Idled)) do
     v:Disable()
 end
@@ -72,26 +75,34 @@ for i, v in pairs(npcs:GetChildren()) do
     end
 end
 
-
-spawn(function()
-    while wait() do
-        pcall(function()
-            if Player.PlayerGui.MenuV2.StatFrame.Element.Text:match("Anti") then
-                Player.PlayerGui.MenuV2.StatFrame.Element.Text = "Anti Magic"
-            end 
-      
+spawn(
+    function()
+        while wait(0) do
+            pcall(
+                function()
                     for i, v in pairs(Workspace:GetChildren()) do
                         if v.Name == "Quest Board" then
                             v.Parent = Workspace.Map
                         end
                     end
- if Player.PlayerGui:FindFirstChild("Buttons") and wait() then
-game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
-Player.PlayerGui.Buttons.Enabled = false
-end 
-        end) 
+                end
+            )
+        end
     end
-end)
+)
+spawn(
+    function()
+        while wait() do
+            pcall(
+                function()
+                    if Player.PlayerGui.MenuV2.StatFrame.Element.Text:match("Anti") then
+                        Player.PlayerGui.MenuV2.StatFrame.Element.Text = "Anti Magic"
+                    end
+                end
+            )
+        end
+    end
+)
 wait(1)
 
 local Quests = {}
@@ -101,93 +112,178 @@ for i, v in pairs(Workspace.Map:GetChildren()) do
             if v.Name == "Part" then
                 table.insert(
                     Quests,
-                    v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text .. " - " .. v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("LevelReq").Text
+                    v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text ..
+                        " - " .. v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("LevelReq").Text
                 )
             end
         end
     end
 end
 
+local function ServerHop()
+    local PlaceID = game.PlaceId
+    local AllIDs = {}
+    local foundAnything = ""
+    local actualHour = os.date("!*t").hour
+    local Deleted = false
+    function TPReturner()
+        local Site
+        if foundAnything == "" then
+            Site =
+                game.HttpService:JSONDecode(
+                game:HttpGet(
+                    "https://games.roblox.com/v1/games/" .. PlaceID .. "/servers/Public?sortOrder=Asc&limit=100"
+                )
+            )
+        else
+            Site =
+                game.HttpService:JSONDecode(
+                game:HttpGet(
+                    "https://games.roblox.com/v1/games/" ..
+                        PlaceID .. "/servers/Public?sortOrder=Asc&limit=100&cursor=" .. foundAnything
+                )
+            )
+        end
+        local ID = ""
+        if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
+            foundAnything = Site.nextPageCursor
+        end
+        local num = 0
+        for i, v in pairs(Site.data) do
+            local Possible = true
+            ID = tostring(v.id)
+            if tonumber(v.maxPlayers) > tonumber(v.playing) then
+                for _, Existing in pairs(AllIDs) do
+                    if num ~= 0 then
+                        if ID == tostring(Existing) then
+                            Possible = false
+                        end
+                    else
+                        if tonumber(actualHour) ~= tonumber(Existing) then
+                            local delFile =
+                                pcall(
+                                function()
+                                    delfile("NotSameServers.json")
+                                    AllIDs = {}
+                                    table.insert(AllIDs, actualHour)
+                                end
+                            )
+                        end
+                    end
+                    num = num + 1
+                end
+                if Possible == true then
+                    table.insert(AllIDs, ID)
+                    wait()
+                    pcall(
+                        function()
+                            writefile("NotSameServers.json", HttpService:JSONEncode(AllIDs))
+                            wait()
+                            game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, Player)
+                        end
+                    )
+                    wait(4)
+                end
+            end
+        end
+    end
 
+    function Teleport()
+        while wait() do
+            pcall(
+                function()
+                    TPReturner()
+                    if foundAnything ~= "" then
+                        TPReturner()
+                    end
+                end
+            )
+        end
+    end
+
+    -- If you'd like to use a script before server hopping (Like a Automatic Chest collector you can put the Teleport() after it collected everything.
+    Teleport() --CharWars
+end
 
 local Armor = {}
 for i, v in pairs(game.Workspace:WaitForChild("Purchases").Armor:GetChildren()) do
-    if not table.find(Armor,v.Name) then
-        table.insert(Armor,v.Name .. " - " .. v.GUI.View.ItemCost.Text)
-    end 
-end 
+    if not table.find(Armor, v.Name) then
+        table.insert(Armor, v.Name .. " - " .. v.GUI.View.ItemCost.Text)
+    end
+end
 local Items = {}
 for i, v in pairs(game.Workspace:WaitForChild("Purchases").Items:GetChildren()) do
-    if not table.find(Items,v.Name) then
-        table.insert(Items,v.Name .. " - " .. v.GUI.View.ItemCost.Text)
-    end 
-end 
+    if not table.find(Items, v.Name) then
+        table.insert(Items, v.Name .. " - " .. v.GUI.View.ItemCost.Text)
+    end
+end
 local Pages = {}
 for i, v in pairs(game.Workspace:WaitForChild("Purchases").Pages:GetChildren()) do
-    if not table.find(Pages,v.Name) then
-        table.insert(Pages,v.Name .. " - " .. v.GUI.View.ItemCost.Text)
-    end 
-end 
+    if not table.find(Pages, v.Name) then
+        table.insert(Pages, v.Name .. " - " .. v.GUI.View.ItemCost.Text)
+    end
+end
 local Weapons = {}
 for i, v in pairs(game.Workspace:WaitForChild("Purchases").Weapons:GetChildren()) do
-    if not table.find(Weapons,v.Name) then
-        table.insert(Weapons,v.Name .. " - " .. v.GUI.View.ItemCost.Text)
-    end 
-end 
-
-
-
-
+    if not table.find(Weapons, v.Name) then
+        table.insert(Weapons, v.Name .. " - " .. v.GUI.View.ItemCost.Text)
+    end
+end
 
 if hookmetamethod then
-
-local OldNameCall
-OldNameCall = hookmetamethod(game, "__newindex", function(A, B, ...)
-    if not checkcaller()  and (B == "WalkSpeed") then
-        return game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed or 16
-    end
-    if not checkcaller()  and (B == "JumpPower") then
-        return game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").JumpPower or 50
-    end
-    return OldNameCall(A, B, ...)
-end)
-
-
-local Table = {Player, Char}
-local Table2 = {
-    "ClearAllChildren",
-}
-local OldNameCall = nil
-OldNameCall =
-    hookmetamethod(
-    game,
-    "__namecall",
-    function(self, ...)
-        local Args = {...}
-        if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih") then
-            return wait(9e9)
+    local OldNameCall
+    OldNameCall =
+        hookmetamethod(
+        game,
+        "__newindex",
+        function(A, B, ...)
+            if not checkcaller() and (B == "WalkSpeed") then
+                return game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed or 16
+            end
+            if not checkcaller() and (B == "JumpPower") then
+                return game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").JumpPower or 50
+            end
+            return OldNameCall(A, B, ...)
         end
-        if  table.find(Table2,getnamecallmethod()) and table.find(Table,self) or self.Name == game.Players.LocalPlayer.Name and getnamecallmethod() == "ClearAllChildren" then
-            return wait(9e9)
+    )
+
+    local Table = {Player, Char}
+    local Table2 = {
+        "ClearAllChildren"
+    }
+    local OldNameCall = nil
+    OldNameCall =
+        hookmetamethod(
+        game,
+        "__namecall",
+        function(self, ...)
+            local Args = {...}
+            if self.Name == "LightAttack" and Args[1] == "Yes" or self.Name == "Trigger" or self.Name:match("ahdih") then
+                return wait(9e9)
+            end
+            if
+                table.find(Table2, getnamecallmethod()) and table.find(Table, self) or
+                    self.Name == game.Players.LocalPlayer.Name and getnamecallmethod() == "ClearAllChildren"
+             then
+                return wait(9e9)
+            end
+            return OldNameCall(self, ...)
         end
-        return OldNameCall(self, ...)
-    end
-)
+    )
 end
 local R = getsenv(Player.Character:FindFirstChild("Client"))
-local Swing = R.Swing 
+local Swing = R.Swing
 Player.Character.JumpCooldown.Disabled = true
 
 game.Players.LocalPlayer.CharacterAdded:Connect(
     function()
         if Player.Character and wait(3) then
             local R = getsenv(Player.Character:FindFirstChild("Client"))
-            local Swing = R.Swing 
+            local Swing = R.Swing
             Player.Character.JumpCooldown.Disabled = true
         end
     end
 )
-
 
 local function RaduisCheck(A, B, C)
     if (A.Position - B.Position).Mag < C then
@@ -211,27 +307,29 @@ for i, v in pairs(Workspace.Areas:GetChildren()) do
 end
 
 local GetTool = function()
-    local Tool 
-    for i,v in pairs(Player.Character:GetChildren()) do
-        if v:IsA('Tool') then 
-            Tool = v 
-        end 
-    end 
+    local Tool
+    for i, v in pairs(Player.Character:GetChildren()) do
+        if v:IsA("Tool") then
+            Tool = v
+        end
+    end
 end
 
 local function Click()
-    for i,v in pairs(Player.Character:GetChildren()) do
+    for i, v in pairs(Player.Character:GetChildren()) do
         if v:IsA("Tool") then
             v:Activate()
-        end 
-    end 
-    if not Player.Character:FindFirstChildWhichIsA("Tool") and not Player.Character.Config.CAttackCooldown.Value and Player.Character.Config.CurrentCombo.Value ~= 5 then
+        end
+    end
+    if
+        not Player.Character:FindFirstChildWhichIsA("Tool") and not Player.Character.Config.CAttackCooldown.Value and
+            Player.Character.Config.CurrentCombo.Value ~= 5
+     then
         Swing()
-    end 
+    end
 end
 
 local FuckDekuDimz = function()
-    
     if not Player.Character.Config.CombatMode.Value and Settings.FightMethod == "Fists" then
         VirtualInputManager:SendKeyEvent(true, "R", false, game)
     end
@@ -243,29 +341,29 @@ end
 
 events = {"MouseButton1Click", "MouseButton1Down", "Activated"}
 local Get = function()
-local A
-    for i,v in pairs(Player.PlayerGui:FindFirstChild("Quest"):GetChildren()) do
-        if v:IsA("IntValue")  then 
-            A = v.Name 
-        end 
-    end 
-    return A 
-end 
-
+    local A
+    for i, v in pairs(Player.PlayerGui:FindFirstChild("Quest"):GetChildren()) do
+        if v:IsA("IntValue") then
+            A = v.Name
+        end
+    end
+    return A
+end
 
 local function getNearestMob()
     local TargetDistance = math.huge
     local Target
     for i, v in ipairs(npcs:GetChildren()) do
         if
-            v.Name == (Settings.Mob) and not Settings.AutoQuest and v and v:FindFirstChild("HumanoidRootPart") and v.Head.Transparency ~= 1 and
+            v.Name == (Settings.Mob) and not Settings.AutoQuest and v and v:FindFirstChild("HumanoidRootPart") and
+                v.Head.Transparency ~= 1 and
                 v.Health.Value ~= 0 or
-                Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart")  and v.Head.Transparency ~= 1  and 
-                    Player.PlayerGui:FindFirstChild("Quest") and string.find(Get(),v.Name)
-                    
+                Settings.AutoQuest and v.Health.Value ~= 0 and v:FindFirstChild("HumanoidRootPart") and v and
+                    v.Head.Transparency ~= 1 and
+                    Player.PlayerGui:FindFirstChild("Quest") and
+                    string.match(Get(), v.Name)
          then
-            local Mag =
-                (v:GetModelCFrame().Position - Player.Character.HumanoidRootPart.Position).Magnitude
+            local Mag = (v.HumanoidRootPart.Position - Player.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
                 TargetDistance = Mag
                 Target = v
@@ -274,6 +372,22 @@ local function getNearestMob()
     end
     return Target
 end
+
+function getUserRole(i, v)
+    return i:GetRoleInGroup(v)
+end
+for i, v in pairs(Players:GetPlayers()) do
+    if v:GetRoleInGroup(15032683) ~= "Member" and v:GetRoleInGroup(15032683) ~= "Guest" then
+        ServerHop()
+    end
+end
+Players.PlayerAdded:Connect(
+    function(v)
+        if v:GetRoleInGroup(15032683) ~= "Member" and v:GetRoleInGroup(15032683) ~= "Guest" then
+            ServerHop()
+        end
+    end
+)
 
 local Snaps = {
     "Wind",
@@ -310,7 +424,6 @@ local Traits = {
     "Alchemist",
     "Resilient"
 }
-
 
 local Table = {
     "WeekendHair2!",
@@ -361,9 +474,9 @@ local Table = {
     "4MILVISITS!",
     "LIGHTNINGISOUT!!",
     "PROTISSOWEIRD?",
-    "30KMEMBERMILESTONE"
+    "30KMEMBERMILESTONE",
+    "RobloxDown1!"
 }
-
 
 if Settings.Speed == nil then
     Settings.Speed = 300
@@ -381,20 +494,25 @@ if Settings.FightMethod == nil then
     Settings.FightMethod = "Fists"
 end
 
-UserInputService.InputBegan:Connect(function(v)
-	if v.KeyCode == Enum.KeyCode.LeftShift then
-		Player.Character.Humanoid.WalkSpeed = 30
-	elseif v.KeyCode == Enum.KeyCode.RightShift then
-			Player.Character.Humanoid.WalkSpeed = 30
-	end
-end)
-UserInputService.InputEnded:Connect(function(v)
-	if v.KeyCode == Enum.KeyCode.LeftShift then
-		Player.Character.Humanoid.WalkSpeed = 16
-	elseif v.KeyCode == Enum.KeyCode.RightShift then
-			Player.Character.Humanoid.WalkSpeed = 16
-	end
-end)
+UserInputService.InputBegan:Connect(
+    function(v)
+        if v.KeyCode == Enum.KeyCode.LeftShift then
+            Player.Character.Humanoid.WalkSpeed = 30
+        elseif v.KeyCode == Enum.KeyCode.RightShift then
+            Player.Character.Humanoid.WalkSpeed = 30
+        end
+    end
+)
+UserInputService.InputEnded:Connect(
+    function(v)
+        if v.KeyCode == Enum.KeyCode.LeftShift then
+            Player.Character.Humanoid.WalkSpeed = 16
+        elseif v.KeyCode == Enum.KeyCode.RightShift then
+            Player.Character.Humanoid.WalkSpeed = 16
+        end
+    end
+)
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -430,12 +548,12 @@ spawn(
                     if Settings.Method == "Under" then
                         if Settings.TeleportMethod == "InstantTP" then
                             Player.Character.HumanoidRootPart.CFrame =
-                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
                             Tween(
                                 Player.Character.HumanoidRootPart,
-                                v:GetModelCFrame() * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
                                 Settings.Speed
                             )
                         end
@@ -443,12 +561,12 @@ spawn(
                     if Settings.Method == "Above" then
                         if Settings.TeleportMethod == "InstantTP" then
                             Player.Character.HumanoidRootPart.CFrame =
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
                             Tween(
                                 Player.Character.HumanoidRootPart,
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, Settings.Height, 3) * CFrame.Angles(Settings.Angle, 0 ,0),
                                 Settings.Speed
                             )
                         end
@@ -456,12 +574,12 @@ spawn(
                     if Settings.Method == "Behind" then
                         if Settings.TeleportMethod == "InstantTP" then
                             Player.Character.HumanoidRootPart.CFrame =
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0)
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0)
                         end
                         if Settings.TeleportMethod == "Tween" then
                             Tween(
                                 Player.Character.HumanoidRootPart,
-                                v:GetModelCFrame() * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0),
+                                v.HumanoidRootPart.CFrame * CFrame.new(0, Settings.Height, 8) * CFrame.Angles(Settings.Angle, 0 ,0),
                                 Settings.Speed
                             )
                         end
@@ -501,104 +619,8 @@ spawn(
                 pcall(function()
                     FuckDekuDimz()
                      if Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Boss)and wait(4) and not Settings.AllBosses and Settings.D then
-                            local PlaceID = game.PlaceId
-                            local AllIDs = {}
-                            local foundAnything = ""
-                            local actualHour = os.date("!*t").hour
-                            local Deleted = false
-                            local File =
-                                pcall(
-                                function()
-                                    AllIDs = game:GetService("HttpService"):JSONDecode(readfile("NotSameServers.json"))
-                                end
-                            )
-                            if not File then
-                                table.insert(AllIDs, actualHour)
-                                writefile("NotSameServers.json", game:GetService("HttpService"):JSONEncode(AllIDs))
-                            end
-                            function TPReturner()
-                                local Site
-                                if foundAnything == "" then
-                                    Site =
-                                        game.HttpService:JSONDecode(
-                                        game:HttpGet(
-                                            "https://games.roblox.com/v1/games/" ..
-                                                PlaceID .. "/servers/Public?sortOrder=Asc&limit=100"
-                                        )
-                                    )
-                                else
-                                    Site =
-                                        game.HttpService:JSONDecode(
-                                        game:HttpGet(
-                                            "https://games.roblox.com/v1/games/" ..
-                                                PlaceID ..
-                                                    "/servers/Public?sortOrder=Asc&limit=100&cursor=" .. foundAnything
-                                        )
-                                    )
-                                end
-                                local ID = ""
-                                if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
-                                    foundAnything = Site.nextPageCursor
-                                end
-                                local num = 0
-                                for i, v in pairs(Site.data) do
-                                    local Possible = true
-                                    ID = tostring(v.id)
-                                    if tonumber(v.maxPlayers) > tonumber(v.playing) then
-                                        for _, Existing in pairs(AllIDs) do
-                                            if num ~= 0 then
-                                                if ID == tostring(Existing) then
-                                                    Possible = false
-                                                end
-                                            else
-                                                if tonumber(actualHour) ~= tonumber(Existing) then
-                                                    local delFile =
-                                                        pcall(
-                                                        function()
-                                                            delfile("NotSameServers.json")
-                                                            AllIDs = {}
-                                                            table.insert(AllIDs, actualHour)
-                                                        end
-                                                    )
-                                                end
-                                            end
-                                            num = num + 1
-                                        end
-                                        if Possible == true then
-                                            table.insert(AllIDs, ID)
-                                            wait()
-                                            pcall(
-                                                function()
-                                                    writefile(
-                                                        "NotSameServers.json",
-                                                        game:GetService("HttpService"):JSONEncode(AllIDs)
-                                                    )
-                                                    wait()
-                                                    TeleportService:TeleportToPlaceInstance(PlaceID, ID, Player)
-                                                end
-                                            )
-                                            wait(4)
-                                        end
-                                    end
-                                end
-                            end
-
-                            function Teleport()
-                                while wait() do
-                                    pcall(
-                                        function()
-                                            TPReturner()
-                                            if foundAnything ~= "" then
-                                                TPReturner()
-                                            end
-                                        end
-                                    )
-                                end
-                            end
-
-                            -- If you'd like to use a script before server hopping (Like a Automatic Chest collector you can put the Teleport() after it collected everything.
-                            Teleport()
-                        end
+                         ServerHop()
+                        end 
                         if Settings.ServerhopMethod == "VipServerHop" and not npcs:FindFirstChild(Settings.Boss) and wait(4) and not Settings.AllBosses and Settings.D  then
                             game.ReplicatedStorage.Events.JoinPrivateServer:FireServer(Settings.VipCode)
                         end
