@@ -29,7 +29,10 @@ repeat
 until game:IsLoaded() and Player and Player.Character and
     Workspace.Camera.CameraSubject == Player.Character:WaitForChild("Humanoid")
 wait()
-
+if Player.PlayerGui:FindFirstChild("Buttons") then
+    game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
+    Player.PlayerGui.Buttons.Enabled = false
+end
 for i, v in pairs(getconnections(Player.Idled)) do
     v:Disable()
 end
@@ -74,7 +77,7 @@ end
 
 spawn(
     function()
-        while wait() do
+        while wait(0) do
             pcall(
                 function()
                     for i, v in pairs(Workspace:GetChildren()) do
@@ -82,10 +85,16 @@ spawn(
                             v.Parent = Workspace.Map
                         end
                     end
-                    if Player.PlayerGui:FindFirstChild("Buttons") then
-                        game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
-                        Player.PlayerGui.Buttons.Enabled = false
-                    end
+                end
+            )
+        end
+    end
+)
+spawn(
+    function()
+        while wait() do
+            pcall(
+                function()
                     if Player.PlayerGui.MenuV2.StatFrame.Element.Text:match("Anti") then
                         Player.PlayerGui.MenuV2.StatFrame.Element.Text = "Anti Magic"
                     end
@@ -94,8 +103,6 @@ spawn(
         end
     end
 )
-
-
 wait(1)
 
 local Quests = {}
@@ -366,7 +373,6 @@ local function getNearestMob()
     return Target
 end
 
-
 for i, v in pairs(Players:GetPlayers()) do
     if v:GetRoleInGroup(15032683) ~= "Member" and v:GetRoleInGroup(15032683) ~= "Guest" and Settings.AutoHop then
         ServerHop()
@@ -380,6 +386,7 @@ Players.PlayerAdded:Connect(
     end
 )
 
+local Snap = {}
 local Snaps = {
     "Wind",
     "Fire",
@@ -516,10 +523,10 @@ local Section2 = Tab1:CreateSection("")
 local Section3 = Tab2:CreateSection("Menu")
 local Section4 = Tab2:CreateSection("Background")
 
-
 local Toggle1 = Section1:CreateToggle("Anti Mod Hop", Settings.AutoHop, function(State)
 Settings.AutoHop = State
 end)
+
 local Toggle1 = Section1:CreateToggle("Auto Mobs", Settings.AutoFarm, function(State)
 Settings.AutoFarm = State
 RunService.Stepped:Connect(
@@ -698,7 +705,7 @@ spawn(
         while Settings.Snaps do
             wait(3)
 
-            if not Player.PlayerGui.MenuV2.StatFrame.Element.Text:find(Settings.Snap) then
+            if not Player.PlayerGui.MenuV2.StatFrame.Element.Text:find(Settings.Snap) and not table.find(Snap,Player.PlayerGui.MenuV2.StatFrame.Element.Text) then
                 pcall(
                     function()
                         Player.PlayerGui.MenuV2.ShopFrame.SnapTab.Spin.Parent = Player.PlayerGui.MenuV2
@@ -716,9 +723,15 @@ spawn(
 )
 end)
 
+local LA1 = Section1:CreateLabel("")
 local Dropdown1 = Section1:CreateDropdown("Snaps", Snaps, function(Name)
     Settings.Snap = Name
+    table.insert(Snap,Name)
+    for i,v in pairs(Snap) do 
+        LA1:UpdateText(v .." Snaps To Stop At!") wait(2)
+    end
 end)
+
 
 local Toggle1 = Section1:CreateToggle("Auto Roll Race", nil, function(State)
 Settings.Races = State
