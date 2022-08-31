@@ -269,6 +269,7 @@ Player.Character.JumpCooldown.Disabled = true
 game.Players.LocalPlayer.CharacterAdded:Connect(
     function()
         if Player.Character and wait(3) then
+            Player.Character:WaitForChild("Client")
             local R = getsenv(Player.Character:FindFirstChild("Client"))
             local Swing = R.Swing
             Player.Character.JumpCooldown.Disabled = true
@@ -633,7 +634,7 @@ Settings.exhausted = State
 spawn(function()
     while wait() and Settings.exhausted do 
         pcall(function()
-            if Player.Mana.Value == Player.Mana.MaxValue then
+            if Player.Mana.Value <= 0 then
                 local Reset = Player.Character:GetModelCFrame().Position
                 Player.Character:Destroy()
                 repeat wait() until Player.Character
