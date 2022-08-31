@@ -2,7 +2,6 @@ repeat
     wait()
 until game:IsLoaded()
 
-
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
@@ -297,7 +296,17 @@ for i, v in pairs(Workspace.Areas:GetChildren()) do
         table.insert(Areas, v.Name)
     end
 end
-
+local Numbers = {
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine"
+}
 local GetTool = function()
     local Tool
     for i, v in pairs(Player.Character:GetChildren()) do
@@ -305,14 +314,30 @@ local GetTool = function()
             Tool = v
         end
     end
+   
 end
-
-local function Click()
+local Uhhh = function()
     for i, v in pairs(Player.Character:GetChildren()) do
         if v:IsA("Tool") then
             v:Activate()
         end
     end
+end 
+local Magic = function()
+    for i, v in pairs(Numbers) do
+        if Settings.IncludeMagics and Player.Character:WaitForChild("Book"):WaitForChild("Out").Value then
+            wait(4)
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, v, false, game)
+            Uhhh()
+            
+        end
+    end
+    if not Player.Character:WaitForChild("Book"):WaitForChild("Out").Value then
+        game:GetService("VirtualInputManager"):SendKeyEvent(true, "E", false, game)
+    end 
+end 
+local function Click()
+    Uhhh()
     if
         not Player.Character:FindFirstChildWhichIsA("Tool") and not Player.Character.Config.CAttackCooldown.Value and
             Player.Character.Config.CurrentCombo.Value ~= 5
@@ -329,6 +354,9 @@ local FuckDekuDimz = function()
         VirtualInputManager:SendKeyEvent(true, "F", false, game)
     end
     Click()
+    if not Player.Character:WaitForChild("Book"):WaitForChild("Out").Value then
+        game:GetService("VirtualInputManager"):SendKeyEvent(true, "E", false, game)
+    end 
 end
 
 events = {"MouseButton1Click", "MouseButton1Down", "Activated"}
@@ -587,11 +615,37 @@ spawn(
 end)
 
 
+local Toggle1 = Section1:CreateToggle("Auto Magic Attacks", Settings.IncludeMagics, function(State)
+    Settings.IncludeMagics = State
+spawn(function()
+    while Settings.IncludeMagics do wait()
+        Magic()
+        Uhhh()
+    end 
+end)
 
+end)
 local Dropdown1 = Section1:CreateDropdown("Mobs", Sus, function(Name)
 	Settings.Mob = Name
 end)
+local Toggle1 = Section1:CreateToggle("Magic Exhausted Force Reset", Settings.exhausted, function(State)
+Settings.exhausted = State
+spawn(function()
+    while wait() and Settings.exhausted do 
+        pcall(function()
+            if Player.Mana.Value == Player.Mana.MaxValue then
+                local Reset = Player.Character:GetModelCFrame().Position
+                Player.Character:Destroy()
+                repeat wait() until Player.Character
+                wait(3)
+                Player.Character:MoveTo(Reset)
+            end 
+        end)
+    end 
+end)
+end)
 
+Toggle1:AddToolTip("Disables and resets you if Magic is exhausted or should i say at 0")
 local Toggle1 = Section1:CreateToggle("Auto Bosses", Settings.Boss, function(State)
 Settings.Boss = State
 
@@ -697,7 +751,8 @@ spawn(
         while Settings.Snaps do
             wait(3)
 
-            if not table.find(Snap,Player.PlayerGui.MenuV2.StatFrame.Element.Text) then                pcall(
+            if not table.find(Snap,Player.PlayerGui.MenuV2.StatFrame.Element.Text) then               
+                pcall(
                     function()
                         Player.PlayerGui.MenuV2.ShopFrame.SnapTab.Spin.Parent = Player.PlayerGui.MenuV2
 
@@ -823,7 +878,7 @@ spawn(function()
     while wait() and Settings.HardReset do
         pcall(function()
             if Player.Character.Health.Value <= 10 then
-                Player.Character:Destroy()
+                Player.Character.Head:Destroy()
             end 
         end) 
     end 
@@ -979,7 +1034,7 @@ Settings.InfiniteJump = State
 game:GetService("UserInputService").JumpRequest:connect(
     function()
         if Settings.InfiniteJump then
-            Player.Character:FindFirstChildWhichIsA "Humanoid":ChangeState("Jumping")
+            game:GetService "Players".LocalPlayer.Character:FindFirstChildWhichIsA "Humanoid":ChangeState("Jumping")
         end
     end
 )
