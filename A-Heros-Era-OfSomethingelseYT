@@ -11,7 +11,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
 local UserInputService = game:GetService("UserInputService")
-
+local CoreGui = game:GetService("CoreGui")
 local npcs = Workspace.NPCS
 local Player = Players.LocalPlayer
 local wait = task.wait
@@ -32,7 +32,14 @@ wait()
 for i, v in pairs(getconnections(Player.Idled)) do
     v:Disable()
 end
-
+CoreGui.RobloxPromptGui.promptOverlay.DescendantAdded:Connect(
+    function()
+        if CoreGui.RobloxPromptGui.promptOverlay:FindFirstChild("ErrorPrompt") then
+            wait(25)
+            TeleportService:Teleport(game.PlaceId, Player)
+        end
+    end
+)
 local Name = "Era Of Alt.json"
 
 Des = {}
@@ -324,6 +331,7 @@ local Uhhh = function()
         end
     end
 end 
+
 local Magic = function()
     for i, v in pairs(Numbers) do
         if Settings.IncludeMagics and Player.Character:WaitForChild("Book"):WaitForChild("Out").Value then
