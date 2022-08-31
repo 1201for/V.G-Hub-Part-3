@@ -620,8 +620,10 @@ local Toggle1 = Section1:CreateToggle("Auto Magic Attacks", Settings.IncludeMagi
     Settings.IncludeMagics = State
 spawn(function()
     while Settings.IncludeMagics do wait()
-        Magic()
-        Uhhh()
+        pcall(function()
+            Magic()
+            Uhhh()
+        end)
     end 
 end)
 
