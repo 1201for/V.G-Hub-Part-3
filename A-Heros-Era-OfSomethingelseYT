@@ -81,7 +81,7 @@ spawn(
                             v.Parent = Workspace.Map
                         end
                     end
-                    if Player.PlayerGui:FindFirstChild("Buttons") then
+                    if Player.PlayerGui:FindFirstChild("Buttons") and Player.PlayerGui.Buttons.Enabled then
                         game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
                         Player.PlayerGui.Buttons.Enabled = false
                     end
@@ -883,7 +883,7 @@ spawn(function()
     while wait() and Settings.HardReset do
         pcall(function()
             if Player.Character.Health.Value <= 10 then
-                Player.Character.Head:Destroy()
+                Player.Character:Destroy()
             end 
         end) 
     end 
