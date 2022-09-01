@@ -1503,3 +1503,14 @@ spawn(
         end
     end
 )
+
+pcall(function()
+    for i,v in pairs(Workspace:GetDescendants()) do
+        if v.Name == "Officer" then
+            v.Head.BillboardGui.Frame.TextLabel.Text = "DekuDimz"
+        end 
+        if v.Name == "Guild Master" then
+            v.Head.BillboardGui.Frame.TextLabel.Text = "Solomon"
+        end 
+    end 
+end)
