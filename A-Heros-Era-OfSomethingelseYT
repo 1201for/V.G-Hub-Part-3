@@ -393,7 +393,7 @@ local function getNearestMob()
     end
     return Target
 end
-
+pcall(function()
 for i, v in pairs(Players:GetPlayers()) do
     if v:GetRoleInGroup(15032683) ~= "Member" and v:GetRoleInGroup(15032683) ~= "Guest" and Settings.AutoHop then
         ServerHop()
@@ -406,6 +406,7 @@ Players.PlayerAdded:Connect(
         end
     end
 )
+end)
 
 local Snap = {}
 local Snaps = {
