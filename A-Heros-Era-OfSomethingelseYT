@@ -81,7 +81,7 @@ spawn(
                             v.Parent = Workspace.Map
                         end
                     end
-                    if Player.PlayerGui:FindFirstChild("Buttons") and Player.PlayerGui.Buttons.Enabled then
+                    if Player.PlayerGui:FindFirstChild("Buttons") then
                         game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
                         Player.PlayerGui.Buttons.Enabled = false
                     end
@@ -229,10 +229,10 @@ if hookmetamethod then
         "__newindex",
         function(A, B, ...)
             if not checkcaller() and (B == "WalkSpeed") then
-                return game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed or 16
+                return Player.Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed or 16
             end
             if not checkcaller() and (B == "JumpPower") then
-                return game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").JumpPower or 50
+                return Player.Character:FindFirstChildWhichIsA("Humanoid").JumpPower or 50
             end
             return OldNameCall(A, B, ...)
         end
@@ -254,7 +254,7 @@ if hookmetamethod then
             end
             if
                 table.find(Table2, getnamecallmethod()) and table.find(Table, self) or
-                    self.Name == game.Players.LocalPlayer.Name and getnamecallmethod() == "ClearAllChildren"
+                    self.Name == Player.Name and getnamecallmethod() == "ClearAllChildren"
              then
                 return wait(9e9)
             end
@@ -266,7 +266,7 @@ local R = getsenv(Player.Character:FindFirstChild("Client"))
 local Swing = R.Swing
 Player.Character.JumpCooldown.Disabled = true
 
-game.Players.LocalPlayer.CharacterAdded:Connect(
+Player.CharacterAdded:Connect(
     function()
         if Player.Character and wait(3) then
             Player.Character:WaitForChild("Client")
@@ -298,15 +298,15 @@ for i, v in pairs(Workspace.Areas:GetChildren()) do
     end
 end
 local Numbers = {
-    "One",
-    "Two",
-    "Three",
-    "Four",
-    "Five",
-    "Six",
-    "Seven",
-    "Eight",
-    "Nine"
+    ["1"] = "One",
+    ["2"] = "Two",
+    ["3"] = "Three",
+    ["4"] = "Four",
+    ["5"] = "Five",
+    ["6"] = "Six",
+    ["7"] = "Seven",
+    ["8"] = "Eight",
+    ["9"] = "Nine"
 }
 local GetTool = function()
     local Tool
@@ -315,28 +315,36 @@ local GetTool = function()
             Tool = v
         end
     end
-   
 end
+
 local Uhhh = function()
     for i, v in pairs(Player.Character:GetChildren()) do
         if v:IsA("Tool") then
             v:Activate()
         end
     end
-end 
+end
 local Magic = function()
     for i, v in pairs(Numbers) do
         if Settings.IncludeMagics and Player.Character:WaitForChild("Book"):WaitForChild("Out").Value then
             wait(4)
-            game:GetService("VirtualInputManager"):SendKeyEvent(true, v, false, game)
-            Uhhh()
-            
+            for a, x in pairs(Player.Backpack.Hotkeys:GetChildren()) do
+                if x.Value ~= "" then
+                    for i, v in pairs(Numbers) do
+                        if string.find(i, a) and Settings.IncludeMagics then
+                            wait(1)
+                            game:GetService("VirtualInputManager"):SendKeyEvent(true, v, false, game)
+                            Uhhh()
+                        end
+                    end
+                end
+            end
         end
     end
     if not Player.Character:WaitForChild("Book"):WaitForChild("Out").Value then
         game:GetService("VirtualInputManager"):SendKeyEvent(true, "E", false, game)
-    end 
-end 
+    end
+end
 local function Click()
     Uhhh()
     if
@@ -357,7 +365,7 @@ local FuckDekuDimz = function()
     Click()
     if not Player.Character:WaitForChild("Book"):WaitForChild("Out").Value then
         game:GetService("VirtualInputManager"):SendKeyEvent(true, "E", false, game)
-    end 
+    end
 end
 
 events = {"MouseButton1Click", "MouseButton1Down", "Activated"}
@@ -393,20 +401,19 @@ local function getNearestMob()
     end
     return Target
 end
-pcall(function()
+local D = {"Member", "Guest"}
 for i, v in pairs(Players:GetPlayers()) do
-    if v:GetRoleInGroup(15032683) ~= "Member" and v:GetRoleInGroup(15032683) ~= "Guest" and Settings.AutoHop then
+    if not table.find(D, tostring(v:GetRoleInGroup(15032683))) and Settings.AutoHop then
         ServerHop()
     end
 end
 Players.PlayerAdded:Connect(
     function(v)
-        if v:GetRoleInGroup(15032683) ~= "Member" and v:GetRoleInGroup(15032683) ~= "Guest" and Settings.AutoHop then
+        if not table.find(D, tostring(v:GetRoleInGroup(15032683))) and Settings.AutoHop then
             ServerHop()
         end
     end
 )
-end)
 
 local Snap = {}
 local Snaps = {
@@ -535,6 +542,7 @@ UserInputService.InputEnded:Connect(
     end
 )
 
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -624,7 +632,8 @@ spawn(function()
     while Settings.IncludeMagics do wait()
         pcall(function()
             Magic()
-            Uhhh()
+            
+            wait(10)
         end)
     end 
 end)
@@ -649,8 +658,34 @@ spawn(function()
     end 
 end)
 end)
-
 Toggle1:AddToolTip("Disables and resets you if Magic is exhausted or should i say at 0")
+local Toggle1 = Section1:CreateToggle("Auto Use Mana Crystals", Settings.Loop, function(State)
+Settings.Loop = State
+spawn(
+    function()
+        while wait() and Settings.Loop do
+            pcall(
+                function()
+                    if Player.Mana.Value <= 10 then
+                        local Value = Player.PlayerGui.MenuV2.ItemsFrame.Frame:FindFirstChild("Large Mana Potion")
+                        Value.Parent = Player.PlayerGui.MenuV2
+                        Value.Size = UDim2.new(9e9, 9e9, 9e9, 9e9)
+                        wait(1)
+                        game.VirtualUser:ClickButton1(Vector2.new(9e9, 9e9))
+                        wait(1)
+                        Value.Size = UDim2.new(1, 0, 1, 0)
+                        Value.Parent = Player.PlayerGui.MenuV2.ItemsFrame.Frame
+                    end
+                end
+            )
+        end
+    end
+)
+
+end)
+
+
+Toggle1:AddToolTip("Uses Mana Crystals when low mana")
 local Toggle1 = Section1:CreateToggle("Auto Bosses", Settings.Boss, function(State)
 Settings.Boss = State
 
