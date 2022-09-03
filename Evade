@@ -1,5 +1,13 @@
-
-
+local O = {
+    9872472334,
+    10324346056,
+    10324347967,
+    10539706691,
+    10662542523,
+}
+if not table.find(O, game.PlaceId) then
+    return 
+end 
 repeat
     wait()
 until game:IsLoaded()
