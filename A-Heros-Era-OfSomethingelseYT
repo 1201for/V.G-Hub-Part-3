@@ -262,6 +262,19 @@ if hookmetamethod then
         end
     )
 end
+
+Player.Character:WaitForChild("Essence of Terror").Activated:Connect(
+    function()
+        if Player.Character:WaitForChild("Essence of Terror") then
+            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(
+                "RACIST MODE ACTIVATE",
+                "All"
+            )
+        end
+    end
+)
+
+
 local R = getsenv(Player.Character:FindFirstChild("Client"))
 local Swing = R.Swing
 Player.Character.JumpCooldown.Disabled = true
