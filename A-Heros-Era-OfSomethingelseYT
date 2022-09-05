@@ -262,7 +262,7 @@ if hookmetamethod then
         end
     )
 end
-
+pcall(function()
 Player.Character:WaitForChild("Essence of Terror").Activated:Connect(
     function()
         if Player.Character:WaitForChild("Essence of Terror") then
@@ -273,7 +273,7 @@ Player.Character:WaitForChild("Essence of Terror").Activated:Connect(
         end
     end
 )
-
+end)
 
 local R = getsenv(Player.Character:FindFirstChild("Client"))
 local Swing = R.Swing
