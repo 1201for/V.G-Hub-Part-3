@@ -265,6 +265,8 @@ end
 local R = getsenv(Player.Character:FindFirstChild("Client"))
 local Swing = R.Swing
 Player.Character.JumpCooldown.Disabled = true
+Player.Character.Scripts.Tilt.Disabled = true
+Player.Character.Scripts.Adjuster.Disabled = true
 
 Player.CharacterAdded:Connect(
     function()
@@ -273,6 +275,8 @@ Player.CharacterAdded:Connect(
             local R = getsenv(Player.Character:FindFirstChild("Client"))
             local Swing = R.Swing
             Player.Character.JumpCooldown.Disabled = true
+            Player.Character.Scripts.Tilt.Disabled = true
+            Player.Character.Scripts.Adjuster.Disabled = true
         end
     end
 )
@@ -504,7 +508,8 @@ local Table = {
     "30KMEMBERMILESTONE",
     "RobloxDown1!",
     "SchoolIsBack!",
-    "JEFFTHERTERMINATED"
+    "JEFFTHERTERMINATED",
+    "CRONGETINSTUDIO"
 }
 
 if Settings.Speed == nil then
