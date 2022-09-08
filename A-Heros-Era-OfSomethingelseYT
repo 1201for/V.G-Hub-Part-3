@@ -81,7 +81,7 @@ spawn(
                             v.Parent = Workspace.Map
                         end
                     end
-                    if Player.PlayerGui:FindFirstChild("Buttons") then
+                    if Player.PlayerGui:FindFirstChild("Buttons") and Player.PlayerGui.Buttons.Enabled then
                         game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
                         Player.PlayerGui.Buttons.Enabled = false
                     end
@@ -511,8 +511,7 @@ local Table = {
     "RobloxDown1!",
     "SchoolIsBack!",
     "JEFFTHERTERMINATED",
-    "CRONGETINSTUDIO",
-    "Update3Hype!"
+    "CRONGETINSTUDIO"
 }
 
 if Settings.Speed == nil then
@@ -700,58 +699,85 @@ Settings.Boss = State
 RunService.Stepped:Connect(
     function()
         if Settings.Boss then
-            pcall(function()
-                if Player.Character or Player.CharacterAdded:Wait(1) then
-                    Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
-                end 
-            end)
+            pcall(
+                function()
+                    if Player.Character or Player.CharacterAdded:Wait(1) then
+                        Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+                    end
+                end
+            )
         end
     end
 )
 spawn(
     function()
         while Settings.Boss and wait() do
-                pcall(function()
+            pcall(
+                function()
                     FuckDekuDimz()
-                     if Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Boss)and wait(4) and not Settings.AllBosses and Settings.D then
-                         ServerHop()
-                        end 
-                        if Settings.ServerhopMethod == "VipServerHop" and not npcs:FindFirstChild(Settings.Boss) and wait(4) and not Settings.AllBosses and Settings.D  then
-                            game.ReplicatedStorage.Events.JoinPrivateServer:FireServer(Settings.VipCode)
-                        end
                     for i, v in pairs(npcs:GetChildren()) do
                         if
-                            v:IsA("Model") and v:FindFirstChild("Head") and v.Head.Transparency ~= 1 and v.Health.Value ~= 0 and v:FindFirstChild("Boss") and
-                                table.find(Sus1, v.Name) and Settings.AllBosses or not Settings.AllBosses and 
-                                v.Name == Settings.Boss and v.Head.Transparency ~= 1 and v.Health.Value ~= 0 and v:FindFirstChild("Boss")
+                            v:IsA("Model") and v:FindFirstChild("Head") and v.Head.Transparency ~= 1 and
+                                v.Health.Value ~= 0 and
+                                v:FindFirstChild("Boss") and
+                                table.find(Sus1, v.Name) and
+                                Settings.AllBosses or
+                                not Settings.AllBosses and v.Name == Settings.Bosses and v.Head.Transparency ~= 1 and
+                                    v.Health.Value ~= 0 and
+                                    v:FindFirstChild("Boss")
                          then
                             if Settings.TeleportMethod == "InstantTP" then
                                 Player.Character.HumanoidRootPart.CFrame =
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 0) *
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 17, 0) *
                                     CFrame.Angles(Settings.Angle, 0, 0)
                             end
                             if Settings.TeleportMethod == "Tween" then
                                 Tween(
                                     Player.Character.HumanoidRootPart,
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 0) *
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 17, 0) *
                                         CFrame.Angles(Settings.Angle, 0, 0),
                                     Settings.Speed
                                 )
                             end
-                            
                         end
-                      
                     end
-            end)
+                end
+            )
         end
     end
 )
+spawn(
+    function()
+        while wait() and Settings.Boss do
+            pcall(
+                function()
+                    if
+                        Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Bosses) and wait(4) and
+                            not Settings.AllBosses and
+                            Settings.D
+                     then
+                        ServerHop()
+                    end
+                    if
+                        Settings.ServerhopMethod == "VipServerHop" and not npcs:FindFirstChild(Settings.Bosses) and
+                            wait(4) and
+                            not Settings.AllBosses and
+                            Settings.D
+                     then
+                        game.ReplicatedStorage.Events.JoinPrivateServer:FireServer(Settings.VipCode)
+                    end
+                end
+            )
+        end
+    end
+)
+
 end)
-local Toggle1 = Section1:CreateToggle("AllBosses", Settings.AllBosses, function(State)
-Settings.AllBosses = State
+local Toggle1 = Section1:CreateToggle("AllBosses", nil, function(State)
+Settings.AllBoss = State
 end)
 local Dropdown1 = Section1:CreateDropdown("Bosses", Sus1, function(Name)
-	Settings.Boss = Name
+	Settings.Bosses = Name
 end)
 local Toggle1 = Section1:CreateToggle("Serverhop After boss dead", Settings.D, function(State)
 Settings.D = State
