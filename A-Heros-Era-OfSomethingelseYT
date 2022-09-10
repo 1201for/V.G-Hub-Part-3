@@ -88,9 +88,6 @@ spawn(
                         game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
                         Player.PlayerGui.Buttons.Enabled = false
                     end
-                    if Player.PlayerGui.MenuV2.StatFrame.Element.Text:match("Anti") then
-                        Player.PlayerGui.MenuV2.StatFrame.Element.Text = "Snap: Anti Magic"
-                    end
                 end
             )
         end
@@ -412,13 +409,13 @@ local function getNearestMob()
 end
 local D = {"Member", "Guest"}
 for i, v in pairs(Players:GetPlayers()) do
-    if not table.find(D, tostring(v:GetRoleInGroup(15032683))) and Settings.AutoHop then
+    if not table.find(D, v:GetRoleInGroup(15032683)) and Settings.AutoHop then
         ServerHop()
     end
 end
 Players.PlayerAdded:Connect(
     function(v)
-        if not table.find(D, tostring(v:GetRoleInGroup(15032683))) and Settings.AutoHop then
+        if not table.find(D, v:GetRoleInGroup(15032683)) and Settings.AutoHop then
             ServerHop()
         end
     end
@@ -442,7 +439,7 @@ local Snaps = {
     "Demon",
     "Spatial",
     "Time",
-    "Anti Magic"
+    "Anti-Magic"
 }
 local Races = {
     "Elf",
@@ -514,7 +511,8 @@ local Table = {
     "RobloxDown1!",
     "SchoolIsBack!",
     "JEFFTHERTERMINATED",
-    "CRONGETINSTUDIO"
+    "CRONGETINSTUDIO",
+    "RipUpd3!"
 }
 
 if Settings.Speed == nil then
