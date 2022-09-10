@@ -76,6 +76,9 @@ spawn(
         while wait() do
             pcall(
                 function()
+                    if Player.PlayerGui:FindFirstChild("MenuV2 (NEW)") then
+                        Player.PlayerGui:WaitForChild("MenuV2 (NEW)").Name = "MenuV2"
+                    end 
                     for i, v in pairs(Workspace:GetChildren()) do
                         if v.Name == "Quest Board" then
                             v.Parent = Workspace.Map
@@ -728,13 +731,13 @@ spawn(
                          then
                             if Settings.TeleportMethod == "InstantTP" then
                                 Player.Character.HumanoidRootPart.CFrame =
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 17, 0) *
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -17, 0) *
                                     CFrame.Angles(Settings.Angle, 0, 0)
                             end
                             if Settings.TeleportMethod == "Tween" then
                                 Tween(
                                     Player.Character.HumanoidRootPart,
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, 17, 0) *
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -17, 0) *
                                         CFrame.Angles(Settings.Angle, 0, 0),
                                     Settings.Speed
                                 )
