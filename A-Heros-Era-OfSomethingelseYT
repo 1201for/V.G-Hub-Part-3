@@ -570,7 +570,18 @@ UserInputService.InputEnded:Connect(
     end
 )
 
-
+local function NoClip()
+    if identifyexecutor and identifyexecutor() ~= "Krnl" then
+        Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+    elseif identifyexecutor and identifyexecutor() == "Krnl" then
+        for i,v in pairs(Player.Character:GetChildren()) do
+            if v:IsA("BasePart") then 
+                v.CanCollide = false 
+                v.Velocity = Vector3.new(0,0,0)
+            end 
+        end 
+    end 
+end 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -593,7 +604,7 @@ RunService.Stepped:Connect(
         if Settings.AutoFarm then
             pcall(function()
                 if Player.Character or Player.CharacterAdded:Wait(1) then
-                    Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+                    NoClip()
                 end 
             end)
         end
@@ -745,7 +756,7 @@ RunService.Stepped:Connect(
             pcall(
                 function()
                     if Player.Character or Player.CharacterAdded:Wait(1) then
-                        Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+                        NoClip()
                     end
                 end
             )
@@ -817,7 +828,7 @@ RunService.Stepped:Connect(
             pcall(
                 function()
                     if Player.Character or Player.CharacterAdded:Wait(1) then
-                        Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+                        NoClip()
                     end
                 end
             )
@@ -1331,7 +1342,7 @@ noclip = false
 RunService.Stepped:connect(
     function()
         if noclip then
-            Player.Character.Humanoid:ChangeState(11)
+            NoClip()
         end
     end
 )
@@ -1341,7 +1352,7 @@ Player:GetMouse().KeyDown:connect(
         if v == "g" then
             if Settings.Sex then
                 noclip = not noclip
-                Player.Character.Humanoid:ChangeState(11)
+                NoClip()
             end
         end
     end
