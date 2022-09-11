@@ -71,14 +71,21 @@ for i, v in pairs(npcs:GetChildren()) do
     end
 end
 
+for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:GetChildren()) do
+    wait()
+    local A = Instance.new("BoolValue")
+    A.Value = false
+    A.Name = "Cooldown"
+    A.Parent = v
+end
 spawn(
     function()
-        while wait() do
+        while wait(0.1) do
             pcall(
                 function()
                     if Player.PlayerGui:FindFirstChild("MenuV2 (NEW)") then
                         Player.PlayerGui:WaitForChild("MenuV2 (NEW)").Name = "MenuV2"
-                    end 
+                    end
                     for i, v in pairs(Workspace:GetChildren()) do
                         if v.Name == "Quest Board" then
                             v.Parent = Workspace.Map
@@ -90,6 +97,24 @@ spawn(
                     end
                     if Player.PlayerGui.MenuV2.StatFrame.Element.Text:match("Anti") then
                         Player.PlayerGui.MenuV2.StatFrame.Element.Text = "Snap: Anti Magic"
+                    end
+                end
+            )
+        end
+    end
+)
+
+spawn(
+    function()
+        while wait(1) do
+            pcall(
+                function()
+                    for i, v in pairs(Player.PlayerGui.CustomBackpack.ButtonUi:GetChildren()) do
+                        if v:IsA("ImageLabel") and v.Cooldown.AbsoluteSize.Y ~= 0 then
+                            v:FindFirstChildWhichIsA("BoolValue").Value = true
+                        else
+                            v:FindFirstChildWhichIsA("BoolValue").Value = false
+                        end
                     end
                 end
             )
@@ -509,7 +534,9 @@ local Table = {
     "RobloxDown1!",
     "SchoolIsBack!",
     "JEFFTHERTERMINATED",
-    "CRONGETINSTUDIO"
+    "CRONGETINSTUDIO",
+    "Update3Hype!",
+    "RipUpd3!"
 }
 
 if Settings.Speed == nil then
@@ -626,17 +653,19 @@ spawn(
 
 end)
 
-if Player.PlayerGui.MenuV2.StatFrame.Element.Text == "Snap: Anti Magic" then
+if Player.PlayerGui.MenuV2.StatFrame.Element.Text == "Snap: Anti Magic" or Player.PlayerGui.MenuV2.StatFrame.Element.Text == "Snap: Anti-Magic" then
 local Toggle1 = Section1:CreateToggle("Black Hurricane", Settings.BlackMagic, function(State)
 Settings.BlackMagic = State
 
 spawn(
     function()
-        while wait(10) and Settings.BlackMagic do
+        while wait() and Settings.BlackMagic do
             pcall(
                 function()
-                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "One", false, game)
-                    Player.Character:FindFirstChildWhichIsA("Tool"):Activate()
+                    if Player.PlayerGui.CustomBackpack.ButtonUi.Button1:FindFirstChildWhichIsA("BoolValue").Value == false then
+                        game:GetService("VirtualInputManager"):SendKeyEvent(true, "One", false, game)
+                        Player.Character:FindFirstChildWhichIsA("Tool"):Activate()
+                    end 
                 end
             )
         end
@@ -730,17 +759,83 @@ spawn(
                 function()
                     FuckDekuDimz()
                     for i, v in pairs(npcs:GetChildren()) do
+                        if v.Name == Settings.Bosses and v.Head.Transparency ~= 1 and
+                                    v.Health.Value ~= 0
+                         then
+                            if Settings.TeleportMethod == "InstantTP" then
+                                Player.Character.HumanoidRootPart.CFrame =
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 4) *
+                                    CFrame.Angles(Settings.Angle, 0, 0)
+                            end
+                            if Settings.TeleportMethod == "Tween" then
+                                Tween(
+                                    Player.Character.HumanoidRootPart,
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 4) *
+                                        CFrame.Angles(Settings.Angle, 0, 0),
+                                    Settings.Speed
+                                )
+                            end
+                        end
+                    end
+                end
+            )
+        end
+    end
+)
+spawn(
+    function()
+        while wait() and Settings.Boss do
+            pcall(
+                function()
+                    if
+                        Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Bosses) and wait(4) and Player.Character and npcs:FindFirstChild(Settings.Bosses):FindFirstChild("Head") and npcs:FindFirstChild(Settings.Bosses).Head.Transparency ~= 1 and npcs:FindFirstChild(Settings.Bosses).Head:FindFirstChildWhichIsA("Weld") and 
+                            Settings.D 
+                     then
+                        ServerHop()
+                    end
+                    if
+                        Settings.ServerhopMethod == "VipServerHop" and not npcs:FindFirstChild(Settings.Bosses) and Player.Character  and
+                            wait(4) and Settings.D
+                     then
+                        TeleportService:Teleport(game.PlaceId, Player)
+                        game.ReplicatedStorage.Events.JoinPrivateServer:FireServer(Settings.VipCode)
+                    end
+                end
+            )
+        end
+    end
+)
+
+end)
+local Toggle1 = Section1:CreateToggle("AllBosses", Settings.AllBoss, function(State)
+Settings.AllBoss = State
+
+
+RunService.Stepped:Connect(
+    function()
+        if Settings.AllBoss then
+            pcall(
+                function()
+                    if Player.Character or Player.CharacterAdded:Wait(1) then
+                        Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+                    end
+                end
+            )
+        end
+    end
+)
+spawn(
+    function()
+        while Settings.AllBoss and wait() do
+            pcall(
+                function()
+                    FuckDekuDimz()
+                    for i, v in pairs(npcs:GetChildren()) do
                         if
                             v:IsA("Model") and v:FindFirstChild("Head") and v.Head.Transparency ~= 1 and
                                 v.Health.Value ~= 0 and
-                                v:FindFirstChild("Boss") and
-                                table.find(Sus1, v.Name) and
-                                Settings.AllBosses or
-                                not Settings.AllBosses and v.Name == Settings.Bosses and v.Head.Transparency ~= 1 and
-                                    v.Health.Value ~= 0 and
-                                    v:FindFirstChild("Boss")
-                         then
-                            if Settings.TeleportMethod == "InstantTP" then
+                                table.find(Sus1, v.Name) then
+                          if Settings.TeleportMethod == "InstantTP" then
                                 Player.Character.HumanoidRootPart.CFrame =
                                     v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 0) *
                                     CFrame.Angles(Settings.Angle, 0, 0)
@@ -760,35 +855,6 @@ spawn(
         end
     end
 )
-spawn(
-    function()
-        while wait() and Settings.Boss do
-            pcall(
-                function()
-                    if
-                        Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Bosses) and wait(4) and
-                            not Settings.AllBosses and
-                            Settings.D
-                     then
-                        ServerHop()
-                    end
-                    if
-                        Settings.ServerhopMethod == "VipServerHop" and not npcs:FindFirstChild(Settings.Bosses) and
-                            wait(4) and
-                            not Settings.AllBosses and
-                            Settings.D
-                     then
-                        game.ReplicatedStorage.Events.JoinPrivateServer:FireServer(Settings.VipCode)
-                    end
-                end
-            )
-        end
-    end
-)
-
-end)
-local Toggle1 = Section1:CreateToggle("AllBosses", nil, function(State)
-Settings.AllBoss = State
 end)
 local Dropdown1 = Section1:CreateDropdown("Bosses", Sus1, function(Name)
 	Settings.Bosses = Name
@@ -820,7 +886,7 @@ local Slider3 = Section1:CreateSlider("Tween Speed",0,1000,Settings.Speed,false,
 	Settings.Speed = Value
 end)
 
-local Slider3 = Section1:CreateSlider("AutoFarm Distance",0,15,Settings.Height,false, function(Value)
+local Slider3 = Section1:CreateSlider("AutoFarm Distance",0,20,Settings.Height,false, function(Value)
 	Settings.Height = Value
 end)
 local Slider3 = Section1:CreateSlider("AutoFarm Angle",0,360,Settings.Angle,false, function(Value)
