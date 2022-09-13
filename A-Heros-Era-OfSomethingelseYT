@@ -799,7 +799,7 @@ spawn(
             pcall(
                 function()
                     if
-                        Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Bosses) and wait(4) and Player.Character and npcs:FindFirstChild(Settings.Bosses):FindFirstChild("Head") and npcs:FindFirstChild(Settings.Bosses).Head.Transparency ~= 1 and npcs:FindFirstChild(Settings.Bosses).Head:FindFirstChildWhichIsA("Weld") and 
+                        Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Bosses) and wait(4) and Player.Character and 
                             Settings.D 
                      then
                         ServerHop()
