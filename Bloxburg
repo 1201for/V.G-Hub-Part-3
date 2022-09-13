@@ -1,0 +1,567 @@
+local Config = {
+    WindowName = "V.G Hub",
+    Color = Color3.fromRGB(255, 128, 64),
+    Keybind = Enum.KeyCode.RightControl
+}
+repeat
+    wait()
+until game:IsLoaded()
+wait()
+game:GetService("Players").LocalPlayer.Idled:connect(
+    function()
+        game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+    end
+)
+local Name = "BloxBurg.json"
+
+Des = {}
+if makefolder then
+    makefolder("V.G Hub")
+end
+
+local Settings
+
+if
+    not pcall(
+        function()
+            readfile("V.G Hub//" .. Name)
+        end
+    )
+ then
+    writefile("V.G Hub//" .. Name, game:GetService("HttpService"):JSONEncode(Des))
+end
+
+Settings = game:GetService("HttpService"):JSONDecode(readfile("V.G Hub//" .. Name))
+
+local function Save()
+    writefile("V.G Hub//" .. Name, game:GetService("HttpService"):JSONEncode(Settings))
+end
+
+-- Wait for game to load
+
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local wait = task.wait
+local spawn = task.spawn
+local Player = Players.LocalPlayer
+local St = ReplicatedStorage.Stats[Player.Name]
+local Workstations = Workspace.Environment.Locations
+local Da = require(ReplicatedStorage.Modules.DataService)
+local Jo = require(Player.PlayerGui.MainGUI.Scripts.JobHandler)
+local PathfindingService = game:GetService("PathfindingService")
+local Gamei = Workspace["_game"]
+
+local Fire = function(A)
+    local O = getfenv(Da.FireServer).i
+    getfenv(Da.FireServer).i = function()
+    end
+    Da:FireServer(A)
+    getfenv(Da.FireServer).i = O
+end
+local Invoke = function(A)
+    local O = getfenv(Da.InvokeServer).i
+    getfenv(Da.InvokeServer).i = function()
+    end
+    Da:InvokeServer(A)
+    getfenv(Da.InvokeServer).i = O
+end
+
+local Order = function(A)
+    if not A or (A and not A:FindFirstChild("Order")) then
+        return
+    end
+    if St.Job.Value == "StylezHairdresser" then
+        local B = A.Order:WaitForChild("Style").Value
+        local C = A.Order:WaitForChild("Color").Value
+        return {B, C}
+    elseif St.Job.Value == "BloxyBurgersCashier" then
+        local D = A.Order:WaitForChild("Burger").Value
+        local F = A.Order:WaitForChild("Fries").Value
+        local G = A.Order:WaitForChild("Cola").Value
+        return {D, F, G}
+    end
+end
+
+local function AD(A)
+    local Speed = 1
+    if Player.Character:FindFirstChildOfClass("Model") then
+        Speed =
+            ReplicatedStorage.Shared.VehicleHandler.VehicleData[
+            string.split(Player.Character:FindFirstChildOfClass("Model").Name, "_")[2]
+        ].ForwardSpeed
+    else
+        Speed = Player.Character.Humanoid.WalkSpeed
+    end
+end
+local function AutoDrive(pos)
+    local A, B = pcall(AD, pos)
+    if not A then
+        wait()
+    end
+end
+
+local function getNearestCleaner()
+    local TargetDistance = math.huge
+    local Target
+    for i, v in pairs(Workspace.Environment.Locations.GreenClean.Spawns:GetChildren()) do
+        if
+            v:FindFirstChildWhichIsA("BasePart") and v.Name == "WallSpawn" or
+                v:FindFirstChildWhichIsA("Model") and v.Name == "GroundSpawn"
+         then
+            local Mag = (v.Position - Player.Character.HumanoidRootPart.Position).Magnitude
+            if Mag < TargetDistance then
+                TargetDistance = Mag
+                Target = v
+            end
+        end
+    end
+    return Target
+end
+
+spawn(
+    function()
+        while wait() do
+            pcall(
+                function()
+                    if Settings.Stylish then
+                        if (St.Job.Value ~= "StylezHairdresser") then
+                            Jo:GoToWork("StylezHairdresser") --> TP to job
+                        end
+
+                        repeat
+                            wait()
+                        until St.Job.Value == "StylezHairdresser"
+                        for i, v in pairs(
+                            Workspace.Environment.Locations.StylezHairStudio.HairdresserWorkstations:GetChildren()
+                        ) do
+                            if v.InUse.Value == nil or v.InUse.Value == Player.Name then
+                                Player.Character:WaitForChild("Humanoid"):MoveTo(v.Stool:GetModelCFrame().Position)
+                            end
+                            Fire(
+                                {
+                                    Type = "FinishOrder",
+                                    Workstation = v,
+                                    Order = Order(v.Occupied.Value)
+                                }
+                            )
+                        end
+                        wait(5)
+                        if
+                            tonumber(
+                                Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                            ) >= 1000
+                         then
+                            Jo:StopWorking()
+                            wait(10)
+                            return
+                        end
+                    end
+                    if Settings.Burger then
+                        if (St.Job.Value ~= "BloxyBurgersCashier") then
+                            Jo:GoToWork("BloxyBurgersCashier") --> TP to job
+                        end
+
+                        repeat
+                            wait()
+                        until St.Job.Value == "BloxyBurgersCashier"
+                        for i, v in pairs(
+                            game:GetService("Workspace").Environment.Locations.BloxyBurgers.CashierWorkstations:GetChildren(
+
+                            )
+                        ) do
+                            if v.InUse.Value == nil or v.InUse.Value == Player.Name then
+                                Player.Character:WaitForChild("Humanoid"):MoveTo(
+                                    v.OrderDisplay:GetModelCFrame().Position
+                                )
+                            end
+                            Fire(
+                                {
+                                    Type = "FinishOrder",
+                                    Workstation = v,
+                                    Order = Order(v.Occupied.Value)
+                                }
+                            )
+                        end
+                        wait(5)
+                        if
+                            tonumber(
+                                Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                            ) >= 1000
+                         then
+                            Jo:StopWorking()
+                            wait(10)
+                            return
+                        end
+                    end
+                    --[[if Settings.Pizza then
+                if (St.Job.Value ~= "PizzaPlanetDelivery") then
+                    Jo:GoToWork("PizzaPlanetDelivery") --> TP to job
+                end
+                repeat
+                    wait()
+                until St.Job.Value == "PizzaPlanetDelivery"
+                if not Player.Character:FindFirstChildWhichIsA("Model") and wait(1) then
+               Invoke({ Type = 'UsePizzaMoped' })
+               end 
+                            if Player.Character:FindFirstChildWhichIsA("Model") then
+                                local Boxes = workspace.Environment.Locations.PizzaPlanet.Conveyor.MovingBoxes:GetChildren()
+                                local Customer = nil
+                                for i, v in pairs(Boxes) do
+                                    if Customer then
+                                        break
+                                    end
+                                    Player.Character:SetPrimaryPartCFrame(CFrame.new(v.Position) + Vector3.new(0, 7, 0))
+                                    wait(1)
+                                    Customer = Invoke({ Type = 'TakePizzaBox', Box = v })
+                                end
+            
+                                AutoDrive(Customer.HumanoidRootPart.Position)
+            
+                                wait(1)
+            
+                                Fire({
+                                    Type = "DeliverPizza", 
+                                    Customer = Customer
+                                })
+                                
+                                wait(.2)
+                            end end ]]
+                    if Settings.CleanJanitor then
+                        if (St.Job.Value ~= "CleanJanitor") then
+                            Jo:GoToWork("CleanJanitor") --> TP to job
+                        end
+
+                        repeat
+                            wait()
+                        until St.Job.Value == "CleanJanitor"
+                        local v = getNearestCleaner()
+                        if v:FindFirstChildWhichIsA("BasePart") then
+                            Player.Character.Humanoid:MoveTo(v.Position)
+                        end
+                        if v:FindFirstChildWhichIsA("Model") then
+                            Player.Character.Humanoid:MoveTo(
+                                v:FindFirstChildWhichIsA("Model"):GetModelCFrame().Position
+                            )
+                        end
+                        if (Player.Character.HumanoidRootPart.Position - v.Position).Magnitude < 5 then
+                            Invoke(
+                                {
+                                    Type = "CleanJanitorObject",
+                                    Spawn = v
+                                }
+                            )
+                        end
+                    end
+                end
+            )
+        end
+    end
+)
+
+spawn(
+    function()
+        while wait() do
+            wait()
+            pcall(
+                function()
+                    Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text =
+                        string.gsub(
+                        Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text,
+                        "$ ",
+                        ""
+                    )
+                    Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text =
+                        string.gsub(
+                        Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text,
+                        " ",
+                        ""
+                    )
+                end
+            )
+        end
+    end
+)
+
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
+local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
+
+local Tab1 = Window:CreateTab("Anime Rifts")
+local Tab2 = Window:CreateTab("UI Settings")
+
+local Section1 = Tab1:CreateSection("")
+local Section2 = Tab1:CreateSection("")
+local Section3 = Tab2:CreateSection("Menu")
+local Section4 = Tab2:CreateSection("Background")
+
+
+local Toggle1 = Section1:CreateToggle("StylezHairdresser", Settings.Stylish, function(State)
+    Settings.Stylish = State 
+end)
+
+local Toggle1 = Section1:CreateToggle("BloxyBurgersCashier", Settings.Burger, function(State)
+    Settings.Burger = State 
+end)
+local Toggle1 = Section1:CreateToggle("CleanJanitor", Settings.CleanJanitor, function(State)
+    Settings.CleanJanitor = State 
+    RunService.Stepped:connect(function()
+        if Settings.CleanJanitor then
+            for i,v in pairs(Player.Character:GetChildren()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end 
+            end 
+        end 
+    end)
+end)
+
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/Karrot-Esp"))()
+
+local Toggle1 = Section1:CreateToggle("Enable Esp", Settings.Esp, function(State)
+    Settings.Esp = State
+    ESP:Toggle(Settings.Esp)
+end)
+
+local Toggle1 = Section1:CreateToggle("PLayer Esp", Settings.PlayerEsp, function(State)
+    Settings.PlayerEsp = State
+    ESP.Players = Settings.PlayerEsp
+end)
+local Toggle1 = Section1:CreateToggle("Tracers Esp", Settings.Tracers, function(State)
+    Settings.Tracers = State
+    ESP.Tracers = Settings.Tracers
+end)
+local Toggle1 = Section1:CreateToggle("Name Esp", Settings.EspNames, function(State)
+    ESP.Names = Settings.EspNames
+    Settings.EspNames = State
+end)
+local Toggle1 = Section1:CreateToggle("Boxes Esp", Settings.Boxes, function(State)
+    Settings.Boxes = State
+    ESP.Boxes = Settings.Boxes
+end)
+
+local Toggle1 = Section2:CreateToggle("Invisicam", Settings.Sorry, function(State)
+Settings.Sorry = State
+if Settings.Sorry then
+    Player.DevCameraOcclusionMode = "Invisicam"
+else
+    Player.DevCameraOcclusionMode = "Zoom"
+end
+end)
+
+local Toggle1 = Section2:CreateToggle("N Noclip", Settings.Sex1, function(State)
+noclips = false
+Settings.Sex1 = State
+Player:GetMouse().KeyDown:connect(
+    function(v)
+        if v == "n" then
+            if Settings.Sex1 then
+                noclips = not noclips
+                for i, v in pairs(Character:GetChildren()) do
+                    if v:IsA("BasePart") then
+                        pcall(function()
+                        v.CanCollide = false
+                        end)
+                    end
+                end
+            end
+        end
+    end
+)
+RunService.Stepped:connect(
+    function()
+        if noclips then
+            for i, v in pairs(Character:GetChildren()) do
+                if v:IsA("BasePart") then
+                    pcall(function()
+                    v.CanCollide = false
+                    end)
+                end
+            end
+        end
+    end
+)
+
+end)
+
+local Toggle1 = Section2:CreateToggle("G Noclip", Settings.Sex, function(State)
+Settings.Sex = State
+noclip = false
+RunService.Stepped:connect(
+    function()
+        if noclip then
+            Character.Humanoid:ChangeState(11)
+        end
+    end
+)
+mouse = Player:GetMouse()
+Player:GetMouse().KeyDown:connect(
+    function(v)
+        if v == "g" then
+            if Settings.Sex then
+                noclip = not noclip
+                Character.Humanoid:ChangeState(11)
+            end
+        end
+    end
+)
+end)
+
+local Button1 = Section2:CreateButton("Anti Lag", function()
+for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+    if v:IsA("BasePart") and not v.Parent:FindFirstChild("Humanoid") then
+        v.Material = Enum.Material.SmoothPlastic
+        if v:IsA("Texture") then
+            v:Destroy()
+        end
+    end
+end
+end)
+
+local Button1 = Section2:CreateButton("Lag Switch F3", function()
+local ass = false
+local bitch = settings()
+
+game:GetService("UserInputService").InputEnded:connect(
+    function(i)
+        if i.KeyCode == Enum.KeyCode.F3 then
+            ass = not ass
+            bitch.Network.IncomingReplicationLag = ass and 10 or 0
+        end
+    end
+)
+end) 
+local Button1 = Section2:CreateButton("ServerHop", function()
+local PlaceID = game.PlaceId
+local AllIDs = {}
+local foundAnything = ""
+local actualHour = os.date("!*t").hour
+local Deleted = false
+local File = pcall(function()
+    AllIDs = game:GetService('HttpService'):JSONDecode(readfile("NotSameServers.json"))
+end)
+if not File then
+    table.insert(AllIDs, actualHour)
+    writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+end
+function TPReturner()
+    local Site;
+    if foundAnything == "" then
+        Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
+    else
+        Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything))
+    end
+    local ID = ""
+    if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
+        foundAnything = Site.nextPageCursor
+    end
+    local num = 0;
+    for i,v in pairs(Site.data) do
+        local Possible = true
+        ID = tostring(v.id)
+        if tonumber(v.maxPlayers) > tonumber(v.playing) then
+            for _,Existing in pairs(AllIDs) do
+                if num ~= 0 then
+                    if ID == tostring(Existing) then
+                        Possible = false
+                    end
+                else
+                    if tonumber(actualHour) ~= tonumber(Existing) then
+                        local delFile = pcall(function()
+                            delfile("NotSameServers.json")
+                            AllIDs = {}
+                            table.insert(AllIDs, actualHour)
+                        end)
+                    end
+                end
+                num = num + 1
+            end
+            if Possible == true then
+                table.insert(AllIDs, ID)
+                wait(getgenv().delay2)
+                pcall(function()
+                    writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+                    wait(getgenv().delay2)
+                    game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, Player)
+                end)
+                wait(4)
+            end
+        end
+    end
+end
+
+function Teleport()
+    while wait(getgenv().delay2) do
+        pcall(function()
+            TPReturner()
+            if foundAnything ~= "" then
+                TPReturner()
+            end
+        end)
+    end
+end
+
+-- If you'd like to use a script before server hopping (Like a Automatic Chest collector you can put the Teleport() after it collected everything.
+Teleport() 
+end)
+local Button1 = Section2:CreateButton("Rejoin", function()
+game:GetService("TeleportService"):Teleport(game.PlaceId, Player) end)
+
+
+
+local Toggle3 = Section3:CreateToggle("UI Toggle", nil, function(State)
+	Window:Toggle(State)
+end)
+Toggle3:CreateKeybind(tostring(Config.Keybind):gsub("Enum.KeyCode.", ""), function(Key)
+	Config.Keybind = Enum.KeyCode[Key]
+end)
+Toggle3:SetState(true)
+Section3:CreateLabel("Credits DekuDimz#7960")
+Section3:CreateLabel("Credits AlexR32#3232 Ui")
+Section3:CreateLabel("Credits The3Bakers")
+local Colorpicker3 = Section3:CreateColorpicker("UI Color", function(Color)
+	Window:ChangeColor(Color)
+end)
+Colorpicker3:UpdateColor(Config.Color)
+
+-- credits to jan for patterns
+local Dropdown3 = Section4:CreateDropdown("Image", {"Default","Hearts","Abstract","Hexagon","Circles","Lace With Flowers","Floral"}, function(Name)
+	if Name == "Default" then
+		Window:SetBackground("2151741365")
+	elseif Name == "Hearts" then
+		Window:SetBackground("6073763717")
+	elseif Name == "Abstract" then
+		Window:SetBackground("6073743871")
+	elseif Name == "Hexagon" then
+		Window:SetBackground("6073628839")
+	elseif Name == "Circles" then
+		Window:SetBackground("6071579801")
+	elseif Name == "Lace With Flowers" then
+		Window:SetBackground("6071575925")
+	elseif Name == "Floral" then
+		Window:SetBackground("5553946656")
+	end
+end)
+Dropdown3:SetOption("Default")
+
+local Colorpicker4 = Section4:CreateColorpicker("Color", function(Color)
+	Window:SetBackgroundColor(Color)
+end)
+Colorpicker4:UpdateColor(Color3.new(1,1,1))
+
+local Slider3 = Section4:CreateSlider("Transparency",0,1,nil,false, function(Value)
+	Window:SetBackgroundTransparency(Value)
+end)
+Slider3:SetValue(0)
+
+local Slider4 = Section4:CreateSlider("Tile Scale",0,1,nil,false, function(Value)
+	Window:SetTileScale(Value)
+end)
+Slider4:SetValue(0.5)
+spawn(function()
+while wait() do
+Save()
+end end)
