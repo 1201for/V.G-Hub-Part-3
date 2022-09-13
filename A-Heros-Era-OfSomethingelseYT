@@ -673,7 +673,7 @@ spawn(
         while wait() and Settings.BlackMagic do
             pcall(
                 function()
-                    if Player.PlayerGui.CustomBackpack.ButtonUi.Button1:FindFirstChildWhichIsA("BoolValue").Value == false then
+                    if Player.PlayerGui.CustomBackpack.ButtonUi.Button1:FindFirstChildWhichIsA("BoolValue").Value == false and Player.Character then
                         game:GetService("VirtualInputManager"):SendKeyEvent(true, "One", false, game)
                         Player.Character:FindFirstChildWhichIsA("Tool"):Activate()
                     end 
