@@ -71,13 +71,6 @@ for i, v in pairs(npcs:GetChildren()) do
     end
 end
 
-for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:GetChildren()) do
-    wait()
-    local A = Instance.new("BoolValue")
-    A.Value = false
-    A.Name = "Cooldown"
-    A.Parent = v
-end
 spawn(
     function()
         while wait(0.1) do
@@ -140,89 +133,24 @@ for i, v in pairs(Workspace.Map:GetChildren()) do
 end
 
 local function ServerHop()
-    local PlaceID = game.PlaceId
-    local AllIDs = {}
-    local foundAnything = ""
-    local actualHour = os.date("!*t").hour
-    local Deleted = false
-    function TPReturner()
-        local Site
-        if foundAnything == "" then
-            Site =
-                game.HttpService:JSONDecode(
-                game:HttpGet(
-                    "https://games.roblox.com/v1/games/" .. PlaceID .. "/servers/Public?sortOrder=Asc&limit=100"
-                )
+    local HttpService = game:GetService("HttpService")
+    local ABC = {}
+    for _, v in ipairs(
+        HttpService:JSONDecode(
+            game:HttpGetAsync(
+                "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"
             )
-        else
-            Site =
-                game.HttpService:JSONDecode(
-                game:HttpGet(
-                    "https://games.roblox.com/v1/games/" ..
-                        PlaceID .. "/servers/Public?sortOrder=Asc&limit=100&cursor=" .. foundAnything
-                )
-            )
-        end
-        local ID = ""
-        if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
-            foundAnything = Site.nextPageCursor
-        end
-        local num = 0
-        for i, v in pairs(Site.data) do
-            local Possible = true
-            ID = tostring(v.id)
-            if tonumber(v.maxPlayers) > tonumber(v.playing) then
-                for _, Existing in pairs(AllIDs) do
-                    if num ~= 0 then
-                        if ID == tostring(Existing) then
-                            Possible = false
-                        end
-                    else
-                        if tonumber(actualHour) ~= tonumber(Existing) then
-                            local delFile =
-                                pcall(
-                                function()
-                                    delfile("NotSameServers.json")
-                                    AllIDs = {}
-                                    table.insert(AllIDs, actualHour)
-                                end
-                            )
-                        end
-                    end
-                    num = num + 1
-                end
-                if Possible == true then
-                    table.insert(AllIDs, ID)
-                    wait()
-                    pcall(
-                        function()
-                            writefile("NotSameServers.json", HttpService:JSONEncode(AllIDs))
-                            wait()
-                            game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, Player)
-                        end
-                    )
-                    wait(4)
-                end
-            end
+        ).data
+    ) do
+        if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
+            ABC[#ABC + 1] = v.id
         end
     end
-
-    function Teleport()
-        while wait() do
-            pcall(
-                function()
-                    TPReturner()
-                    if foundAnything ~= "" then
-                        TPReturner()
-                    end
-                end
-            )
-        end
+    if #ABC > 0 then
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, ABC[math.random(1, #ABC)])
     end
-
-    -- If you'd like to use a script before server hopping (Like a Automatic Chest collector you can put the Teleport() after it collected everything.
-    Teleport() --CharWars
 end
+
 
 local Armor = {}
 for i, v in pairs(game.Workspace:WaitForChild("Purchases").Armor:GetChildren()) do
@@ -443,7 +371,16 @@ Players.PlayerAdded:Connect(
         end
     end
 )
-
+game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:WaitForChild("Button1")
+repeat wait()
+for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:GetChildren()) do
+    wait()
+    local A = Instance.new("BoolValue")
+    A.Value = false
+    A.Name = "Cooldown"
+    A.Parent = v
+end
+until game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:FindFirstChild("Button1"):FindFirstChildWhichIsA("BoolValue")
 local Snap = {}
 local Snaps = {
     "Wind",
@@ -798,8 +735,8 @@ spawn(
         while wait() and Settings.Boss do
             pcall(
                 function()
-                                        for i, v in pairs(npcs:GetChildren()) do
-                        if not v.Head:FindFirstChildWhichIsA("Weld") and Player.Character
+                        for i, v in pairs(npcs:GetChildren()) do
+                        if not v.Head:FindFirstChildWhichIsA("Weld") and v.Torso:FindFirstChildWhichIsA("Weld") and wait(4)
                          then
                     if
                         Settings.ServerhopMethod == "ServerHop" and
