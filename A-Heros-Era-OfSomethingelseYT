@@ -775,7 +775,7 @@ spawn(
                          then
                             if Settings.TeleportMethod == "InstantTP" then
                                 Player.Character.HumanoidRootPart.CFrame =
-                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 4) *
+                                    v.HumanoidRootPart.CFrame * CFrame.new(0, -Settings.Height, 3) *
                                     CFrame.Angles(Settings.Angle, 0, 0)
                             end
                             if Settings.TeleportMethod == "Tween" then
@@ -798,19 +798,23 @@ spawn(
         while wait() and Settings.Boss do
             pcall(
                 function()
+                                        for i, v in pairs(npcs:GetChildren()) do
+                        if not v.Head:FindFirstChildWhichIsA("Weld") and Player.Character
+                         then
                     if
-                        Settings.ServerhopMethod == "ServerHop" and not npcs:FindFirstChild(Settings.Bosses) and wait(4) and Player.Character and 
+                        Settings.ServerhopMethod == "ServerHop" and
                             Settings.D 
                      then
                         ServerHop()
                     end
                     if
-                        Settings.ServerhopMethod == "VipServerHop" and not npcs:FindFirstChild(Settings.Bosses) and Player.Character  and
+                        Settings.ServerhopMethod == "VipServerHop" and 
                             wait(4) and Settings.D
                      then
                         TeleportService:Teleport(game.PlaceId, Player)
                         game.ReplicatedStorage.Events.JoinPrivateServer:FireServer(Settings.VipCode)
-                    end
+                     end
+                end end 
                 end
             )
         end
