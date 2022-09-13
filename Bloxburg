@@ -247,7 +247,7 @@ spawn(
                                 v:FindFirstChildWhichIsA("Model"):GetModelCFrame().Position
                             )
                         end
-                        if (Player.Character.HumanoidRootPart.Position - v.Position).Magnitude < 5 then
+                        if (Player.Character.HumanoidRootPart.Position - v.Position).Magnitude < 10 then
                             Invoke(
                                 {
                                     Type = "CleanJanitorObject",
@@ -256,11 +256,63 @@ spawn(
                             )
                         end
                     end
+                    if Settings.HutFisherman then
+                        if St.Job.Value ~= "HutFisherman" then
+                            Jo:GoToWork("HutFisherman")
+                        end
+                        repeat
+                            wait()
+                        until St.Job.Value == "HutFisherman"
+                        if Player.Character:FindFirstChild("Fishing Rod") then
+                            local Done = false
+                            spawn(
+                                function()
+                                    repeat
+                                        wait()
+                                        if not Player.Character:FindFirstChild("Fishing Rod") then
+                                            break
+                                        end
+                                    until Player.Character:FindFirstChild("Fishing Rod"):FindFirstChild("Bobber").CFrame.Y <
+                                        6
+                                    Done = true
+                                end
+                            )
+                            Player.Character.Humanoid:MoveTo(Vector3.new(1053, 10, 1099))
+                            local time = tick()
+                            Fire(
+                                {
+                                    State = true,
+                                    Type = "UseFishingRod",
+                                    Pos = Vector3.new(1032, 6, 1107)
+                                }
+                            )
+                            repeat
+                                wait()
+                            until Done
+                            Fire(
+                                {
+                                    State = false,
+                                    Type = "UseFishingRod",
+                                    Time = tick() - time
+                                }
+                            )
+                            if
+                                tonumber(
+                                    Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                                ) >= 1000
+                             then
+                                Jo:StopWorking()
+                                wait(10)
+                                return
+                            end
+                        end
+                    end
                 end
             )
         end
     end
 )
+
 
 spawn(
     function()
@@ -310,6 +362,18 @@ local Toggle1 = Section1:CreateToggle("CleanJanitor", Settings.CleanJanitor, fun
     Settings.CleanJanitor = State 
     RunService.Stepped:connect(function()
         if Settings.CleanJanitor then
+            for i,v in pairs(Player.Character:GetChildren()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end 
+            end 
+        end 
+    end)
+end)
+local Toggle1 = Section1:CreateToggle("HutFisherman", Settings.HutFisherman, function(State)
+    Settings.HutFisherman = State 
+    RunService.Stepped:connect(function()
+        if Settings.HutFisherman then
             for i,v in pairs(Player.Character:GetChildren()) do
                 if v:IsA("BasePart") then
                     v.CanCollide = false
