@@ -51,7 +51,11 @@ local Player = Players.LocalPlayer
 local St = ReplicatedStorage.Stats[Player.Name]
 local Workstations = Workspace.Environment.Locations
 local Da = require(ReplicatedStorage.Modules.DataService)
-local Jo = require(Player.PlayerGui.MainGUI.Scripts.JobHandler)
+if Player.PlayerGui.MainGUI:FindFirstChild("Scripts") then
+local Jo = require(Player.PlayerGui.MainGUI:WaitForChild("Scripts").JobHandler)
+elseif Player.PlayerScripts:FindFirstChild("Modules"):FindFirstChild("JobHandler") then
+local Jo = require(Player.PlayerScripts.Modules.JobHandler)
+end 
 local PathfindingService = game:GetService("PathfindingService")
 local Gamei = Workspace["_game"]
 
@@ -585,7 +589,7 @@ end)
 Toggle3:SetState(true)
 Section3:CreateLabel("Credits DekuDimz#7960")
 Section3:CreateLabel("Credits AlexR32#3232 Ui")
-Section3:CreateLabel("Credits The3Bakers")
+Section3:CreateLabel("Credits inverevt")
 local Colorpicker3 = Section3:CreateColorpicker("UI Color", function(Color)
 	Window:ChangeColor(Color)
 end)
