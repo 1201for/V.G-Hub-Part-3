@@ -51,11 +51,7 @@ local Player = Players.LocalPlayer
 local St = ReplicatedStorage.Stats[Player.Name]
 local Workstations = Workspace.Environment.Locations
 local Da = require(ReplicatedStorage.Modules.DataService)
-if Player.PlayerGui.MainGUI:FindFirstChild("Scripts") then
-local Jo = require(Player.PlayerGui.MainGUI:WaitForChild("Scripts").JobHandler)
-elseif Player.PlayerScripts:FindFirstChild("Modules"):FindFirstChild("JobHandler") then
 local Jo = require(Player.PlayerScripts.Modules.JobHandler)
-end 
 local PathfindingService = game:GetService("PathfindingService")
 local Gamei = Workspace["_game"]
 
