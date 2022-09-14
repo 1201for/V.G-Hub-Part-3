@@ -51,7 +51,9 @@ local Player = Players.LocalPlayer
 local St = ReplicatedStorage.Stats[Player.Name]
 local Workstations = Workspace.Environment.Locations
 local Da = require(ReplicatedStorage.Modules.DataService)
+
 local Jo = require(Player.PlayerScripts.Modules.JobHandler)
+
 local PathfindingService = game:GetService("PathfindingService")
 local Gamei = Workspace["_game"]
 
@@ -149,7 +151,7 @@ spawn(
                                 }
                             )
                         end
-                        wait(math.random(5,10))
+                        wait(math.random(5, 10))
                         if
                             tonumber(
                                 Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
@@ -186,7 +188,7 @@ spawn(
                                 }
                             )
                         end
-                        wait(math.random(5,10))
+                        wait(math.random(5, 10))
                         if
                             tonumber(
                                 Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
@@ -337,13 +339,26 @@ local Toggle1 = Section1:CreateToggle("CleanJanitor", Settings.CleanJanitor, fun
         end 
     end)
 end)
-local Toggle1 = Section1:CreateToggle("HutFisherman", Settings.HutFisherman, function(State)
-    Settings.HutFisherman = State 
+local Toggle1 = Section1:CreateToggle("CleanJanitor", Settings.CleanJanitor, function(State)
+    Settings.CleanJanitor = State 
     RunService.Stepped:connect(function()
-        if Settings.HutFisherman then
+        if Settings.CleanJanitor then
             for i,v in pairs(Player.Character:GetChildren()) do
                 if v:IsA("BasePart") then
                     v.CanCollide = false
+                end 
+            end 
+        end 
+    end)
+end)
+local Toggle1 = Section1:CreateToggle("PizzaPlanetDelivery", Settings.PizzaPlanetDelivery, function(State)
+    Settings.PizzaPlanetDelivery = State 
+    RunService.Stepped:connect(function()
+        if Settings.PizzaPlanetDelivery then
+            for i,v in pairs(Player.Character:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                    v.Velocity = Vector3.new(0,0,0)
                 end 
             end 
         end 
