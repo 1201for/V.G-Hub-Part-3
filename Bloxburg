@@ -149,7 +149,7 @@ spawn(
                                 }
                             )
                         end
-                        wait(5)
+                        wait(math.random(5,10))
                         if
                             tonumber(
                                 Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
@@ -186,7 +186,7 @@ spawn(
                                 }
                             )
                         end
-                        wait(5)
+                        wait(math.random(5,10))
                         if
                             tonumber(
                                 Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
@@ -197,39 +197,6 @@ spawn(
                             return
                         end
                     end
-                    --[[if Settings.Pizza then
-                if (St.Job.Value ~= "PizzaPlanetDelivery") then
-                    Jo:GoToWork("PizzaPlanetDelivery") --> TP to job
-                end
-                repeat
-                    wait()
-                until St.Job.Value == "PizzaPlanetDelivery"
-                if not Player.Character:FindFirstChildWhichIsA("Model") and wait(1) then
-               Invoke({ Type = 'UsePizzaMoped' })
-               end 
-                            if Player.Character:FindFirstChildWhichIsA("Model") then
-                                local Boxes = workspace.Environment.Locations.PizzaPlanet.Conveyor.MovingBoxes:GetChildren()
-                                local Customer = nil
-                                for i, v in pairs(Boxes) do
-                                    if Customer then
-                                        break
-                                    end
-                                    Player.Character:SetPrimaryPartCFrame(CFrame.new(v.Position) + Vector3.new(0, 7, 0))
-                                    wait(1)
-                                    Customer = Invoke({ Type = 'TakePizzaBox', Box = v })
-                                end
-            
-                                AutoDrive(Customer.HumanoidRootPart.Position)
-            
-                                wait(1)
-            
-                                Fire({
-                                    Type = "DeliverPizza", 
-                                    Customer = Customer
-                                })
-                                
-                                wait(.2)
-                            end end ]]
                     if Settings.CleanJanitor then
                         if (St.Job.Value ~= "CleanJanitor") then
                             Jo:GoToWork("CleanJanitor") --> TP to job
