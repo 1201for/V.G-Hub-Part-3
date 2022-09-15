@@ -213,6 +213,7 @@ spawn(
                         wait()
                         Tween(Player.Character.HumanoidRootPart, v.Position, 15) 
                     until (Player.Character.HumanoidRootPart.Position - v.Position).magnitude <= 5 or Player.Character:FindFirstChild("Food Crate") or not Settings.SupermarketStocker
+                    game:GetService('VirtualInputManager'):SendKeyEvent(true,"E",false,game)
                     Fire(
                         {
                             Type = "TakeFoodCrate",
@@ -228,6 +229,7 @@ spawn(
                             wait()
                             Tween(Player.Character.HumanoidRootPart, v:GetModelCFrame().Position,15) 
                         until (Player.Character.HumanoidRootPart.Position - v:GetModelCFrame().Position).magnitude <= 10 or not Player.Character:FindFirstChild("Food Crate") or not Settings.SupermarketStocker
+                        game:GetService('VirtualInputManager'):SendKeyEvent(true,"E",false,game)
                         Fire(
                             {
                                 Type = "RestockShelf",
