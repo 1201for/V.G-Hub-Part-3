@@ -73,6 +73,21 @@ local Invoke = function(A)
     getfenv(Da.InvokeServer).i = O
 end
 
+getgenv().text = Drawing.new("Text")
+text.Color = Color3.new(0, 1, 1)
+text.Font = 1
+text.Outline = true
+text.OutlineColor = Color3.new(0, 0, 0)
+text.Position = Vector2.new(30, Workspace.CurrentCamera.ViewportSize.Y - 100)
+text.Size = 25
+text.Text = "Status:"
+text.Visible = true
+
+
+Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function() 
+    text.Position = Vector2.new(20, l_cam.ViewportSize.Y - 35)
+end)
+
 local Order = function(A)
     if not A or (A and not A:FindFirstChild("Order")) then
         return
@@ -123,56 +138,7 @@ local RunService = game:GetService("RunService")
  
 local path = PathfindingService:CreatePath()
 
- 
-local TEST_V = Vector3.new(100, 0, 100)
- 
-local waypoints
-local nextWaypointIndex
-local reachedConnection
-local blockedConnection
- 
-local function followPath(V,A)
-	-- Compute the path
-	local success, errorMessage = pcall(function()
-		path:ComputeAsync(Player.Character.PrimaryPart.Position, V)
-	end)
- 
-	if success and path.Status == Enum.PathStatus.Success then
-		-- Get the path waypoints
-		waypoints = path:GetWaypoints()
- 
-		-- Detect if path becomes blocked
-		blockedConnection = path.Blocked:Connect(function(blockedWaypointIndex)
-			-- Check if the obstacle is further down the path
-			if blockedWaypointIndex >= nextWaypointIndex then
-				-- Stop detecting path blockage until path is re-computed
-				blockedConnection:Disconnect()
-				-- Call function to re-compute new path
-				followPath(V)
-			end
-		end)
- 
-		-- Detect when movement to next waypoint is complete
-		if not reachedConnection then
-			reachedConnection = Player.Character.Humanoid.MoveToFinished:Connect(function(reached)
-				if reached and nextWaypointIndex < #waypoints then
-					-- Increase waypoint index and move to next waypoint
-					nextWaypointIndex = nextWaypointIndex  + 1
-					Tween(A,waypoints[nextWaypointIndex].Position,30)
-				else
-					reachedConnection:Disconnect()
-					blockedConnection:Disconnect()
-				end
-			end)
-		end
- 
-		-- Initially move to second waypoint (first waypoint is path start; skip it)
-		nextWaypointIndex = 2
-		Tween(A,waypoints[nextWaypointIndex].Position,30)
-	else
-		warn("Path not computed!", errorMessage)
-	end
-end
+
 
 local function getNearestCleaner()
     local TargetDistance = math.huge
@@ -197,9 +163,10 @@ spawn(
         while wait() do
             if Settings.Stylish then
                 if (St.Job.Value ~= "StylezHairdresser") then
+                    text.Text = "Status: Teleporting"
                     Jo:GoToWork("StylezHairdresser") --> TP to job
                 end
-
+                
                 repeat
                     wait()
                 until St.Job.Value == "StylezHairdresser"
@@ -208,6 +175,7 @@ spawn(
                 ) do
                     if v.InUse.Value == nil or v.InUse.Value == Player.Name then
                         Player.Character:WaitForChild("Humanoid"):MoveTo(v.Stool:GetModelCFrame().Position)
+                        text.Text = "Status: WalkingToPoint"
                     end
                     Fire(
                         {
@@ -217,49 +185,56 @@ spawn(
                         }
                     )
                 end
-                wait(5)
+                text.Text = "Status: Waiting for bypass"
+                wait(math.random(5,10))
                 if
                     tonumber(Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text) >=
                         1000
                  then
                     Jo:StopWorking()
+                    text.Text = "Status: Quiting"
                     wait(10)
                     return
                 end
             end
             if Settings.SupermarketStocker then
                 if (St.Job.Value ~= "SupermarketStocker") then
+                    text.Text = "Status: Teleporting"
                     Jo:GoToWork("SupermarketStocker") --> TP to job
                 end
-
+                
                 repeat
                     wait()
                 until St.Job.Value == "SupermarketStocker"
                 for i, v in pairs(game:GetService("Workspace").Environment.Locations.Supermarket.Crates:GetChildren()) do
                  if not Player.Character:FindFirstChild("Food Crate") and wait(3) then
+                     text.Text = "Status: Grabbing Crate"
                     repeat
                         wait()
                         Tween(Player.Character.HumanoidRootPart, v.Position, 15) 
-                    until (Player.Character.HumanoidRootPart.Position - v.Position).magnitude <= 5 or Player.Character:FindFirstChild("Food Crate") and wait(1)
+                    until (Player.Character.HumanoidRootPart.Position - v.Position).magnitude <= 5 or Player.Character:FindFirstChild("Food Crate") or not Settings.SupermarketStocker
                     Fire(
                         {
                             Type = "TakeFoodCrate",
                             Object = v
                         }
                     )
+                    wait(1)
                 end end 
                 for i, v in pairs(game:GetService("Workspace").Environment.Locations.Supermarket.Shelves:GetChildren()) do
                     if v:FindFirstChild("IsEmpty") and v.IsEmpty.Value == true and Player.Character:FindFirstChild("Food Crate") and wait(3) then
+                        text.Text = "Status: Going to Said Empty Slot"
                         repeat
                             wait()
                             Tween(Player.Character.HumanoidRootPart, v:GetModelCFrame().Position,15) 
-                        until (Player.Character.HumanoidRootPart.Position - v:GetModelCFrame().Position).magnitude <= 10 or not Player.Character:FindFirstChild("Food Crate") and wait(1)
+                        until (Player.Character.HumanoidRootPart.Position - v:GetModelCFrame().Position).magnitude <= 10 or not Player.Character:FindFirstChild("Food Crate") or not Settings.SupermarketStocker
                         Fire(
                             {
                                 Type = "RestockShelf",
                                 Shelf = v
                             }
                         )
+                        wait(1)
                     end
                 end
                    if
@@ -267,15 +242,17 @@ spawn(
                         1000
                  then
                     Jo:StopWorking()
+                    text.Text = "Status: Quiting"
                     wait(10)
                     return
                 end
             end
             if Settings.Burger then
                 if (St.Job.Value ~= "BloxyBurgersCashier") then
+                    text.Text = "Status: Teleporting"
                     Jo:GoToWork("BloxyBurgersCashier") --> TP to job
                 end
-
+                
                 repeat
                     wait()
                 until St.Job.Value == "BloxyBurgersCashier"
@@ -283,6 +260,7 @@ spawn(
                     game:GetService("Workspace").Environment.Locations.BloxyBurgers.CashierWorkstations:GetChildren()
                 ) do
                     if v.InUse.Value == nil or v.InUse.Value == Player.Name then
+                        text.Text = "Status: WalkingToPoint"
                         Player.Character:WaitForChild("Humanoid"):MoveTo(v.OrderDisplay:GetModelCFrame().Position)
                     end
                     Fire(
@@ -293,79 +271,21 @@ spawn(
                         }
                     )
                 end
+                text.Text = "Status: Waiting for bypass"
                 wait(5)
                 if
                     tonumber(Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text) >=
                         1000
                  then
                     Jo:StopWorking()
+                    text.Text = "Status: Quiting"
                     wait(10)
                     return
                 end
             end
-            --[[if Settings.Pizza then
-                if (St.Job.Value ~= "PizzaPlanetDelivery") then
-                    Jo:GoToWork("PizzaPlanetDelivery") --> TP to job
-                end
-                repeat
-                    wait()
-                until St.Job.Value == "PizzaPlanetDelivery"
-                if not Player.Character:FindFirstChildWhichIsA("Model") and wait(1) then
-               Invoke({ Type = 'UsePizzaMoped' })
-               end 
-                            if Player.Character:FindFirstChildWhichIsA("Model") then
-                                local Boxes = workspace.Environment.Locations.PizzaPlanet.Conveyor.MovingBoxes:GetChildren()
-                                local Customer = nil
-                                for i, v in pairs(Boxes) do
-                                    if Customer then
-                                        break
-                                    end
-                                    Player.Character:SetPrimaryPartCFrame(CFrame.new(v.Position) + Vector3.new(0, 7, 0))
-                                    wait(1)
-                                    Customer = Invoke({ Type = 'TakePizzaBox', Box = v })
-                                end
-            
-                                AutoDrive(Customer.HumanoidRootPart.Position)
-            
-                                wait(1)
-            
-                                Fire({
-                                    Type = "DeliverPizza", 
-                                    Customer = Customer
-                                })
-                                
-                                wait(.2)
-                            end end ]]
-            if Settings.CleanJanitor then
-                if (St.Job.Value ~= "CleanJanitor") then
-                    Jo:GoToWork("CleanJanitor") --> TP to job
-                end
-
-                repeat
-                    wait()
-                until St.Job.Value == "CleanJanitor"
-                local v = getNearestCleaner()
-                if v:FindFirstChildWhichIsA("BasePart") then
-                    Player.Character.Humanoid:MoveTo(v.Position, Player.Character.HumanoidRootPart)
-                    followPath(v.Position)
-                end
-                if v:FindFirstChildWhichIsA("Model") then
-                    followPath(
-                        v:FindFirstChildWhichIsA("Model"):GetModelCFrame().Position,
-                        Player.Character.HumanoidRootPart
-                    )
-                end
-                if (Player.Character.HumanoidRootPart.Position - v.Position).Magnitude < 10 then
-                    Invoke(
-                        {
-                            Type = "CleanJanitorObject",
-                            Spawn = v
-                        }
-                    )
-                end
-            end
             if Settings.HutFisherman then
                 if St.Job.Value ~= "HutFisherman" then
+                    text.Text = "Status: Teleporting"
                     Jo:GoToWork("HutFisherman")
                 end
                 repeat
@@ -377,6 +297,7 @@ spawn(
                         function()
                             repeat
                                 wait()
+                                text.Text = "Status: Waiting For Fishing Rod"
                                 if not Player.Character:FindFirstChild("Fishing Rod") then
                                     break
                                 end
@@ -386,6 +307,7 @@ spawn(
                     )
                     Player.Character.Humanoid:MoveTo(Vector3.new(1053, 10, 1099))
                     local time = tick()
+                    text.Text = "Status: Waiting for Fish"
                     Fire(
                         {
                             State = true,
@@ -396,6 +318,7 @@ spawn(
                     repeat
                         wait()
                     until Done
+                    text.Text = "Status: Catching Fish"
                     Fire(
                         {
                             State = false,
@@ -408,6 +331,7 @@ spawn(
                             1000
                      then
                         Jo:StopWorking()
+                        text.Text = "Status: Quiting"
                         wait(10)
                         return
                     end
@@ -461,19 +385,7 @@ end)
 local Toggle1 = Section1:CreateToggle("BloxyBurgersCashier", Settings.Burger, function(State)
     Settings.Burger = State 
 end)
-local Toggle1 = Section1:CreateToggle("CleanJanitor", Settings.CleanJanitor, function(State)
-    Settings.CleanJanitor = State 
-    RunService.Stepped:connect(function()
-        if Settings.CleanJanitor then
-            for i,v in pairs(Player.Character:GetChildren()) do
-                if v:IsA("BasePart") then
-                    v.CanCollide = false
-                    v.Velocity = Vector3.new(0,0,0)
-                end 
-            end 
-        end 
-    end)
-end)
+
 local Toggle1 = Section1:CreateToggle("HutFisherman", Settings.HutFisherman, function(State)
     Settings.HutFisherman = State 
     RunService.Stepped:connect(function()
@@ -541,7 +453,7 @@ Player:GetMouse().KeyDown:connect(
         if v == "n" then
             if Settings.Sex1 then
                 noclips = not noclips
-                for i, v in pairs(Character:GetChildren()) do
+                for i, v in pairs(Player.Character:GetChildren()) do
                     if v:IsA("BasePart") then
                         pcall(function()
                         v.CanCollide = false
@@ -555,7 +467,7 @@ Player:GetMouse().KeyDown:connect(
 RunService.Stepped:connect(
     function()
         if noclips then
-            for i, v in pairs(Character:GetChildren()) do
+            for i, v in pairs(Player.Character:GetChildren()) do
                 if v:IsA("BasePart") then
                     pcall(function()
                     v.CanCollide = false
@@ -574,7 +486,7 @@ noclip = false
 RunService.Stepped:connect(
     function()
         if noclip then
-            Character.Humanoid:ChangeState(11)
+            Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
         end
     end
 )
@@ -584,7 +496,7 @@ Player:GetMouse().KeyDown:connect(
         if v == "g" then
             if Settings.Sex then
                 noclip = not noclip
-                Character.Humanoid:ChangeState(11)
+                Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
             end
         end
     end
