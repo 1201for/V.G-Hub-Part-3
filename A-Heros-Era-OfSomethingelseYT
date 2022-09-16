@@ -473,7 +473,9 @@ local Table = {
     "JEFFTHERTERMINATED",
     "CRONGETINSTUDIO",
     "Update3Hype!",
-    "RipUpd3!"
+    "RipUpd3!",
+    "OOpsAnotherProtmistake",
+    "SNAPCHANGESBYPROT?",
 }
 
 if Settings.Speed == nil then
@@ -736,7 +738,7 @@ spawn(
             pcall(
                 function()
                         for i, v in pairs(npcs:GetChildren()) do
-                        if not v.Head:FindFirstChildWhichIsA("Weld") and v.Torso:FindFirstChildWhichIsA("Weld") and wait(4)
+                        if not v or not v.Torso:FindFirstChildWhichIsA("Weld")   and wait(4)
                          then
                     if
                         Settings.ServerhopMethod == "ServerHop" and
@@ -857,7 +859,7 @@ spawn(
         while Settings.Snaps do
             wait(3)
 
-            if not table.find(Snap,Player.PlayerGui.MenuV2.StatFrame.Element.Text) then               
+            if not table.find(Snap,Player.PlayerGui.MenuV2.StatFrame.Element.Text)  or Player.PlayerGui.MenuV2.StatFrame.Element.Text ~= "Snap: Anti Magic" or Player.PlayerGui.MenuV2.StatFrame.Element.Text ~= "Snap: Anti-Magic"  then               
                 pcall(
                     function()
                         Player.PlayerGui.MenuV2.ShopFrame.SnapTab.Spin.Parent = Player.PlayerGui.MenuV2
