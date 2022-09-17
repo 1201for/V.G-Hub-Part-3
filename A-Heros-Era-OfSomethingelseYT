@@ -151,7 +151,6 @@ local function ServerHop()
     end
 end
 
-
 local Armor = {}
 for i, v in pairs(game.Workspace:WaitForChild("Purchases").Armor:GetChildren()) do
     if not table.find(Armor, v.Name) then
@@ -219,14 +218,13 @@ if hookmetamethod then
     )
 end
 
-
 Player.Character.JumpCooldown.Disabled = true
 
 Player.CharacterAdded:Connect(
     function()
         if Player.Character and wait(3) then
             Player.Character:WaitForChild("Client")
-          
+
             Player.Character.JumpCooldown.Disabled = true
         end
     end
@@ -245,7 +243,31 @@ local function Tween(A, B, C)
         Tween:Play()
     end
 end
+Settings.CFLYSPEED = 5
+local KO = function()
+    local moveDirection = Player.Character:FindFirstChildOfClass("Humanoid").MoveDirection * (Settings.CFLYSPEED * 5)
+    workspace.CurrentCamera.CFrame =
+        workspace.CurrentCamera.CFrame *
+        CFrame.new(
+            -Player.Character:WaitForChild("Head").CFrame:ToObjectSpace(workspace.CurrentCamera.CFrame).Position.X,
+            Player.Character:WaitForChild("Head").CFrame:ToObjectSpace(workspace.CurrentCamera.CFrame).Position.Y,
+            -Player.Character:WaitForChild("Head").CFrame:ToObjectSpace(workspace.CurrentCamera.CFrame).Position.Z + 1
+        )
+    local cameraPosition = workspace.CurrentCamera.CFrame.Position
 
+    local objectSpaceVelocity =
+        CFrame.new(
+        cameraPosition,
+        Vector3.new(
+            Player.Character:WaitForChild("Head").Position.X,
+            cameraPosition.Y,
+            Player.Character:WaitForChild("Head").Position.Z
+        )
+    ):VectorToObjectSpace(moveDirection)
+    Player.Character:WaitForChild("Head").CFrame =
+        CFrame.new(Player.Character:WaitForChild("Head").Position) * (workspace.CurrentCamera.CFrame - cameraPosition) *
+        CFrame.new(objectSpaceVelocity)
+end
 local Areas = {}
 for i, v in pairs(Workspace.Areas:GetChildren()) do
     if v:IsA("BasePart") and not table.find(Areas, v.Name) then
@@ -372,15 +394,18 @@ Players.PlayerAdded:Connect(
     end
 )
 game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:WaitForChild("Button1")
-repeat wait()
-for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:GetChildren()) do
+repeat
     wait()
-    local A = Instance.new("BoolValue")
-    A.Value = false
-    A.Name = "Cooldown"
-    A.Parent = v
-end
-until game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:FindFirstChild("Button1"):FindFirstChildWhichIsA("BoolValue")
+    for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:GetChildren()) do
+        wait()
+        local A = Instance.new("BoolValue")
+        A.Value = false
+        A.Name = "Cooldown"
+        A.Parent = v
+    end
+until game:GetService("Players").LocalPlayer.PlayerGui.CustomBackpack.ButtonUi:FindFirstChild("Button1"):FindFirstChildWhichIsA(
+    "BoolValue"
+)
 local Snap = {}
 local Snaps = {
     "Wind",
@@ -475,7 +500,7 @@ local Table = {
     "Update3Hype!",
     "RipUpd3!",
     "OOpsAnotherProtmistake",
-    "SNAPCHANGESBYPROT?",
+    "SNAPCHANGESBYPROT?"
 }
 
 if Settings.Speed == nil then
@@ -498,13 +523,13 @@ UserInputService.InputBegan:Connect(
     function(v)
         if v.KeyCode == Enum.KeyCode.LeftShift then
             Player.Character.Humanoid.WalkSpeed = 29 + Player.Character.Config.SpeedBoost.Value
-       end 
+        end
     end
 )
 UserInputService.InputEnded:Connect(
     function(v)
         if v.KeyCode == Enum.KeyCode.LeftShift then
-            Player.Character.Humanoid.WalkSpeed = 16 
+            Player.Character.Humanoid.WalkSpeed = 16
         end
     end
 )
@@ -513,14 +538,15 @@ local function NoClip()
     if identifyexecutor and identifyexecutor() ~= "Krnl" then
         Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
     elseif identifyexecutor and identifyexecutor() == "Krnl" then
-        for i,v in pairs(Player.Character:GetChildren()) do
-            if v:IsA("BasePart") then 
-                v.CanCollide = false 
-                v.Velocity = Vector3.new(0,0,0)
-            end 
-        end 
-    end 
-end 
+        for i, v in pairs(Player.Character:GetChildren()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+                v.Velocity = Vector3.new(0, 0, 0)
+            end
+        end
+    end
+end
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -1301,130 +1327,34 @@ Player:GetMouse().KeyDown:connect(
     end
 )
 end)
-local Toggle1 = Section2:CreateToggle("H Fly", Settings.Sex2, function(State)
-Settings.Sex2 = State
-local Max = 0
-local Players = Players
-local LP = Players.LocalPlayer
-local Mouse = LP:GetMouse()
-Mouse.KeyDown:connect(
-    function(k)
-        if k:lower() == "h" then
-            Max = Max + 1
-            getgenv().Fly = false
-            if Settings.Sex2 then
-                local T = LP.Character.Torso
-                local S = {
-                    F = 0,
-                    B = 0,
-                    L = 0,
-                    R = 0
-                }
-                local S2 = {
-                    F = 0,
-                    B = 0,
-                    L = 0,
-                    R = 0
-                }
-                local SPEED = 5
-                local function FLY()
-                    getgenv().Fly = true
-                    local BodyGyro = Instance.new("BodyGyro", T)
-                    local BodyVelocity = Instance.new("BodyVelocity", T)
-                    BodyGyro.P = 9e4
-                    BodyGyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-                    BodyGyro.cframe = T.CFrame
-                    BodyVelocity.velocity = Vector3.new(0, 0.1, 0)
-                    BodyVelocity.maxForce = Vector3.new(9e9, 9e9, 9e9)
-                    spawn(
-                        function()
-                            repeat
-                                wait()
-                                LP.Character.Humanoid.PlatformStand = false
-                                if S.L + S.R ~= 0 or S.F + S.B ~= 0 then
-                                    SPEED = 200
-                                elseif not (S.L + S.R ~= 0 or S.F + S.B ~= 0) and SPEED ~= 0 then
-                                    SPEED = 0
-                                end
-                                if (S.L + S.R) ~= 0 or (S.F + S.B) ~= 0 then
-                                    BodyVelocity.velocity =
-                                        ((Workspace.CurrentCamera.CoordinateFrame.lookVector * (S.F + S.B)) +
-                                        ((Workspace.CurrentCamera.CoordinateFrame *
-                                            CFrame.new(S.L + S.R, (S.F + S.B) * 0.2, 0).p) -
-                                            Workspace.CurrentCamera.CoordinateFrame.p)) *
-                                        SPEED
-                                    S2 = {
-                                        F = S.F,
-                                        B = S.B,
-                                        L = S.L,
-                                        R = S.R
-                                    }
-                                elseif (S.L + S.R) == 0 and (S.F + S.B) == 0 and SPEED ~= 0 then
-                                    BodyVelocity.velocity =
-                                        ((Workspace.CurrentCamera.CoordinateFrame.lookVector * (S2.F + S2.B)) +
-                                        ((Workspace.CurrentCamera.CoordinateFrame *
-                                            CFrame.new(S2.L + S2.R, (S2.F + S2.B) * 0.2, 0).p) -
-                                            Workspace.CurrentCamera.CoordinateFrame.p)) *
-                                        SPEED
-                                else
-                                    BodyVelocity.velocity = Vector3.new(0, 0.1, 0)
-                                end
-                                BodyGyro.cframe = Workspace.CurrentCamera.CoordinateFrame
-                            until not getgenv().Fly
-                            S = {
-                                F = 0,
-                                B = 0,
-                                L = 0,
-                                R = 0
-                            }
-                            S2 = {
-                                F = 0,
-                                B = 0,
-                                L = 0,
-                                R = 0
-                            }
-                            SPEED = 0
-                            BodyGyro:destroy()
-                            BodyVelocity:destroy()
-                            LP.Character.Humanoid.PlatformStand = false
-                        end
-                    )
-                end
-                Mouse.KeyDown:connect(
-                    function(k)
-                        if k:lower() == "w" then
-                            S.F = 1
-                        elseif k:lower() == "s" then
-                            S.B = -1
-                        elseif k:lower() == "a" then
-                            S.L = -1
-                        elseif k:lower() == "d" then
-                            S.R = 1
-                        end
-                    end
-                )
-                Mouse.KeyUp:connect(
-                    function(k)
-                        if k:lower() == "w" then
-                            S.F = 0
-                        elseif k:lower() == "s" then
-                            S.B = 0
-                        elseif k:lower() == "a" then
-                            S.L = 0
-                        elseif k:lower() == "d" then
-                            S.R = 0
-                        end
-                    end
-                )
-                FLY()
-                if Max == 2 then
-                    getgenv().Fly = false
-                    Max = 0
-                end
+local Toggle1 = Section2:CreateToggle("H Fly", Settings.CFLY, function(State)
+Settings.CFLY = State
+
+d = false
+RunService.Stepped:connect(
+    function()
+        if d then
+            KO()
+            Player.Character:FindFirstChildOfClass("Humanoid").PlatformStand = true
+            Player.Character:WaitForChild("Head").Anchored = true
+            elseif Settings.CFLY or not d then
+            Player.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
+            Player.Character:WaitForChild("Head").Anchored = false
+        end
+    end
+)
+Player:GetMouse().KeyDown:connect(
+    function(v)
+        if v == "h" then
+            if Settings.CFLY then
+                d = not d
+                KO()
+                
             end
         end
     end
 )
+
 end)
 local Button1 = Section2:CreateButton("Anti Lag", function()
 for _, v in pairs(Workspace:GetDescendants()) do
