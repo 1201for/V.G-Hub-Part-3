@@ -73,19 +73,19 @@ local Invoke = function(A)
     getfenv(Da.InvokeServer).i = O
 end
 
-getgenv().text = Drawing.new("Text")
-text.Color = Color3.new(0, 1, 1)
-text.Font = 1
-text.Outline = true
-text.OutlineColor = Color3.new(0, 0, 0)
-text.Position = Vector2.new(30, Workspace.CurrentCamera.ViewportSize.Y - 100)
-text.Size = 25
-text.Text = "Status:"
-text.Visible = true
+getgenv().Text = Drawing.new("Text")
+Text.Color = Color3.new(0, 1, 1)
+Text.Font = 1
+Text.Outline = true
+Text.OutlineColor = Color3.new(0, 0, 0)
+Text.Position = Vector2.new(30, Workspace.CurrentCamera.ViewportSize.Y - 100)
+Text.Size = 25
+Text.Text = "Status:"
+Text.Visible = true
 
 
 Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function() 
-    text.Position = Vector2.new(20, l_cam.ViewportSize.Y - 35)
+    Text.Position = Vector2.new(20, l_cam.ViewportSize.Y - 35)
 end)
 
 local Order = function(A)
@@ -161,9 +161,10 @@ end
 spawn(
     function()
         while wait() do
+            pcall(function()
             if Settings.Stylish then
                 if (St.Job.Value ~= "StylezHairdresser") then
-                    text.Text = "Status: Teleporting"
+                    Text.Text = "Status: Teleporting"
                     Jo:GoToWork("StylezHairdresser") --> TP to job
                 end
                 
@@ -175,7 +176,7 @@ spawn(
                 ) do
                     if v.InUse.Value == nil or v.InUse.Value == Player.Name then
                         Player.Character:WaitForChild("Humanoid"):MoveTo(v.Stool:GetModelCFrame().Position)
-                        text.Text = "Status: WalkingToPoint"
+                        Text.Text = "Status: WalkingToPoint"
                     end
                     Fire(
                         {
@@ -185,21 +186,23 @@ spawn(
                         }
                     )
                 end
-                text.Text = "Status: Waiting for bypass"
+                Text.Text = "Status: Bypassing"
                 wait(math.random(5,10))
+                Text.Text = "Status: Done"
+                wait(1)
                 if
                     tonumber(Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text) >=
                         1000
                  then
                     Jo:StopWorking()
-                    text.Text = "Status: Quiting"
+                    Text.Text = "Status: Quiting"
                     wait(10)
                     return
                 end
             end
             if Settings.SupermarketStocker then
                 if (St.Job.Value ~= "SupermarketStocker") then
-                    text.Text = "Status: Teleporting"
+                    Text.Text = "Status: Teleporting"
                     Jo:GoToWork("SupermarketStocker") --> TP to job
                 end
                 
@@ -208,12 +211,11 @@ spawn(
                 until St.Job.Value == "SupermarketStocker"
                 for i, v in pairs(game:GetService("Workspace").Environment.Locations.Supermarket.Crates:GetChildren()) do
                  if not Player.Character:FindFirstChild("Food Crate") and wait(3) then
-                     text.Text = "Status: Grabbing Crate"
+                     Text.Text = "Status: Grabbing Crate"
                     repeat
                         wait()
                         Tween(Player.Character.HumanoidRootPart, v.Position, 15) 
                     until (Player.Character.HumanoidRootPart.Position - v.Position).magnitude <= 5 or Player.Character:FindFirstChild("Food Crate") or not Settings.SupermarketStocker
-                    game:GetService('VirtualInputManager'):SendKeyEvent(true,"E",false,game)
                     Fire(
                         {
                             Type = "TakeFoodCrate",
@@ -224,12 +226,11 @@ spawn(
                 end end 
                 for i, v in pairs(game:GetService("Workspace").Environment.Locations.Supermarket.Shelves:GetChildren()) do
                     if v:FindFirstChild("IsEmpty") and v.IsEmpty.Value == true and Player.Character:FindFirstChild("Food Crate") and wait(3) then
-                        text.Text = "Status: Going to Said Empty Slot"
+                        Text.Text = "Status: Going to Said Empty Slot"
                         repeat
                             wait()
                             Tween(Player.Character.HumanoidRootPart, v:GetModelCFrame().Position,15) 
                         until (Player.Character.HumanoidRootPart.Position - v:GetModelCFrame().Position).magnitude <= 10 or not Player.Character:FindFirstChild("Food Crate") or not Settings.SupermarketStocker
-                        game:GetService('VirtualInputManager'):SendKeyEvent(true,"E",false,game)
                         Fire(
                             {
                                 Type = "RestockShelf",
@@ -244,14 +245,14 @@ spawn(
                         1000
                  then
                     Jo:StopWorking()
-                    text.Text = "Status: Quiting"
+                    Text.Text = "Status: Quiting"
                     wait(10)
                     return
                 end
             end
             if Settings.Burger then
                 if (St.Job.Value ~= "BloxyBurgersCashier") then
-                    text.Text = "Status: Teleporting"
+                    Text.Text = "Status: Teleporting"
                     Jo:GoToWork("BloxyBurgersCashier") --> TP to job
                 end
                 
@@ -262,7 +263,7 @@ spawn(
                     game:GetService("Workspace").Environment.Locations.BloxyBurgers.CashierWorkstations:GetChildren()
                 ) do
                     if v.InUse.Value == nil or v.InUse.Value == Player.Name then
-                        text.Text = "Status: WalkingToPoint"
+                        Text.Text = "Status: WalkingToPoint"
                         Player.Character:WaitForChild("Humanoid"):MoveTo(v.OrderDisplay:GetModelCFrame().Position)
                     end
                     Fire(
@@ -273,21 +274,23 @@ spawn(
                         }
                     )
                 end
-                text.Text = "Status: Waiting for bypass"
-                wait(5)
+                Text.Text = "Status: Bypassing"
+                wait(math.random(5,10))
+                Text.Text = "Status: Done"
+                wait(1)
                 if
                     tonumber(Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text) >=
                         1000
                  then
                     Jo:StopWorking()
-                    text.Text = "Status: Quiting"
+                    Text.Text = "Status: Quiting"
                     wait(10)
                     return
                 end
             end
             if Settings.HutFisherman then
                 if St.Job.Value ~= "HutFisherman" then
-                    text.Text = "Status: Teleporting"
+                    Text.Text = "Status: Teleporting"
                     Jo:GoToWork("HutFisherman")
                 end
                 repeat
@@ -299,7 +302,7 @@ spawn(
                         function()
                             repeat
                                 wait()
-                                text.Text = "Status: Waiting For Fishing Rod"
+                                Text.Text = "Status: Waiting For Fishing Rod"
                                 if not Player.Character:FindFirstChild("Fishing Rod") then
                                     break
                                 end
@@ -309,7 +312,7 @@ spawn(
                     )
                     Player.Character.Humanoid:MoveTo(Vector3.new(1053, 10, 1099))
                     local time = tick()
-                    text.Text = "Status: Waiting for Fish"
+                    Text.Text = "Status: Waiting for Fish"
                     Fire(
                         {
                             State = true,
@@ -320,7 +323,7 @@ spawn(
                     repeat
                         wait()
                     until Done
-                    text.Text = "Status: Catching Fish"
+                    Text.Text = "Status: Catching Fish"
                     Fire(
                         {
                             State = false,
@@ -333,12 +336,15 @@ spawn(
                             1000
                      then
                         Jo:StopWorking()
-                        text.Text = "Status: Quiting"
+                        Text.Text = "Status: Quiting"
                         wait(10)
                         return
                     end
                 end
             end
+            Text.Text = ""
+            end)
+            
         end
     end
 )
