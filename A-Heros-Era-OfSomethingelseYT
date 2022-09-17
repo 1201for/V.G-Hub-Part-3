@@ -1335,7 +1335,13 @@ RunService.Stepped:connect(
     function()
         if d then
             KO()
-        
+            if Player.Character and Player.Character:FindFirstChild("Head") then
+            Player.Character:FindFirstChildOfClass("Humanoid").PlatformStand = true
+            Player.Character:WaitForChild("Head").Anchored = true
+            end 
+            elseif Settings.CFLY or not d then
+            Player.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
+            Player.Character:WaitForChild("Head").Anchored = false
         end
     end
 )
@@ -1345,11 +1351,7 @@ Player:GetMouse().KeyDown:connect(
             if Settings.CFLY then
                 d = not d
                 KO()
-                Player.Character:FindFirstChildOfClass("Humanoid").PlatformStand = true
-                Player.Character:WaitForChild("Head").Anchored = true
-                elseif Settings.CFLY or not d then
-                Player.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
-                Player.Character:WaitForChild("Head").Anchored = false
+                
             end
         end
     end
