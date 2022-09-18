@@ -368,7 +368,7 @@ spawn(
                                 local A = v.Occupied.Value
                                 if Player:DistanceFromCharacter(v.PrimaryPart.Position) < 8 then
                                     local Weld = A:WaitForChild("HumanoidRootPart"):WaitForChild("Motor6D")
-                                    local Scanned = 0
+                                    local Scanned = 3
                                     while (Weld.Part1.Name == "CustomerTarget_1") and Weld.Parent do
                                         if v.BagsLeft.Value < 1 then
                                             TweenTo(
