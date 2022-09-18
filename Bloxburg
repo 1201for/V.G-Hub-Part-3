@@ -368,11 +368,10 @@ spawn(
                                 local A = v.Occupied.Value
                                 if Player:DistanceFromCharacter(v.PrimaryPart.Position) < 8 then
                                     local Weld = A:WaitForChild("HumanoidRootPart"):WaitForChild("Motor6D")
-                                    local Scanned = 3
-                                    while (Weld.Part1.Name == "CustomerTarget_1") and Weld.Parent do
+                                    local Scanned = 0
+                                    while (Weld.Part1.Name == "CustomerTarget_1") and Weld.Parent do wait(2)
                                         if v.BagsLeft.Value < 1 then
-                                            TweenTo(
-                                                Player.Character.HumanoidRootPart,
+                                            TweenTo(Player.Character.HumanoidRootPart,
                                                 Workspace.Environment.Locations.Supermarket.Crates:FindFirstChild(
                                                     "BagCrate"
                                                 ).Position
@@ -388,7 +387,7 @@ spawn(
                                                 )
                                                 wait(1)
                                             end
-                                            TweenTo(Player.Character.HumanoidRootPart, v.PrimaryPart.Position)
+                                            TweenTo(Player.Character.HumanoidRootPart,v.PrimaryPart.Position)
                                             while Player.Character:FindFirstChild("BFF Bags") do
                                                 Fire(
                                                     {
@@ -399,51 +398,53 @@ spawn(
                                                 wait(1)
                                             end
                                         end
-                                        repeat
-                                            wait()
-                                            if v.DroppedFood:FindFirstChildWhichIsA("BasePart") then
-                                                if Scanned == 3 then
-                                                    Scanned = 0
-                                                    Fire(
-                                                        {
-                                                            Type = "TakeNewBag",
-                                                            Workstation = v
-                                                        }
-                                                    )
-                                                    wait(1)
-                                                end
-
+                                    repeat wait()
+                                        if v.DroppedFood:FindFirstChildWhichIsA("BasePart") then
+                                            if Scanned == 3 then
+                                                Scanned = 0
                                                 Fire(
                                                     {
-                                                        Type = "ScanDroppedItem",
-                                                        Item = v.DroppedFood:FindFirstChildWhichIsA("BasePart")
+                                                        Type = "TakeNewBag",
+                                                        Workstation = v
                                                     }
                                                 )
-                                                Scanned = Scanned + 1
                                                 wait(1)
                                             end
-                                        until not v.DroppedFood:FindFirstChildWhichIsA("BasePart") and wait(1)
-                                        wait(1)
-                                        Fire(
-                                            {
-                                                Type = "JobCompleted",
-                                                Workstation = v
-                                            }
-                                        )
-                                        if
-                                            tonumber(
-                                                Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
-                                            ) >= 1000
-                                         then
-                                            Jo:StopWorking()
-                                            Text.Text = "Status: Quiting"
-                                            wait(10)
-                                        end
-                                    end
+                                            
+                                            Fire(
+                                                {
+                                                    Type = "ScanDroppedItem",
+                                                    Item = v.DroppedFood:FindFirstChildWhichIsA("BasePart")
+                                                }
+                                            )
+                                            Scanned = Scanned + 1
+                                            wait(1)
+
+                                      end 
+                                    until not v.DroppedFood:FindFirstChildWhichIsA("BasePart")  and wait(1) or v.BagsLeft.Value < 1
+                                    if not v.DroppedFood:FindFirstChildWhichIsA("BasePart") then
+                                    wait(2)
+                                    Fire(
+                                        {
+                                            Type = "JobCompleted",
+                                            Workstation = v
+                                        }
+                                    )
+                                    end 
                                 end
                             end
                         end
+                        end 
                         wait(1)
+                        if
+                            tonumber(
+                                Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                            ) >= 1000
+                         then
+                            Jo:StopWorking()
+                            Text.Text = "Status: Quiting"
+                            wait(10)
+                        end
                     end
                     if Settings.HutFisherman then
                         if St.Job.Value ~= "HutFisherman" then
