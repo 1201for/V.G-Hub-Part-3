@@ -79,12 +79,12 @@ Text.Outline = true
 Text.OutlineColor = Color3.new(0, 0, 0)
 Text.Position = Vector2.new(30, Workspace.CurrentCamera.ViewportSize.Y - 100)
 Text.Size = 25
-Text.Text = "Status:"
+Text.Text = ""
 Text.Visible = true
 
 Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(
     function()
-        Text.Position = Vector2.new(20, Workspace.CurrentCamera.ViewportSize.Y - 35)
+        Text.Position = Vector2.new(20, Workspace.CurrentCamera.ViewportSize.Y - 100)
     end
 )
 
@@ -109,6 +109,7 @@ local function Tween(A, B, C)
         local Info = TweenInfo.new(Time, Enum.EasingStyle.Linear)
         local Tween = game:GetService("TweenService"):Create(A, Info, {CFrame = CFrame.new(B)})
         Tween:Play()
+        wait(Time)
     end
 end
 local PathService = game:GetService("PathfindingService")
@@ -369,13 +370,16 @@ spawn(
                                 if Player:DistanceFromCharacter(v.PrimaryPart.Position) < 8 then
                                     local Weld = A:WaitForChild("HumanoidRootPart"):WaitForChild("Motor6D")
                                     local Scanned = 0
-                                    while (Weld.Part1.Name == "CustomerTarget_1") and Weld.Parent do wait(2)
+                                    while (Weld.Part1.Name == "CustomerTarget_1") and Weld.Parent do
+                                        wait(2)
                                         if v.BagsLeft.Value < 1 then
-                                            TweenTo(Player.Character.HumanoidRootPart,
+                                            TweenTo(
+                                                Player.Character.HumanoidRootPart,
                                                 Workspace.Environment.Locations.Supermarket.Crates:FindFirstChild(
                                                     "BagCrate"
                                                 ).Position
                                             )
+                                            Text.Text = "Status: Restocking Bags"
                                             while not Player.Character:FindFirstChild("BFF Bags") do
                                                 Fire(
                                                     {
@@ -387,7 +391,7 @@ spawn(
                                                 )
                                                 wait(1)
                                             end
-                                            TweenTo(Player.Character.HumanoidRootPart,v.PrimaryPart.Position)
+                                            TweenTo(Player.Character.HumanoidRootPart, v.PrimaryPart.Position)
                                             while Player.Character:FindFirstChild("BFF Bags") do
                                                 Fire(
                                                     {
@@ -395,47 +399,102 @@ spawn(
                                                         Workstation = v
                                                     }
                                                 )
+                                                Text.Text = "Status: RestockedBags"
                                                 wait(1)
                                             end
                                         end
-                                    repeat wait()
-                                        if v.DroppedFood:FindFirstChildWhichIsA("BasePart") then
-                                            if Scanned == 3 then
-                                                Scanned = 0
+                                        repeat
+                                            wait()
+                                            if v.DroppedFood:FindFirstChildWhichIsA("BasePart") then
+                                                if Scanned == 3 then
+                                                    Scanned = 0
+                                                    Fire(
+                                                        {
+                                                            Type = "TakeNewBag",
+                                                            Workstation = v
+                                                        }
+                                                    )
+                                                    Text.Text = "Status: NewBag"
+                                                    wait(1)
+                                                end
+
                                                 Fire(
                                                     {
-                                                        Type = "TakeNewBag",
-                                                        Workstation = v
+                                                        Type = "ScanDroppedItem",
+                                                        Item = v.DroppedFood:FindFirstChildWhichIsA("BasePart")
                                                     }
                                                 )
+                                                Text.Text = "Status: Scanned item" .. " " .. Scanned
+                                                Scanned = Scanned + 1
                                                 wait(1)
                                             end
-                                            
+                                        until not v.DroppedFood:FindFirstChildWhichIsA("BasePart") and wait(1) or
+                                            v.BagsLeft.Value < 1
+                                        if not v.DroppedFood:FindFirstChildWhichIsA("BasePart") then
+                                            wait(2)
                                             Fire(
                                                 {
-                                                    Type = "ScanDroppedItem",
-                                                    Item = v.DroppedFood:FindFirstChildWhichIsA("BasePart")
+                                                    Type = "JobCompleted",
+                                                    Workstation = v
                                                 }
                                             )
-                                            Scanned = Scanned + 1
-                                            wait(1)
-
-                                      end 
-                                    until not v.DroppedFood:FindFirstChildWhichIsA("BasePart")  and wait(1) or v.BagsLeft.Value < 1
-                                    if not v.DroppedFood:FindFirstChildWhichIsA("BasePart") then
-                                    wait(2)
-                                    Fire(
-                                        {
-                                            Type = "JobCompleted",
-                                            Workstation = v
-                                        }
-                                    )
-                                    end 
+                                        end
+                                        if
+                                            tonumber(
+                                                Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                                            ) >= 1000
+                                         then
+                                            Jo:StopWorking()
+                                            Text.Text = "Status: Quiting"
+                                            wait(10)
+                                        end
+                                    end
                                 end
                             end
                         end
-                        end 
                         wait(1)
+                    end
+                    if Settings.CleanJanitor then
+                        if St.Job.Value ~= "CleanJanitor" then
+                            Text.Text = "Status: Teleporting"
+                            Jo:GoToWork("CleanJanitorr")
+                        end
+                        repeat
+                            wait()
+                        until St.Job.Value == "CleanJanitor"
+                        local F = {}
+                        for i, v in pairs(Workspace.Environment.Locations.GreenClean.Spawns:GetChildren()) do
+                            if v:FindFirstChild("Object") then
+                                table.insert(F, v)
+                            end
+                        end
+                        table.sort(
+                            F,
+                            function(i, v)
+                                return Player:DistanceFromCharacter(i.Position) <
+                                    Player:DistanceFromCharacter(v.Position)
+                            end
+                        )
+                        Text.Text = "Status: Fucking around"
+                        if #F > 1 then
+                            local A = F[1]
+                            local P
+                            if A:FindFirstChild("Object"):IsA("Part") then
+                                P = A:FindFirstChild("Object").CFrame.Position
+                            else
+                                P = A:FindFirstChild("Object").PrimaryPart.CFrame.Position
+                            end
+                            Text.Text = "Status: Tweening to Object"
+                            TweenTo(Player.Character.HumanoidRootPart, P)
+                            wait(3)
+                            Invoke(
+                                {
+                                    Type = "CleanJanitorObject",
+                                    Spawn = A
+                                }
+                            )
+                            Text.Text = "Status: Rember to give DekuDimz#3809 free hentai when you see him!"
+                        end
                         if
                             tonumber(
                                 Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
@@ -444,6 +503,120 @@ spawn(
                             Jo:StopWorking()
                             Text.Text = "Status: Quiting"
                             wait(10)
+                        end
+                    end
+
+                    if Settings.BensIceCreamSeller then
+                        if St.Job.Value ~= "BensIceCreamSeller" then
+                            Text.Text = "Status: Teleporting"
+                            Jo:GoToWork("BensIceCreamSeller")
+                        end
+                        repeat
+                            wait()
+                        until St.Job.Value == "BensIceCreamSeller"
+                        for i, v in pairs(Gamei.SpawnedCharacters:GetChildren()) do
+                            if v.Name == "BensIceCreamCustomer" then
+                                if not v:FindFirstChild("HumanoidRootPart") then
+                                    return
+                                end
+                                if v:FindFirstChild("HumanoidRootPart"):FindFirstChild("Motor6D") then
+                                    if v:WaitForChild("HumanoidRootPart"):FindFirstChild("Motor6D").Part1 then
+                                        if
+                                            (v:WaitForChild("HumanoidRootPart"):FindFirstChild("Motor6D").Part1.Name ==
+                                                "CustomerTarget")
+                                         then
+                                            Text.Text = "Status: Repeat"
+                                            local Order = v:FindFirstChild("Order")
+                                            if not Order then
+                                                return
+                                            end
+                                            if v:FindFirstChildOfClass("CFrameValue") then
+                                                return
+                                            end
+                                            Instance.new("CFrameValue", v)
+                                            Player.Character.Humanoid:MoveTo(
+                                                Vector3.new(
+                                                    929.095337,
+                                                    13.7269897,
+                                                    1049.63477,
+                                                    -0.842953146,
+                                                    1.25050681e-08,
+                                                    0.537986934,
+                                                    3.88757222e-08,
+                                                    1,
+                                                    3.7668844e-08,
+                                                    -0.537986934,
+                                                    5.26677013e-08,
+                                                    -0.842953146
+                                                )
+                                            )
+                                            Player.Character.Humanoid.MoveToFinished:Wait()
+                                            Fire(
+                                                {
+                                                    Type = "TakeIceCreamCup"
+                                                }
+                                            )
+                                            Text.Text = "Took Cup Bypassing"
+                                            while not Player.Character:FindFirstChild("Ice Cream Cup") do
+                                                wait(2)
+                                            end
+                                            Fire(
+                                                {
+                                                    Ball = Player.Character:FindFirstChild("Ice Cream Cup"):WaitForChild(
+                                                        "Ball1"
+                                                    ),
+                                                    Type = "AddIceCreamScoop",
+                                                    Taste = Order:FindFirstChild("Flavor1").Value
+                                                }
+                                            )
+                                            Text.Text = "Status: Topping 1 added"
+                                            wait(1)
+                                            Fire(
+                                                {
+                                                    Ball = Player.Character:FindFirstChild("Ice Cream Cup"):WaitForChild(
+                                                        "Ball2"
+                                                    ),
+                                                    Type = "AddIceCreamScoop",
+                                                    Taste = Order:FindFirstChild("Flavor2").Value
+                                                }
+                                            )
+                                            Text.Text = "Status: Topping 2 added"
+                                            wait(1)
+                                            Fire(
+                                                {
+                                                    Type = "AddIceCreamTopping",
+                                                    Taste = Order:FindFirstChild("Topping").Value
+                                                }
+                                            )
+                                            Player.Character.Humanoid:MoveTo(
+                                                v:WaitForChild("HumanoidRootPart").Position + Vector3.new(0, 0, 0)
+                                            )
+                                            Text.Text = "Status: Moving to retard"
+                                            Player.Character.Humanoid.MoveToFinished:Wait()
+                                            wait()
+                                            Fire(
+                                                {
+                                                    Type = "JobCompleted",
+                                                    Workstation = v:WaitForChild("HumanoidRootPart"):FindFirstChild(
+                                                        "Motor6D"
+                                                    ).Part1
+                                                }
+                                            )
+                                            Text.Text = "Done"
+                                            wait(2)
+                                            if
+                                                tonumber(
+                                                    Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                                                ) >= 1000
+                                             then
+                                                Jo:StopWorking()
+                                                Text.Text = "Status: Quiting"
+                                                wait(10)
+                                            end
+                                        end
+                                    end
+                                end
+                            end
                         end
                     end
                     if Settings.HutFisherman then
@@ -533,6 +706,7 @@ spawn(
 )
 
 
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -551,6 +725,26 @@ end)
 
 local Toggle1 = Section1:CreateToggle("BloxyBurgersCashier", Settings.Burger, function(State)
     Settings.Burger = State 
+end)
+
+
+local Toggle1 = Section1:CreateToggle("BensIceCreamSeller", Settings.BensIceCreamSeller, function(State)
+    Settings.BensIceCreamSeller = State 
+end)
+
+
+
+local Toggle1 = Section1:CreateToggle("CleanJanitor", Settings.CleanJanitor, function(State)
+    Settings.CleanJanitor = State 
+    RunService.Stepped:connect(function()
+        if Settings.CleanJanitor then
+            for i,v in pairs(Player.Character:GetChildren()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end 
+            end 
+        end 
+    end)
 end)
 
 local Toggle1 = Section1:CreateToggle("HutFisherman", Settings.HutFisherman, function(State)
@@ -598,7 +792,7 @@ local Toggle1 = Section1:CreateToggle("Enable Esp", Settings.Esp, function(State
     ESP:Toggle(Settings.Esp)
 end)
 
-local Toggle1 = Section1:CreateToggle("PLayer Esp", Settings.PlayerEsp, function(State)
+local Toggle1 = Section1:CreateToggle("Player Esp", Settings.PlayerEsp, function(State)
     Settings.PlayerEsp = State
     ESP.Players = Settings.PlayerEsp
 end)
