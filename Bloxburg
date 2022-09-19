@@ -71,7 +71,7 @@ local Invoke = function(A)
     Da:InvokeServer(A)
     getfenv(Da.InvokeServer).i = O
 end
-
+local F = {}
 getgenv().Text = Drawing.new("Text")
 Text.Color = Color3.new(0, 1, 1)
 Text.Font = 1
@@ -109,7 +109,6 @@ local function Tween(A, B, C)
         local Info = TweenInfo.new(Time, Enum.EasingStyle.Linear)
         local Tween = game:GetService("TweenService"):Create(A, Info, {CFrame = CFrame.new(B)})
         Tween:Play()
-        wait(Time)
     end
 end
 local PathService = game:GetService("PathfindingService")
@@ -189,10 +188,11 @@ local function getNearestCleaner()
     local Target
     for i, v in pairs(Workspace.Environment.Locations.GreenClean.Spawns:GetChildren()) do
         if
-            v:FindFirstChildWhichIsA("BasePart") and v.Name == "WallSpawn" or
-                v:FindFirstChildWhichIsA("Model") and v.Name == "GroundSpawn"
+            v:FindFirstChildWhichIsA("BasePart") or
+                v:FindFirstChildWhichIsA("Model")
          then
-            local Mag = (v.Position - Player.Character.HumanoidRootPart.Position).Magnitude
+             
+            local Mag = (v:FindFirstChild("Object").Parent.CFrame.Position - Player.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
                 TargetDistance = Mag
                 Target = v
@@ -462,39 +462,22 @@ spawn(
                         repeat
                             wait()
                         until St.Job.Value == "CleanJanitor"
-                        local F = {}
-                        for i, v in pairs(Workspace.Environment.Locations.GreenClean.Spawns:GetChildren()) do
-                            if v:FindFirstChild("Object") then
-                                table.insert(F, v)
-                            end
-                        end
-                        table.sort(
-                            F,
-                            function(i, v)
-                                return Player:DistanceFromCharacter(i.Position) <
-                                    Player:DistanceFromCharacter(v.Position)
-                            end
-                        )
                         Text.Text = "Status: Fucking around"
-                        if #F > 1 then
-                            local A = F[1]
                             local P
-                            if A:FindFirstChild("Object"):IsA("Part") then
-                                P = A:FindFirstChild("Object").CFrame.Position + Vector3.new(0,5,0)
+                            if getNearestCleaner():FindFirstChildWhichIsA("BasePart") then
+                                P = getNearestCleaner():FindFirstChildWhichIsA("BasePart").CFrame.Position + Vector3.new(0,3,0)
                             else
-                                P = A:FindFirstChild("Object").PrimaryPart.CFrame.Position + Vector3.new(0,5,0)
+                                P = getNearestCleaner():FindFirstChildWhichIsA("Model").PrimaryPart.CFrame.Position + Vector3.new(0,3,0)
                             end
                             Text.Text = "Status: Tweening to Object"
-                            TweenTo(Player.Character.HumanoidRootPart, P)
-                            wait(3)
+                            Tween(Player.Character.HumanoidRootPart, P,15)
+                            wait(1)
                             Invoke(
                                 {
                                     Type = "CleanJanitorObject",
-                                    Spawn = A
+                                    Spawn = getNearestCleaner()
                                 }
                             )
-                            Text.Text = "Status: Rember to give DekuDimz#3809 free hentai when you see him!"
-                        end
                         if
                             tonumber(
                                 Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
