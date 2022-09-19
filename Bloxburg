@@ -480,9 +480,9 @@ spawn(
                             local A = F[1]
                             local P
                             if A:FindFirstChild("Object"):IsA("Part") then
-                                P = A:FindFirstChild("Object").CFrame.Position
+                                P = A:FindFirstChild("Object").CFrame.Position + Vector3.new(0,5,0)
                             else
-                                P = A:FindFirstChild("Object").PrimaryPart.CFrame.Position
+                                P = A:FindFirstChild("Object").PrimaryPart.CFrame.Position + Vector3.new(0,5,0)
                             end
                             Text.Text = "Status: Tweening to Object"
                             TweenTo(Player.Character.HumanoidRootPart, P)
