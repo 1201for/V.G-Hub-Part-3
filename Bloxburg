@@ -457,7 +457,7 @@ spawn(
                     if Settings.CleanJanitor then
                         if St.Job.Value ~= "CleanJanitor" then
                             Text.Text = "Status: Teleporting"
-                            Jo:GoToWork("CleanJanitorr")
+                            Jo:GoToWork("CleanJanitor")
                         end
                         repeat
                             wait()
