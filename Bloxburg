@@ -674,8 +674,10 @@ spawn(
                                 not Player.Character:FindFirstChild("Vehicle_Delivery Moped")
                          then
                             Tween(Player.Character.HumanoidRootPart, Vector3.new(1176, 14, 284), 15)
+                            Text.Text = "Status: Getting Moped"
                             if (Player.Character.HumanoidRootPart.Position - Vector3.new(1176, 14, 284)).magnitude < 5 then
                                 Click()
+                                Text.Text = "Status: Click"
                             end
                         end
                         if
@@ -687,9 +689,11 @@ spawn(
                                 Vector3.new(1166, 15, 272),
                                 20
                             )
+                            Text.Text = "Status:  Getting Pizza!"
                             if (Player.Character.HumanoidRootPart.Position - Vector3.new(1166, 15, 272)).magnitude < 5 then
                                 Workspace.Camera.CFrame = CFrame.new(1165.80823, 17.5511112, 286.201172, 0.999919415, -0.000955291034, 0.012666015, -5.82076748e-11, 0.997167885, 0.0752079785, -0.012701991, -0.0752019212, 0.997087359)
                                 Click()
+                                Text.Text = "Status: Click"
                             end
                         end
                         if
@@ -705,6 +709,7 @@ spawn(
                             else
                                 P = 15
                             end
+                            Text.Text = "Status: Tweening to Retard"
                             Tween(
                                 Player.Character:FindFirstChild("Vehicle_Delivery Moped").Body,
                                 Vector3.new(
@@ -721,6 +726,7 @@ spawn(
                                     ).Position).magnitude < 5
                              then
                                 Click()
+                                Text.Text = "Status: Click"
                             end
                             if
                                 tonumber(
