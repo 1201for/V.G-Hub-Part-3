@@ -71,6 +71,11 @@ local Invoke = function(A)
     Da:InvokeServer(A)
     getfenv(Da.InvokeServer).i = O
 end
+local Invis = function()
+    local Clone = Player.Character.LowerTorso.Root:Clone()
+    Player.Character.LowerTorso.Root:Destroy()
+    Clone.Parent = Player.Character.LowerTorso
+end
 local F = {}
 getgenv().Text = Drawing.new("Text")
 Text.Color = Color3.new(0, 1, 1)
@@ -87,7 +92,17 @@ Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(
         Text.Position = Vector2.new(20, Workspace.CurrentCamera.ViewportSize.Y - 100)
     end
 )
-
+local Events = {"MouseButton1Down", "MouseButton1Click", "Activated"}
+local Click = function()
+    for i, v in pairs(Events) do
+        for i, v in pairs(getconnections(Player.PlayerGui.MainGUI.InteractIndicator[v])) do
+            v:Fire()
+        end
+        for i, v in pairs(getconnections(Player.PlayerGui.MainGUI.InteractIndicator.TapButton[v])) do
+            v:Fire()
+        end
+    end
+end
 local Order = function(A)
     if not A or (A and not A:FindFirstChild("Order")) then
         return
@@ -111,6 +126,20 @@ local function Tween(A, B, C)
         Tween:Play()
     end
 end
+Player.PlayerGui.DescendantAdded:Connect(
+    function(v)
+        if v.Name == "MessageBox" then
+            v:WaitForChild("Event"):Fire()
+        end
+    end
+)
+Player.PlayerGui.MainGUI.ChildAdded:Connect(
+    function(v)
+        if v.Name == "PaycheckFrame" then
+            v:Destroy()
+        end
+    end
+)
 local PathService = game:GetService("PathfindingService")
 local path = PathfindingService:CreatePath()
 
@@ -186,13 +215,12 @@ end
 local function getNearestCleaner()
     local TargetDistance = math.huge
     local Target
-    for i, v in pairs(Workspace.Environment.Locations.GreenClean.Spawns:GetChildren()) do
+    for i, v in pairs(Gamei.SpawnedCharacters:GetChildren()) do
         if
-            v:FindFirstChildWhichIsA("BasePart") or
-                v:FindFirstChildWhichIsA("Model")
+            v:FindFirstChildWhichIsA("BasePart") and v.Name == "WallSpawn" or
+                v:FindFirstChildWhichIsA("Model") and v.Name == "GroundSpawn"
          then
-             
-            local Mag = (v:FindFirstChild("Object").Parent.CFrame.Position - Player.Character.HumanoidRootPart.Position).Magnitude
+            local Mag = (v.Position - Player.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
                 TargetDistance = Mag
                 Target = v
@@ -202,6 +230,20 @@ local function getNearestCleaner()
     return Target
 end
 
+local function getNearestMob()
+    local TargetDistance = math.huge
+    local Target
+    for i, v in pairs(Workspace.Environment.Locations.GreenClean.Spawns:GetChildren()) do
+        if v.Name == "PizzaPlanetDeliveryCustomer" then
+            local Mag = (v:GetModelCFrame().Position - Player.Character.HumanoidRootPart.Position).Magnitude
+            if Mag < TargetDistance then
+                TargetDistance = Mag
+                Target = v
+            end
+        end
+    end
+    return Target
+end
 spawn(
     function()
         while wait() do
@@ -462,22 +504,39 @@ spawn(
                         repeat
                             wait()
                         until St.Job.Value == "CleanJanitor"
+
+                        for i, v in pairs(Workspace.Environment.Locations.GreenClean.Spawns:GetChildren()) do
+                            if v:FindFirstChild("Object") then
+                                table.insert(F, v)
+                            end
+                        end
+                        table.sort(
+                            F,
+                            function(A, B)
+                                return Player:DistanceFromCharacter(A.Position) <
+                                    Player:DistanceFromCharacter(B.Position)
+                            end
+                        )
                         Text.Text = "Status: Fucking around"
+                        if #F > 1 then
+                            local A = F[1]
                             local P
-                            if getNearestCleaner():FindFirstChildWhichIsA("BasePart") then
-                                P = getNearestCleaner():FindFirstChildWhichIsA("BasePart").CFrame.Position + Vector3.new(0,3,0)
+                            if A:FindFirstChild("Object"):IsA("Part") then
+                                P = A:FindFirstChild("Object").CFrame.Position + Vector3.new(0, 5, 0)
                             else
-                                P = getNearestCleaner():FindFirstChildWhichIsA("Model").PrimaryPart.CFrame.Position + Vector3.new(0,3,0)
+                                P = A:FindFirstChild("Object").PrimaryPart.CFrame.Position + Vector3.new(0, 5, 0)
                             end
                             Text.Text = "Status: Tweening to Object"
-                            Tween(Player.Character.HumanoidRootPart, P,15)
-                            wait(1)
+                            TweenTo(Player.Character.HumanoidRootPart, P)
+                            wait(3)
                             Invoke(
                                 {
                                     Type = "CleanJanitorObject",
-                                    Spawn = getNearestCleaner()
+                                    Spawn = A
                                 }
                             )
+                            Text.Text = "Status: Rember to give DekuDimz#3809 free hentai when you see him!"
+                        end
                         if
                             tonumber(
                                 Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
@@ -602,6 +661,78 @@ spawn(
                             end
                         end
                     end
+                    if Settings.PizzaPlanetDelivery then
+                        if St.Job.Value ~= "PizzaPlanetDelivery" then
+                            Text.Text = "Status: Teleporting"
+                            Jo:GoToWork("PizzaPlanetDelivery")
+                        end
+                        repeat
+                            wait()
+                        until St.Job.Value == "PizzaPlanetDelivery"
+                        if
+                            not Player.Character:FindFirstChild("Pizza Box") and
+                                not Player.Character:FindFirstChild("Vehicle_Delivery Moped")
+                         then
+                            Tween(Player.Character.HumanoidRootPart, Vector3.new(1176, 14, 284), 15)
+                            if (Player.Character.HumanoidRootPart.Position - Vector3.new(1176, 14, 284)).magnitude < 5 then
+                                Click()
+                            end
+                        end
+                        if
+                            Player.Character:FindFirstChild("Vehicle_Delivery Moped") and
+                                not Player.Character:FindFirstChild("Pizza Box")
+                         then
+                            Tween(
+                                Player.Character:FindFirstChild("Vehicle_Delivery Moped").Body,
+                                Vector3.new(1166, 15, 272),
+                                20
+                            )
+                            if (Player.Character.HumanoidRootPart.Position - Vector3.new(1166, 15, 272)).magnitude < 5 then
+                                Workspace.Camera.CFrame = CFrame.new(1165.80823, 17.5511112, 286.201172, 0.999919415, -0.000955291034, 0.012666015, -5.82076748e-11, 0.997167885, 0.0752079785, -0.012701991, -0.0752019212, 0.997087359)
+                                Click()
+                            end
+                        end
+                        if
+                            Player.Character:FindFirstChild("Pizza Box") and
+                                Player.Character:FindFirstChild("Vehicle_Delivery Moped")
+                         then
+                            local P
+                            if Gamei.SpawnedCharacters:FindFirstChild("PizzaPlanetDeliveryCustomer") then
+                                P =
+                                    Gamei.SpawnedCharacters:FindFirstChild("PizzaPlanetDeliveryCustomer"):GetModelCFrame(
+
+                                ).Position.Y
+                            else
+                                P = 15
+                            end
+                            Tween(
+                                Player.Character:FindFirstChild("Vehicle_Delivery Moped").Body,
+                                Vector3.new(
+                                    game:GetService("Workspace").MouseIgnore.DeliveryArrow.Position.X,
+                                    P,
+                                    game:GetService("Workspace").MouseIgnore.DeliveryArrow.Position.Z
+                                ),
+                                20
+                            )
+                            if
+                                (Player.Character.HumanoidRootPart.Position -
+                                    Gamei.SpawnedCharacters:FindFirstChild("PizzaPlanetDeliveryCustomer"):GetModelCFrame(
+
+                                    ).Position).magnitude < 5
+                             then
+                                Click()
+                            end
+                            if
+                                tonumber(
+                                    Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                                ) >= 5000
+                             then
+                                Jo:StopWorking()
+                                Text.Text = "Status: Quiting"
+                                wait(10)
+                            end
+                        end
+                    end
                     if Settings.HutFisherman then
                         if St.Job.Value ~= "HutFisherman" then
                             Text.Text = "Status: Teleporting"
@@ -689,7 +820,6 @@ spawn(
 )
 
 
-
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -715,7 +845,15 @@ local Toggle1 = Section1:CreateToggle("BensIceCreamSeller", Settings.BensIceCrea
     Settings.BensIceCreamSeller = State 
 end)
 
-
+local Toggle1 = Section1:CreateToggle("Invis", Settings.Invis, function(State)
+Settings.Invis = State
+spawn(function()
+    while wait() and Settings.Invis do 
+        Invis()
+        wait(3)
+    end 
+end)
+end)
 
 local Toggle1 = Section1:CreateToggle("CleanJanitor", Settings.CleanJanitor, function(State)
     Settings.CleanJanitor = State 
@@ -767,6 +905,21 @@ local Toggle1 = Section1:CreateToggle("SupermarketStocker", Settings.Supermarket
         end 
     end)
 end)
+
+local Toggle1 = Section1:CreateToggle("PizzaPlanetDelivery", Settings.PizzaPlanetDelivery, function(State)
+    Settings.PizzaPlanetDelivery = State 
+    RunService.Stepped:connect(function()
+        if Settings.PizzaPlanetDelivery then
+            for i,v in pairs(Player.Character:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                    v.Velocity = Vector3.new(0,0,0)
+                end 
+            end 
+        end 
+    end)
+end)
+
 
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/Karrot-Esp"))()
 
