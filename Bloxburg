@@ -101,6 +101,7 @@ local Click = function()
         for i, v in pairs(getconnections(Player.PlayerGui.MainGUI.InteractIndicator.TapButton[v])) do
             v:Fire()
         end
+        
     end
 end
 local Order = function(A)
@@ -230,11 +231,19 @@ local function getNearestCleaner()
     return Target
 end
 
-local function getNearestMob()
+function lookAt(A, B)
+    local Straight = (B - A).Unit
+    local Up = Vector3.new(0, 1, 0)
+    local Right = Straight:Cross(Up)
+    local Up2 = Right:Cross(Straight)
+
+    return CFrame.fromMatrix(B, Right, Up2)
+end
+local function getNearestTree()
     local TargetDistance = math.huge
     local Target
-    for i, v in pairs(Workspace.Environment.Locations.GreenClean.Spawns:GetChildren()) do
-        if v.Name == "PizzaPlanetDeliveryCustomer" then
+    for i, v in pairs(game:GetService("Workspace").Environment.Trees:GetChildren()) do
+        if v:IsA("Model") and v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChildWhichIsA("BasePart").Position.Y > 0 then
             local Mag = (v:GetModelCFrame().Position - Player.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
                 TargetDistance = Mag
@@ -244,11 +253,86 @@ local function getNearestMob()
     end
     return Target
 end
+local function getNearestMine()
+    local TargetDistance = math.huge
+    local Target
+    for i, v in pairs(Workspace.Environment.Locations["Static_MinerCave"].Folder:GetChildren()) do
+        if v:IsA("Model") and v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChildWhichIsA("BasePart").BrickColor.Name ~= "Bright red" then
+            local Mag = (v:GetModelCFrame().Position - Player.Character.HumanoidRootPart.Position).Magnitude
+            if Mag < TargetDistance then
+                TargetDistance = Mag
+                Target = v
+            end
+        elseif v:IsA("Model") and v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChildWhichIsA("BasePart").BrickColor.Name == "Bright red" then
+            v:Destroy()
+        end
+    end
+    return Target
+end
 spawn(
     function()
         while wait() do
             pcall(
                 function()
+                    if Settings.CaveMiner then
+                        if (St.Job.Value ~= "CaveMiner") then
+                            Text.Text = "Status: Teleporting"
+                            Jo:GoToWork("CaveMiner") --> TP to job
+                        end
+
+                        repeat
+                            wait()
+                        until St.Job.Value == "CaveMiner"
+                        if getNearestMine() then
+                            Tween(Player.Character.HumanoidRootPart,getNearestMine():GetModelCFrame().Position + Vector3.new(0,5,0),15)
+                            Workspace.Camera.CFrame = CFrame.new(350.404419, 20.3447189, 783.925537, 1, 2.76919254e-05, -4.8828133e-06, 0, 0.173647493, 0.984807909, 2.81191133e-05, -0.984807909, 0.173647493)
+                            wait(1)
+                            Text.Text = "Status: Mining"
+                            Click()
+                        end 
+                        if
+                            tonumber(
+                                Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                            ) >= 1000
+                         then
+                             Tween(Player.Character.HumanoidRootPart,Vector3.new(409, 8, 815),15)
+                            Text.Text = "Status: Quiting"
+                            wait(10)
+                        end
+                    end 
+                    if Settings.LumberWoodcutter then
+                        if (St.Job.Value ~= "LumberWoodcutter") and wait(2) then
+                            Text.Text = "Status: Teleporting"
+                            Jo:GoToWork("LumberWoodcutter") --> TP to job
+                            Tween(Player.Character.HumanoidRootPart,Vector3.new(631, 14, 818),15)
+                            Tween(Player.Character.HumanoidRootPart,Vector3.new(614, 15, 822),15)
+                        end
+
+                        repeat
+                            wait()
+                        until St.Job.Value == "LumberWoodcutter" and Player.Character:FindFirstChild("Hatchet") and wait(1)
+                        if getNearestTree() and Player.Character:FindFirstChild("Hatchet") then
+                            Tween(Player.Character.HumanoidRootPart,getNearestTree():GetModelCFrame().Position + Vector3.new(0,0,3),15)
+                            wait(1)
+                            if (Player.Character.HumanoidRootPart.Position - getNearestTree():GetModelCFrame().Position).Magnitude < 15 then
+                            Text.Text = "Status: Choping"
+                            Fire({
+                                Tree = getNearestTree(),
+                                Type = 'UseHatchet'
+                            })
+                            end 
+                        end 
+                        if
+                            tonumber(
+                                Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                            ) >= 1000
+                         then
+                            Jo:StopWorking()
+                            Text.Text = "Status: Quiting"
+                            wait(10)
+                        end
+                    end 
+                    
                     if Settings.Stylish then
                         if (St.Job.Value ~= "StylezHairdresser") then
                             Text.Text = "Status: Teleporting"
@@ -845,6 +929,9 @@ end)
 local Toggle1 = Section1:CreateToggle("BloxyBurgersCashier", Settings.Burger, function(State)
     Settings.Burger = State 
 end)
+local Toggle1 = Section1:CreateToggle("CaveMiner", Settings.CaveMiner, function(State)
+    Settings.CaveMiner = State 
+end)
 
 
 local Toggle1 = Section1:CreateToggle("BensIceCreamSeller", Settings.BensIceCreamSeller, function(State)
@@ -860,6 +947,21 @@ spawn(function()
     end 
 end)
 end)
+local Toggle1 = Section1:CreateToggle("LumberWoodcutter", Settings.LumberWoodcutter, function(State)
+    Settings.LumberWoodcutter = State 
+    RunService.Stepped:connect(function()
+        if Settings.LumberWoodcutter then
+            for i,v in pairs(Player.Character:GetChildren()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                    v.Velocity = Vector3.new(0,0,0)
+                end 
+            end 
+        end 
+    end)
+end)
+
+
 
 local Toggle1 = Section1:CreateToggle("CleanJanitor", Settings.CleanJanitor, function(State)
     Settings.CleanJanitor = State 
