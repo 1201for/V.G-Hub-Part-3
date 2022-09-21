@@ -500,7 +500,9 @@ local Table = {
     "Update3Hype!",
     "RipUpd3!",
     "OOpsAnotherProtmistake",
-    "SNAPCHANGESBYPROT?"
+    "SNAPCHANGESBYPROT?",
+    "55KLIKESTHANKYOU",
+    "UPDATEMAPNOW!"
 }
 
 if Settings.Speed == nil then
