@@ -18,7 +18,8 @@ Des = {}
 if makefolder then
     makefolder("V.G Hub")
 end
-
+local Games = {4491408735,185655149}
+if not  table.find(Games,game.PlaceId) then return end
 local Settings
 
 if
@@ -296,6 +297,7 @@ spawn(
                             ) >= 1000
                          then
                              Tween(Player.Character.HumanoidRootPart,Vector3.new(409, 8, 815),15)
+                            Jo:StopWorking()
                             Text.Text = "Status: Quiting"
                             wait(10)
                         end
