@@ -18,8 +18,10 @@ Des = {}
 if makefolder then
     makefolder("V.G Hub")
 end
-local Games = {4491408735,185655149}
-if not  table.find(Games,game.PlaceId) then return end
+local Games = {4491408735, 185655149}
+if not table.find(Games, game.PlaceId) then
+    return
+end
 local Settings
 
 if
@@ -102,7 +104,6 @@ local Click = function()
         for i, v in pairs(getconnections(Player.PlayerGui.MainGUI.InteractIndicator.TapButton[v])) do
             v:Fire()
         end
-        
     end
 end
 local Order = function(A)
@@ -197,7 +198,7 @@ local function WalkTo(v)
                 local distance
                 for waypointIndex, waypoint in pairs(waypoints) do
                     local waypointPosition = waypoint.Position
-                    game.Players.LocalPlayer.Character.Humanoid:MoveTo(waypointPosition + Vector3.new(0, 1, 0))
+                    game.Players.LocalPlayer.Character.Humanoid:MoveTo(waypointPosition)
                     repeat
                         distance =
                             (waypointPosition -
@@ -208,7 +209,7 @@ local function WalkTo(v)
             end
         )
         if not success then
-            game.Players.LocalPlayer.Character.Humanoid:MoveTo(v.Position + Vector3.new(0, 1, 0))
+            game.Players.LocalPlayer.Character.Humanoid:MoveTo(v.Position)
         end
     until (v - game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Parent.PrimaryPart.Position).magnitude <
         10 or s == false
@@ -244,7 +245,10 @@ local function getNearestTree()
     local TargetDistance = math.huge
     local Target
     for i, v in pairs(game:GetService("Workspace").Environment.Trees:GetChildren()) do
-        if v:IsA("Model") and v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChildWhichIsA("BasePart").Position.Y > 0 then
+        if
+            v:IsA("Model") and v:FindFirstChildWhichIsA("BasePart") and
+                v:FindFirstChildWhichIsA("BasePart").Position.Y > 0
+         then
             local Mag = (v:GetModelCFrame().Position - Player.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
                 TargetDistance = Mag
@@ -254,17 +258,43 @@ local function getNearestTree()
     end
     return Target
 end
+
+for i, v in pairs(getconnections(game:GetService("ScriptContext").Error)) do
+    v:Disable()
+    game:GetService("ScriptContext").Error:Connect(
+        function(...)
+            local Args = {...}
+            local i, v =
+                pcall(
+                function()
+                    return Args[3].Name
+                end
+            )
+            if i == false then
+                return
+            end
+            v:Fire(...)
+        end
+    )
+end
+
 local function getNearestMine()
     local TargetDistance = math.huge
     local Target
     for i, v in pairs(Workspace.Environment.Locations["Static_MinerCave"].Folder:GetChildren()) do
-        if v:IsA("Model") and v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChildWhichIsA("BasePart").BrickColor.Name ~= "Bright red" then
+        if
+            v:IsA("Model") and v:FindFirstChildWhichIsA("BasePart") and
+                v:FindFirstChildWhichIsA("BasePart").BrickColor.Name ~= "Bright red"
+         then
             local Mag = (v:GetModelCFrame().Position - Player.Character.HumanoidRootPart.Position).Magnitude
             if Mag < TargetDistance then
                 TargetDistance = Mag
                 Target = v
             end
-        elseif v:IsA("Model") and v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChildWhichIsA("BasePart").BrickColor.Name == "Bright red" then
+        elseif
+            v:IsA("Model") and v:FindFirstChildWhichIsA("BasePart") and
+                v:FindFirstChildWhichIsA("BasePart").BrickColor.Name == "Bright red"
+         then
             v:Destroy()
         end
     end
@@ -275,6 +305,231 @@ spawn(
         while wait() do
             pcall(
                 function()
+                    if Settings.PizzaPlanetBaker then
+                        if (St.Job.Value ~= "PizzaPlanetBaker") then
+                            Text.Text = "Status: Teleporting"
+                            Jo:GoToWork("PizzaPlanetBaker") --> TP to job
+                        end
+
+                        repeat
+                            wait()
+                        until St.Job.Value == "PizzaPlanetBaker"
+
+                        for i, v in pairs(
+                            game:GetService("Workspace").Environment.Locations.PizzaPlanet.BakerWorkstations:GetChildren(
+
+                            )
+                        ) do
+                            if v.Name == "Workstation" then
+                                local Workstation = v
+                                if Workstation.Order.IngredientsLeft.Value < 1 then
+                                    Tween(
+                                        Player.Character.HumanoidRootPart,
+                                        game:GetService("Workspace").Environment.Locations.PizzaPlanet.IngredientCrates:FindFirstChild(
+                                            "Crate"
+                                        ).Position,
+                                        15
+                                    )
+                                    repeat
+                                        wait()
+                                    until Player:DistanceFromCharacter(
+                                        game:GetService("Workspace").Environment.Locations.PizzaPlanet.IngredientCrates:FindFirstChild(
+                                            "Crate"
+                                        ).Position
+                                    ) < 5
+                                    while not Player.Character:FindFirstChild("Ingredient Crate") do
+                                        Fire(
+                                            {
+                                                Type = "TakeIngredientCrate",
+                                                Object = game:GetService("Workspace").Environment.Locations.PizzaPlanet.IngredientCrates:FindFirstChild(
+                                            "Crate"
+                                        )
+                                            }
+                                        )
+                                        wait(1)
+                                    end
+                                    Tween(Player.Character.HumanoidRootPart, Workstation.PrimaryPart.Position, 15)
+                                    while Player.Character:FindFirstChild("Ingredient Crate") do
+                                        Fire(
+                                            {
+                                                Type = "RestockIngredients",
+                                                Workstation = Workstation
+                                            }
+                                        )
+                                        wait(1)
+                                    end
+                                    return
+                                end
+
+                                    Tween(Player.Character.HumanoidRootPart, Workstation.PrimaryPart.Position, 15)
+                                    wait()
+                                    repeat
+                                        wait()
+                                    until Player:DistanceFromCharacter(Workstation.PrimaryPart.Position) < 5
+                                    Fire({
+								Type = "UseWorkstation", 
+								Workstation = Workstation
+							});
+                                    if Workstation.OrderDisplay.DisplayMain:FindFirstChild("BakerGUI") and wait(2) then
+                                        Fire(
+                                            {
+                                                Type = "JobCompleted",
+                                                Workstation = Workstation,
+                                                Order = {true,true,true,Workstation.Order.Value}
+                                            }
+                                        )
+                                    end
+                                    if
+                                        tonumber(
+                                            Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                                        ) >= 1000
+                                     then
+                                        Jo:StopWorking()
+                                        Text.Text = "Status: Quiting"
+                                        wait(10)
+                                    end
+                            end
+                        end
+                    end
+
+                    if Settings.MikesMechanic then
+                        if (St.Job.Value ~= "MikesMechanic") then
+                            Text.Text = "Status: Teleporting"
+                            Jo:GoToWork("MikesMechanic") --> TP to job
+                        end
+
+                        repeat
+                            wait()
+                        until St.Job.Value == "MikesMechanic"
+
+                        for a, b in pairs(workspace["_game"].SpawnedCharacters:GetChildren()) do
+                            if b.Name == "MikesMotorsCustomer" then
+                                if not b:FindFirstChild("HumanoidRootPart") then
+                                    return
+                                end
+                                if b:FindFirstChild("HumanoidRootPart"):FindFirstChild("AttachWeld") then
+                                    local c = b:WaitForChild("HumanoidRootPart"):FindFirstChild("AttachWeld")
+                                    if c.Part1 then
+                                        if c.Part1.Name == "CustomerTarget" and c.Part1.Parent.Name == "Workstation" then
+                                            local d = b
+                                            local e = c.Part1.Parent
+                                            if Player:DistanceFromCharacter(e.PrimaryPart.Position) < 15 then
+                                                if d:FindFirstChildOfClass("CFrameValue") then
+                                                    return
+                                                end
+                                                Instance.new("CFrameValue", d)
+                                                local f = d:WaitForChild("Order")
+                                                local g = f.Vehicle.Value
+                                                local h
+                                                if f:FindFirstChild("Color") then
+                                                    h = "Color"
+                                                elseif f:FindFirstChild("Wheels") then
+                                                    h = "Wheels"
+                                                elseif f:FindFirstChild("Oil") then
+                                                    h = "Oil"
+                                                end
+                                                if h == "Color" then
+                                                    local i = f.Color.Value
+                                                    local j =
+                                                        workspace.Environment.Locations.MikesMotors.PaintingEquipment:FindFirstChild(
+                                                        i
+                                                    )
+                                                    Tween(Player.Character.HumanoidRootPart, j.Can.Position, 15)
+                                                    wait(2)
+                                                    while not Player.Character:FindFirstChild("Spray Painter") do
+                                                        Fire({Type = "TakePainter", Object = j})
+                                                        wait()
+                                                    end
+                                                    Tween(
+                                                        Player.Character.HumanoidRootPart,
+                                                        d.Vehicle.Body.Position,
+                                                        15
+                                                    )
+                                                    wait(2)
+                                                    while Player.Character:FindFirstChild("Spray Painter") do
+                                                        Fire({Type = "FixBike", Workstation = e})
+                                                        wait()
+                                                    end
+                                                    Fire({Type = "JobCompleted", Workstation = e})
+                                                elseif h == "Wheels" then
+                                                    local k = f.Wheels.Value
+                                                    local l =
+                                                        workspace.Environment.Locations.MikesMotors.TireRacks:FindFirstChild(
+                                                        k
+                                                    )
+                                                    Tween(Player.Character.HumanoidRootPart, l.Part.Position, 15)
+                                                    wait(2)
+                                                    while not Player.Character:FindFirstChild("Motorcycle Wheel") do
+                                                        Fire({Type = "TakeWheel", Object = l})
+                                                        wait()
+                                                    end
+                                                    Tween(
+                                                        Player.Character.HumanoidRootPart,
+                                                        d.Vehicle.Body.Position,
+                                                        15
+                                                    )
+                                                    wait(2)
+                                                    while Player.Character:FindFirstChild("Motorcycle Wheel") do
+                                                        Fire({Type = "FixBike", Workstation = e})
+                                                        wait()
+                                                    end
+                                                    Tween(Player.Character.HumanoidRootPart, l.Part.Position, 15)
+                                                    wait(2)
+                                                    while not Player.Character:FindFirstChild("Motorcycle Wheel") do
+                                                        Fire({Type = "TakeWheel", Object = l})
+                                                        wait()
+                                                    end
+                                                    Tween(
+                                                        Player.Character.HumanoidRootPart,
+                                                        d.Vehicle.Body.Position,
+                                                        15
+                                                    )
+                                                    wait(2)
+                                                    while Player.Character:FindFirstChild("Motorcycle Wheel") do
+                                                        Fire({Type = "FixBike", Workstation = e, Front = true})
+                                                        wait()
+                                                    end
+                                                    Fire({Type = "JobCompleted", Workstation = e})
+                                                elseif h == "Oil" then
+                                                    local m =
+                                                        workspace.Environment.Locations.MikesMotors.OilCans:FindFirstChild(
+                                                        "Can"
+                                                    )
+                                                    Tween(Player.Character.HumanoidRootPart, m.Body.Position, 15)
+                                                    wait(2)
+                                                    while not Player.Character:FindFirstChild("Oil Can") do
+                                                        Fire({Type = "TakeOil", Object = m})
+                                                        wait()
+                                                    end
+                                                    Tween(
+                                                        Player.Character.HumanoidRootPart,
+                                                        d.Vehicle.Body.Position,
+                                                        15
+                                                    )
+                                                    wait(2)
+                                                    while Player.Character:FindFirstChild("Oil Can") do
+                                                        Fire({Type = "FixBike", Workstation = e})
+                                                        wait()
+                                                    end
+                                                    Fire({Type = "JobCompleted", Workstation = e})
+                                                end
+                                            end
+                                        end
+                                        if
+                                            tonumber(
+                                                Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
+                                            ) >= 1000
+                                         then
+                                            Tween(Player.Character.HumanoidRootPart, Vector3.new(409, 8, 815), 15)
+                                            Jo:StopWorking()
+                                            Text.Text = "Status: Quiting"
+                                            wait(10)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
                     if Settings.CaveMiner then
                         if (St.Job.Value ~= "CaveMiner") then
                             Text.Text = "Status: Teleporting"
@@ -285,45 +540,73 @@ spawn(
                             wait()
                         until St.Job.Value == "CaveMiner"
                         if getNearestMine() then
-                            Tween(Player.Character.HumanoidRootPart,getNearestMine():GetModelCFrame().Position + Vector3.new(0,5,0),15)
-                            Workspace.Camera.CFrame = CFrame.new(350.404419, 20.3447189, 783.925537, 1, 2.76919254e-05, -4.8828133e-06, 0, 0.173647493, 0.984807909, 2.81191133e-05, -0.984807909, 0.173647493)
+                            Tween(
+                                Player.Character.HumanoidRootPart,
+                                getNearestMine():GetModelCFrame().Position + Vector3.new(0, 5, 0),
+                                15
+                            )
+                            Workspace.Camera.CFrame =
+                                CFrame.new(
+                                350.404419,
+                                20.3447189,
+                                783.925537,
+                                1,
+                                2.76919254e-05,
+                                -4.8828133e-06,
+                                0,
+                                0.173647493,
+                                0.984807909,
+                                2.81191133e-05,
+                                -0.984807909,
+                                0.173647493
+                            )
                             wait(1)
                             Text.Text = "Status: Mining"
                             Click()
-                        end 
+                        end
                         if
                             tonumber(
                                 Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
                             ) >= 1000
                          then
-                             Tween(Player.Character.HumanoidRootPart,Vector3.new(409, 8, 815),15)
+                            Tween(Player.Character.HumanoidRootPart, Vector3.new(409, 8, 815), 15)
                             Jo:StopWorking()
                             Text.Text = "Status: Quiting"
                             wait(10)
                         end
-                    end 
+                    end
                     if Settings.LumberWoodcutter then
                         if (St.Job.Value ~= "LumberWoodcutter") and wait(2) then
                             Text.Text = "Status: Teleporting"
                             Jo:GoToWork("LumberWoodcutter") --> TP to job
-                            Tween(Player.Character.HumanoidRootPart,Vector3.new(631, 14, 818),15)
-                            Tween(Player.Character.HumanoidRootPart,Vector3.new(614, 15, 822),15)
+                            Tween(Player.Character.HumanoidRootPart, Vector3.new(631, 14, 818), 15)
+                            Tween(Player.Character.HumanoidRootPart, Vector3.new(614, 15, 822), 15)
                         end
 
                         repeat
                             wait()
-                        until St.Job.Value == "LumberWoodcutter" and Player.Character:FindFirstChild("Hatchet") and wait(1)
-                        if getNearestTree() and Player.Character:FindFirstChild("Hatchet") then
-                            Tween(Player.Character.HumanoidRootPart,getNearestTree():GetModelCFrame().Position + Vector3.new(0,0,3),15)
+                        until St.Job.Value == "LumberWoodcutter" and Player.Character:FindFirstChild("Hatchet") and
                             wait(1)
-                            if (Player.Character.HumanoidRootPart.Position - getNearestTree():GetModelCFrame().Position).Magnitude < 15 then
-                            Text.Text = "Status: Choping"
-                            Fire({
-                                Tree = getNearestTree(),
-                                Type = 'UseHatchet'
-                            })
-                            end 
-                        end 
+                        if getNearestTree() and Player.Character:FindFirstChild("Hatchet") then
+                            Tween(
+                                Player.Character.HumanoidRootPart,
+                                getNearestTree():GetModelCFrame().Position + Vector3.new(0, 0, 3),
+                                15
+                            )
+                            wait(1)
+                            if
+                                (Player.Character.HumanoidRootPart.Position - getNearestTree():GetModelCFrame().Position).Magnitude <
+                                    15
+                             then
+                                Text.Text = "Status: Choping"
+                                Fire(
+                                    {
+                                        Tree = getNearestTree(),
+                                        Type = "UseHatchet"
+                                    }
+                                )
+                            end
+                        end
                         if
                             tonumber(
                                 Player.PlayerGui.MainGUI.Bar.CharMenu.WorkFrame.WorkFrame.EarningsLabel.TextLabel.Text
@@ -333,8 +616,8 @@ spawn(
                             Text.Text = "Status: Quiting"
                             wait(10)
                         end
-                    end 
-                    
+                    end
+
                     if Settings.Stylish then
                         if (St.Job.Value ~= "StylezHairdresser") then
                             Text.Text = "Status: Teleporting"
@@ -777,7 +1060,21 @@ spawn(
                             )
                             Text.Text = "Status:  Getting Pizza!"
                             if (Player.Character.HumanoidRootPart.Position - Vector3.new(1166, 15, 272)).magnitude < 5 then
-                                Workspace.Camera.CFrame = CFrame.new(1165.80823, 17.5511112, 286.201172, 0.999919415, -0.000955291034, 0.012666015, -5.82076748e-11, 0.997167885, 0.0752079785, -0.012701991, -0.0752019212, 0.997087359)
+                                Workspace.Camera.CFrame =
+                                    CFrame.new(
+                                    1165.80823,
+                                    17.5511112,
+                                    286.201172,
+                                    0.999919415,
+                                    -0.000955291034,
+                                    0.012666015,
+                                    -5.82076748e-11,
+                                    0.997167885,
+                                    0.0752079785,
+                                    -0.012701991,
+                                    -0.0752019212,
+                                    0.997087359
+                                )
                                 Click()
                                 Text.Text = "Status: Click"
                             end
@@ -915,7 +1212,7 @@ spawn(
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
-local Tab1 = Window:CreateTab("Anime Rifts")
+local Tab1 = Window:CreateTab("Bloxburg")
 local Tab2 = Window:CreateTab("UI Settings")
 
 local Section1 = Tab1:CreateSection("")
@@ -939,6 +1236,21 @@ end)
 local Toggle1 = Section1:CreateToggle("BensIceCreamSeller", Settings.BensIceCreamSeller, function(State)
     Settings.BensIceCreamSeller = State 
 end)
+
+
+local Toggle1 = Section1:CreateToggle("PizzaPlanetBaker", Settings.PizzaPlanetBaker, function(State)
+    Settings.PizzaPlanetBaker = State 
+    RunService.Stepped:connect(function()
+        if Settings.PizzaPlanetBaker then
+            for i,v in pairs(Player.Character:GetChildren()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end 
+            end 
+        end 
+    end)
+end)
+
 
 local Toggle1 = Section1:CreateToggle("Invis", Settings.Invis, function(State)
 Settings.Invis = State
@@ -977,6 +1289,21 @@ local Toggle1 = Section1:CreateToggle("CleanJanitor", Settings.CleanJanitor, fun
         end 
     end)
 end)
+
+local Toggle1 = Section1:CreateToggle("MikesMechanic", Settings.MikesMechanic, function(State)
+    Settings.MikesMechanic = State 
+    RunService.Stepped:connect(function()
+        if Settings.MikesMechanic then
+            for i,v in pairs(Player.Character:GetChildren()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end 
+            end 
+        end 
+    end)
+end)
+
+
 
 local Toggle1 = Section1:CreateToggle("HutFisherman", Settings.HutFisherman, function(State)
     Settings.HutFisherman = State 
