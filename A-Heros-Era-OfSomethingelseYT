@@ -79,11 +79,6 @@ spawn(
                     if Player.PlayerGui:FindFirstChild("MenuV2 (NEW)") then
                         Player.PlayerGui:WaitForChild("MenuV2 (NEW)").Name = "MenuV2"
                     end
-                    for i, v in pairs(Workspace:GetChildren()) do
-                        if v.Name == "Quest Board" then
-                            v.Parent = Workspace.Map
-                        end
-                    end
                     if Player.PlayerGui:FindFirstChild("Buttons") and Player.PlayerGui.Buttons.Enabled then
                         game:GetService("ReplicatedStorage").Events.ServerCheck:FireServer()
                         Player.PlayerGui.Buttons.Enabled = false
@@ -118,10 +113,11 @@ spawn(
 wait(1)
 
 local Quests = {}
-for i, v in pairs(Workspace.Map:GetChildren()) do
+for i, v in pairs(game:GetService("Workspace").INTERACTIVE:GetChildren()) do
     if v.Name == "Quest Board" then
         for i, v in pairs(v.Papers:GetChildren()) do
-            if v.Name == "Part" then
+            if v.Name == "Part" and not table.find(Quests,v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text ..
+                        " - " .. v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("LevelReq").Text) then
                 table.insert(
                     Quests,
                     v:FindFirstChild("SurfaceGui"):FindFirstChild("Frame"):FindFirstChild("QuestName").Text ..
@@ -502,7 +498,9 @@ local Table = {
     "OOpsAnotherProtmistake",
     "SNAPCHANGESBYPROT?",
     "55KLIKESTHANKYOU",
-    "UPDATEMAPNOW!"
+    "UPDATEMAPNOW!",
+    "SPIRITRACEUPD",
+    "NEWMAPUPDATEXD"
 }
 
 if Settings.Speed == nil then
@@ -1028,7 +1026,7 @@ spawn(
         while wait() and Settings.AutoQuest do
             pcall(
                 function()
-                    for i, v in pairs(Workspace.Map:GetChildren()) do
+                    for i, v in pairs(game:GetService("Workspace").INTERACTIVE:GetChildren()) do
                         if v.Name == "Quest Board" then
                             for i, v in pairs(v.Papers:GetChildren()) do
                                 if v.Name == "Part" then
