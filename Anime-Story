@@ -1,8 +1,7 @@
 repeat
     wait()
 until game:IsLoaded()
-local Money = {9417197334,10754228929,10754240183,10803451350}
-if not table.find(Money,game.PlaceId) then return end 
+
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
@@ -377,6 +376,19 @@ OldIndex =
         return OldIndex(self, v)
     end
 )
+end)
+
+local Toggle1 = Section1:CreateToggle("Infinite Charge", Settings.Aut, function(State)
+Settings.Aut = State
+RunService.Stepped:Connect(function()
+    pcall(function()
+        if Settings.Aut then
+            if Player.Character.CharacterState.Energy.Value + 1 <= Player.Character.CharacterState.EnergyMax.Value  then
+                Player.Backpack.PlayerControls.Charge:FireServer("On")
+            end 
+        end 
+    end)
+end)
 end)
 
 local Toggle1 = Section1:CreateToggle("AutoQuest", Settings.AutoQuest, function(State)
