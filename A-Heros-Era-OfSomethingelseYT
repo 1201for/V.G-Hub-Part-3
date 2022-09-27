@@ -1084,18 +1084,6 @@ RunService.Stepped:Connect(
     end
 )
 end)
-local Toggle1 = Section1:CreateToggle("No Trees", Settings.Tree, function(State)
-Settings.Tree = State
-for i,v in pairs(game:GetService("Workspace").Trees:GetDescendants()) do
-    if v:IsA("BasePart") and Settings.Tree then
-        v.CanCollide = false 
-        v.Transparency = 1 
-        elseif v:IsA("BasePart") and not Settings.Tree then
-        v.CanCollide = true
-        v.Transparency = 0
-    end 
-end 
-end)
 
 
 local Dropdown1 = Section1:CreateDropdown("Area Teleports", Areas, function(Name)
