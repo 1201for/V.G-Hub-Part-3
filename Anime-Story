@@ -1,7 +1,8 @@
 repeat
     wait()
 until game:IsLoaded()
-
+local Money = {9417197334,10754228929,10754240183,10803451350}
+if not table.find(Money,game.PlaceId) then return end 
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
