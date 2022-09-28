@@ -136,13 +136,7 @@ Player.PlayerGui.DescendantAdded:Connect(
         end
     end
 )
-Player.PlayerGui.MainGUI.ChildAdded:Connect(
-    function(v)
-        if v.Name == "PaycheckFrame" then
-            v:Destroy()
-        end
-    end
-)
+
 local PathService = game:GetService("PathfindingService")
 local path = PathfindingService:CreatePath()
 
@@ -1212,7 +1206,7 @@ spawn(
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
-local Tab1 = Window:CreateTab("Bloxburg")
+local Tab1 = Window:CreateTab("Anime Rifts")
 local Tab2 = Window:CreateTab("UI Settings")
 
 local Section1 = Tab1:CreateSection("")
