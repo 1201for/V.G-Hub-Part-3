@@ -330,6 +330,18 @@ local function Click()
     end
 end
 
+local function Fire(V)
+	if V:IsA("BasePart") and not v:FindFirstChildWhichIsA("Fire") then
+		local Fire = Instance.new("Fire")
+		Fire.Heat = 10
+		Fire.Color = Color3.new(0,0,0)
+		Fire.SecondaryColor = Color3.new(1, 1, 1) -- White
+		Fire.Size = math.max(V.Size.X, V.Size.Z) -- Pick the larger of the two dimensions
+		Fire.Parent = V
+	end
+end 
+
+
 local FuckDekuDimz = function()
     if not Player.Character.Config.CombatMode.Value and Settings.FightMethod == "Fists" then
         VirtualInputManager:SendKeyEvent(true, "R", false, game)
@@ -560,6 +572,26 @@ local Section4 = Tab2:CreateSection("Background")
 
 local Toggle1 = Section1:CreateToggle("Anti Mod Hop", Settings.AutoHop, function(State)
 Settings.AutoHop = State
+end)
+
+
+local Toggle1 = Section1:CreateToggle("Fire Effects", nil, function(State)
+Settings.Magic = State
+RunService.Stepped:Connect(
+    function()
+        if Settings.Magic then
+            pcall(function()
+                if Player.Character or Player.CharacterAdded:Wait(1) then
+                    for i,v in pairs(Player.Character:GetChildren()) do
+                        if v:IsA("BasePart") then
+                            Fire(v)
+                        end 
+                    end 
+                end 
+            end)
+        end
+    end
+)
 end)
 
 local Toggle1 = Section1:CreateToggle("Auto Mobs", Settings.AutoFarm, function(State)
