@@ -331,7 +331,7 @@ local function Click()
 end
 
 local function Fire(V)
-	if V:IsA("BasePart") and not v:FindFirstChildWhichIsA("Fire") then
+	if V:IsA("BasePart") and not V:FindFirstChildWhichIsA("Fire") then
 		local Fire = Instance.new("Fire")
 		Fire.Heat = 10
 		Fire.Color = Color3.new(0,0,0)
@@ -581,7 +581,7 @@ RunService.Stepped:Connect(
     function()
         if Settings.Magic then
             pcall(function()
-                if Player.Character or Player.CharacterAdded:Wait(1) then
+                if Player.Character then
                     for i,v in pairs(Player.Character:GetChildren()) do
                         if v:IsA("BasePart") then
                             Fire(v)
