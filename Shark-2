@@ -189,7 +189,7 @@ end)
 
 local Slider2 = Section1:CreateSlider("Aimbot Radius", 0,1000,Settings.Aimbot.FOV,false, function(Value)
     Settings.Aimbot.FOV = Value
-    Settings.Aimbot.FOV = Circle.Radius 
+    Circle.Radius = Settings.Aimbot.FOV
 end)
 
 local Toggle1 = Section1:CreateToggle("Circle Visible", Settings.Visible, function(State)
