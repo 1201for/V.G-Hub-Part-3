@@ -93,7 +93,12 @@ local A = require(Workspace.EnemyStats)
 
 
 
-
+local Quests = {}
+for i,v in pairs(Workspace.QuestNPCs:GetChildren()) do
+    if v:IsA("Model") and v:FindFirstChild("Quest") and not table.find(Quests,v.Quest.Value) then
+        table.insert(Quests,v.Quest.Value)
+    end 
+end 
 
 local Hell = {}
 for i, v in pairs(A) do
@@ -107,11 +112,28 @@ for i, v in pairs(Workspace.QuestNPCs:GetChildren()) do
     end
 end
 
+
+
+--Skided from game need it for AutoQuest
+function GetTier(p18)
+	local v32 = { "Exodia Tiers", "Mythical Tiers", "God Tiers", "High Tiers", "Elite Tiers", "Mid Tiers", "Low Tiers" };
+	for v33, v34 in pairs({ 9, 7.5, 6, 5, 3.5, 2 }) do
+		if v34 <= p18 then
+			return v32[v33];
+		end;
+	end;
+	return "Low Tiers";
+end;
+
+
 local function getNearestMobs()
     local TargetDistance = math.huge
     local Target
     for i, v in ipairs(Workspace:GetChildren()) do
-        if v.ClassName == "Model" and table.find(Hell, v.Name) or table.find(Quests,v.Name) then
+        if v:FindFirstChild("Level") then
+            local String = Player.PlayerGui.MainClient.Quest.Folder.Objective.objective
+            String.Text = string.gsub(String.Text,"-"," ")
+        if v:IsA("Model") and (table.find(Hell, v.Name) and not Settings.AutoQuest or string.find(String.Text,GetTier(v.Level.Value)) and Settings.AutoQuest) then
             if v:FindFirstChildWhichIsA("Humanoid") and v:FindFirstChildWhichIsA("Humanoid").Health ~= 0 then
             local Mag =
                     (Player.Character.HumanoidRootPart.Position -
@@ -121,7 +143,7 @@ local function getNearestMobs()
                     Target = v
                     end 
                 end
-            end
+            end end 
         end
     return Target
 end
@@ -148,18 +170,20 @@ local function Hitv2(v)
     end
 end
 
-local function Quests(A)
-    if not Player.PlayerGui.ScreenGui.Quest.Visible then
+local function Q(A)
+    if not Player.PlayerGui.MainClient.Quest.Visible then
         Rep.TakeQuest:FireServer(A)
     elseif
-        Player.PlayerGui.ScreenGui.Quest.Visible and
-            Player.PlayerGui.ScreenGui.Quest.Folder.Objective.progress.Text:split("/")[1] ==
-                Player.PlayerGui.ScreenGui.Quest.Folder.Objective.progress.Text:split("/")[2]
+        Player.PlayerGui.MainClient.Quest.Visible and
+            Player.PlayerGui.MainClient.Quest.Folder.Objective.progress.Text:split("/")[1] ==
+                Player.PlayerGui.MainClient.Quest.Folder.Objective.progress.Text:split("/")[2]
      then
         Rep.TakeQuest:FireServer("Completed")
      end
     return A
 end
+
+
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
@@ -174,55 +198,69 @@ local Section4 = Tab2:CreateSection("Background")
 
 local Toggle1 = Section1:CreateToggle("Auto Mob", Settings.Fight, function(State)
 Settings.Fight = State
-
 spawn(
     function()
-game:GetService("RunService").Stepped:connect(
-    function()
-        pcall(function()
-        if Settings.Fight then
-            if not Player.Character:FindFirstChild("Head"):FindFirstChild("LeftGlow") then
-                VirtualInputManager:SendKeyEvent(true, 49, false, game)
+        game:GetService("RunService").Stepped:connect(
+            function()
+                pcall(
+                    function()
+                        if Settings.Fight then
+                            if not Player.Character:FindFirstChild("Head"):FindFirstChild("LeftGlow") then
+                                VirtualInputManager:SendKeyEvent(true, 49, false, game)
+                            end
+                            if Player.Character.Humanoid.Health ~= 0 and Player.Character:FindFirstChild("Head") then
+                                for i, v in pairs(Player.Character:GetChildren()) do
+                                    if v:IsA("BasePart") then
+                                        v.CanCollide = false
+                                    end
+                                end
+                            end
+                        end
+                    end
+                )
             end
-            if Player.Character.Humanoid.Health ~= 0 and Player.Character:FindFirstChild("Head") then
-            for i, v in pairs(Player.Character:GetChildren()) do
-                if v:IsA("BasePart") then
-                    v.CanCollide = false
-                end
-            end
-            end 
-        end
-        end)
+        )
     end
 )
-end)
-spawn(function()
-while Settings.Fight do
-    wait()
-    pcall(function()
-        if Player.Character.Humanoid.Health ~= 0 then
-            if (Player.Character.PrimaryPart.Position - getNearestMobs().PrimaryPart.Position).Magnitude < 10 then
-            Hit(getNearestMobs())
-            Hitv2(getNearestMobs())
-            end 
-            Player.Character.Humanoid:MoveTo(getNearestMobs().PrimaryPart.Position)
-            end 
+spawn(
+    function()
+        while Settings.Fight do
+            wait()
+            pcall(
+                function()
+                    Q(Settings.Quest)
+                    if Player.Character.Humanoid.Health ~= 0 then
+                        if
+                            (Player.Character.PrimaryPart.Position - getNearestMobs().PrimaryPart.Position).Magnitude <
+                                10
+                         then
+                            Hit(getNearestMobs())
+                            Hitv2(getNearestMobs())
+                        end
+                        Player.Character.Humanoid:MoveTo(getNearestMobs().PrimaryPart.Position)
+                    end
+                end
+            )
         end
-    )
-end
-end)
+    end
+)
 
 end)
 
-
-
+local Toggle1 = Section1:CreateToggle("AutoQuest", Settings.AutoQuest, function(State)
+    Settings.AutoQuest = State
+end)
+local Dropdown1 = Section1:CreateDropdown("Quests", Quests, function(Name)
+	Settings.Quest = Name 
+end)
+    
 
 local Toggle1 = Section1:CreateToggle("Auto Buy Ticket", Settings.AutoBuy, function(State)
 Settings.AutoBuy = State
 spawn(function()
 while Settings.AutoBuy do
     wait()
-    game:GetService("ReplicatedStorage").PurchaseTickets:FireServer(1)
+    ReplicatedStorage.PurchaseTickets:FireServer(1)
 end
 end)
 end)
@@ -231,10 +269,12 @@ Settings.AutoBuy1 = State
 spawn(function()
 while Settings.AutoBuy1 do
     wait()
-    game:GetService("ReplicatedStorage").Reroll:InvokeServer()
+    ReplicatedStorage.Reroll:InvokeServer()
 end
 end)
 end)
+
+
 
 
 
@@ -350,7 +390,7 @@ Settings.System = State
 spawn(function()
 while Settings.System do
     wait()
-    game:GetService("ReplicatedStorage").StatPoint:InvokeServer("Power")
+    ReplicatedStorage.StatPoint:InvokeServer("Power")
 end
 end)
 end)
@@ -359,7 +399,7 @@ Settings.System1 = State
 spawn(function()
 while Settings.System1 do
     wait()
-    game:GetService("ReplicatedStorage").StatPoint:InvokeServer("Speed")
+    ReplicatedStorage.StatPoint:InvokeServer("Speed")
 end
 end)
 end)
@@ -369,7 +409,7 @@ Settings.System2 = State
 spawn(function()
 while Settings.System2 do
     wait()
-    game:GetService("ReplicatedStorage").StatPoint:InvokeServer("Trick")
+    ReplicatedStorage.StatPoint:InvokeServer("Trick")
 end
 end)
 end)
@@ -378,7 +418,7 @@ Settings.System3 = State
 spawn(function()
 while Settings.System3 do
     wait()
-    game:GetService("ReplicatedStorage").StatPoint:InvokeServer("Recovery")
+    ReplicatedStorage.StatPoint:InvokeServer("Recovery")
 end
 end)
 end)
@@ -387,7 +427,7 @@ Settings.System4 = State
 spawn(function()
 while Settings.System4 do
     wait()
-    game:GetService("ReplicatedStorage").StatPoint:InvokeServer("Defense")
+    ReplicatedStorage.StatPoint:InvokeServer("Defense")
 end
 end)
 end)
