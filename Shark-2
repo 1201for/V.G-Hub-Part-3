@@ -42,7 +42,7 @@ local function Save()
 end
 
 
-local Circle = Drawing.new("Circle")
+getgenv()Circle = Drawing.new("Circle")
 Circle.Color = Color3.fromRGB(22, 13, 56)
 Circle.Thickness = 1
 Circle.Radius = 250
@@ -132,8 +132,8 @@ RunService.Stepped:connect(
                       local Mouse = game:GetService("UserInputService"):GetMouseLocation()
                 local TargetPos = game.workspace.Camera:WorldToViewportPoint(ClosestPlayer.PrimaryPart.Position)
                 mousemoverel(
-                (TargetPos.X - Mouse.X) * (Settings.Smoothness or 0.2),
-                (TargetPos.Y - Mouse.Y) * (Settings.Smoothness or 0.2)
+                (TargetPos.X - Mouse.X) * (0.2),
+                (TargetPos.Y - Mouse.Y) * (0.2)
                 )
                 end 
             end
@@ -181,9 +181,6 @@ local Dropdown1 = Section1:CreateDropdown("Aimbot Method", {"FirstPerson","Third
 end)
 
 
-local Slider2 = Section1:CreateSlider("Aimbot Smoothness", 0,1,nil,false, function(Value)
-    Settings.Smoothness = Value 
-end)
 
 
 local Toggle1 = Section1:CreateToggle("WallCheck", nil, function(State)
@@ -191,8 +188,8 @@ local Toggle1 = Section1:CreateToggle("WallCheck", nil, function(State)
 end)
 
 local Slider2 = Section1:CreateSlider("Aimbot Radius", 0,1000,Settings.Aimbot.FOV,false, function(Value)
-    Settings.Aimbot.FOV = Circle.Radius 
     Settings.Aimbot.FOV = Value
+    Settings.Aimbot.FOV = Circle.Radius 
 end)
 
 local Toggle1 = Section1:CreateToggle("Circle Visible", Settings.Visible, function(State)
@@ -212,7 +209,7 @@ local Toggle1 = Section1:CreateToggle("Enable Esp", Settings.Esp, function(State
     ESP:Toggle(Settings.Esp)
     
 end)
-local Toggle1 = Section1:CreateToggle("PLayer Esp", Settings.PlayerEsp, function(State)
+local Toggle1 = Section1:CreateToggle("Player Esp", Settings.PlayerEsp, function(State)
     Settings.PlayerEsp = State
     ESP.Players = Settings.PlayerEsp
 end)
@@ -672,4 +669,3 @@ local Slider4 = Section4:CreateSlider("Tile Scale",0,1,nil,false, function(Value
 	Window:SetTileScale(Value)
 end)
 Slider4:SetValue(0.5)
-
