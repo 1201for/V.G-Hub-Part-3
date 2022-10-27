@@ -105,7 +105,7 @@ function ClosestSharkToCurser()
                 if Vis then
                     local A1, A2 = Vector2.new(Mouse.X, Mouse.Y), Vector2.new(Pos.X, Pos.Y)
                     local Dist = (A2 - A1).Magnitude
-                    if Dist < MaxDistance and Dist <= math.huge then
+                    if Dist < MaxDistance and Dist <= Settings.Aimbot.FOV then
                         MaxDistance = Dist
                         Closest = v
                     end
@@ -189,7 +189,7 @@ end)
 
 local Slider2 = Section1:CreateSlider("Aimbot Radius", 0,1000,Settings.Aimbot.FOV,false, function(Value)
     Settings.Aimbot.FOV = Value
-    Circle.Radius = Settings.Aimbot.FOV
+    Settings.Aimbot.FOV = Circle.Radius 
 end)
 
 local Toggle1 = Section1:CreateToggle("Circle Visible", Settings.Visible, function(State)
@@ -669,3 +669,4 @@ local Slider4 = Section4:CreateSlider("Tile Scale",0,1,nil,false, function(Value
 	Window:SetTileScale(Value)
 end)
 Slider4:SetValue(0.5)
+
