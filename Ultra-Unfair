@@ -255,31 +255,6 @@ local Dropdown1 = Section1:CreateDropdown("Quests", Quests, function(Name)
 end)
     
 
-local Toggle1 = Section1:CreateToggle("Auto Buy Ticket", Settings.AutoBuy, function(State)
-Settings.AutoBuy = State
-spawn(function()
-while Settings.AutoBuy do
-    wait()
-    ReplicatedStorage.PurchaseTickets:FireServer(1)
-end
-end)
-end)
-local Toggle1 = Section1:CreateToggle("Auto reroll Ability", Settings.AutoBuy1, function(State)
-Settings.AutoBuy1 = State
-spawn(function()
-while Settings.AutoBuy1 do
-    wait()
-    ReplicatedStorage.Reroll:InvokeServer()
-end
-end)
-end)
-
-
-
-
-
-
-
 
 local Toggle1 = Section1:CreateToggle("Anti Stun", Settings.AntiStun, function(State)
 Settings.AntiStun = State
