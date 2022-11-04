@@ -91,7 +91,26 @@ local function Save()
 end
 local A = require(Workspace.EnemyStats)
 
+local HideMode = function()
+    if not Player.Character:FindFirstChild("Head") then
+        return
+    end
+    for i, v in pairs(Player.Character:GetChildren()) do
+        if (v:IsA("Accessory") or v:IsA("Shirt") or v:IsA("Pants")) then
+            v:Destroy()
+        end
+        if v.Name == ("Head") and v:FindFirstChildWhichIsA("BillboardGui") then
+            v:FindFirstChildWhichIsA("BillboardGui"):Destroy()
+        end
+    end
+end
+local Distance = function(A)
+    return (A.Position - Player.Character:FindFirstChild("HumanoidRootPart").Position).Magnitude
+end
 
+RunService.Stepped:Connect(function()
+    HideMode()
+end)
 
 local Quests = {}
 for i,v in pairs(Workspace.QuestNPCs:GetChildren()) do
@@ -136,8 +155,7 @@ local function getNearestMobs()
         if v:IsA("Model") and (table.find(Hell, v.Name) and not Settings.AutoQuest or string.find(String.Text,GetTier(v.Level.Value)) and Settings.AutoQuest) then
             if v:FindFirstChildWhichIsA("Humanoid") and v:FindFirstChildWhichIsA("Humanoid").Health ~= 0 then
             local Mag =
-                    (Player.Character.HumanoidRootPart.Position -
-                    v.PrimaryPart.Position).Magnitude
+                    Distance(v.PrimaryPart)
                 if Mag < TargetDistance then
                     TargetDistance = Mag
                     Target = v
@@ -231,7 +249,7 @@ spawn(
                     Q(Settings.Quest)
                     if Player.Character.Humanoid.Health ~= 0 then
                         if
-                            (Player.Character.PrimaryPart.Position - getNearestMobs().PrimaryPart.Position).Magnitude <
+                            Distance(getNearestMobs().PrimaryPart) <
                                 10
                          then
                             Hit(getNearestMobs())
@@ -262,9 +280,6 @@ spawn(function()
 while wait() and Settings.AntiStun do
     pcall(
         function()
-            repeat
-                wait()
-            until Player.Character
             for i, v in pairs(Player.Character:GetChildren()) do
                 if v.Name == "Stunned" then
                     v:Destroy()
@@ -300,14 +315,19 @@ end)
 local Toggle1 = Section1:CreateToggle("Anti Knockback Mob", Settings.Infinite, function(State)
 Settings.Infinite = State
 local OldNameCall = nil
-OldNameCall = hookmetamethod(game, "__namecall", function(...)
-    local Args = {...}
-    local Self = Args[1]
-    if getnamecallmethod()=="FireServer" and tostring(Self)=="Knockback" and Settings.Infinite then
+OldNameCall =
+    hookmetamethod(
+    game,
+    "__namecall",
+    function(...)
+        local Args = {...}
+        local Self = Args[1]
+        if getnamecallmethod() == "FireServer" and tostring(Self) == "Knockback" and Settings.Infinite then
             return wait(math.huge)
+        end
+        return OldNameCall(...)
     end
-    return OldNameCall(...)
-end) 
+)
 end)
 
 local Toggle = Section1:CreateToggle("HitBox", Settings.Sys, function(State)
@@ -354,57 +374,27 @@ end)
 
 
 local Button1 = Section1:CreateButton("Anti Player knockback", function()
-hookfunction(getsenv(Player.PlayerScripts.MoveHandler)._G.knockback, function(...) return; end)
+    hookfunction(getsenv(Player.PlayerScripts.MoveHandler)._G.knockback, function(...) return; end)
 end)
 local Button1 = Section1:CreateButton("Anti Flash Bang", function()
-hookfunction(getsenv(Player.PlayerScripts.MoveHandler)._G.flasheffect, function(...) return; end)
+    hookfunction(getsenv(Player.PlayerScripts.MoveHandler)._G.flasheffect, function(...) return; end)
+end)
+local Table = {"Power","Speed","Trick","Recovery","Defense"}
+
+local Dropdown1 = Section1:CreateDropdown("Stats", Table, function(Name)
+	Settings.Power = Name
 end)
 
-local Toggle = Section1:CreateToggle("Auto Power Stat", Settings.System, function(State)
+local Toggle = Section1:CreateToggle("Auto Update Stat", Settings.System, function(State)
 Settings.System = State
-spawn(function()
-while Settings.System do
-    wait()
-    ReplicatedStorage.StatPoint:InvokeServer("Power")
-end
-end)
-end)
-local Toggle = Section1:CreateToggle("Auto Speed Stat", Settings.System1, function(State)
-Settings.System1 = State
-spawn(function()
-while Settings.System1 do
-    wait()
-    ReplicatedStorage.StatPoint:InvokeServer("Speed")
-end
-end)
-end)
-
-local Toggle = Section1:CreateToggle("Auto Trick Stat", Settings.System2, function(State)
-Settings.System2 = State
-spawn(function()
-while Settings.System2 do
-    wait()
-    ReplicatedStorage.StatPoint:InvokeServer("Trick")
-end
-end)
-end)
-local Toggle = Section1:CreateToggle("Auto Recovery Stat", Settings.System3, function(State)
-Settings.System3 = State
-spawn(function()
-while Settings.System3 do
-    wait()
-    ReplicatedStorage.StatPoint:InvokeServer("Recovery")
-end
-end)
-end)
-local Toggle = Section1:CreateToggle("Auto Defense Stat", Settings.System4, function(State)
-Settings.System4 = State
-spawn(function()
-while Settings.System4 do
-    wait()
-    ReplicatedStorage.StatPoint:InvokeServer("Defense")
-end
-end)
+spawn(
+    function()
+        while Settings.System do
+            wait()
+            ReplicatedStorage.StatPoint:InvokeServer(Settings.Power)
+        end
+    end
+)
 end)
 
 
@@ -427,7 +417,7 @@ Settings.InfiniteJump = State
 game:GetService("UserInputService").JumpRequest:connect(
     function()
         if Settings.InfiniteJump then
-            Player.Character:FindFirstChildOfClass "Humanoid":ChangeState("Jumping")
+            Player.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
         end
     end
 )
