@@ -108,6 +108,9 @@ local Distance = function(A)
     return (A.Position - Player.Character:FindFirstChild("HumanoidRootPart").Position).Magnitude
 end
 
+local H = function(A)
+    return (A:GetModelCFrame() - Player.Character:FindFirstChild("HumanoidRootPart").Position).Magnitude
+end 
 RunService.Stepped:Connect(function()
     HideMode()
 end)
@@ -153,7 +156,7 @@ local function getNearestMobs()
             local String = Player.PlayerGui.MainClient.Quest.Folder.Objective.objective
             String.Text = string.gsub(String.Text,"-"," ")
         if v:IsA("Model") and (table.find(Hell, v.Name) and not Settings.AutoQuest or string.find(String.Text,GetTier(v.Level.Value)) and Settings.AutoQuest) then
-            if v:FindFirstChildWhichIsA("Humanoid") and v:FindFirstChildWhichIsA("Humanoid").Health ~= 0 then
+            if v:FindFirstChildWhichIsA("Humanoid") and v:FindFirstChildWhichIsA("Humanoid").Health ~= 0 or v.Name == "Barrier" then
             local Mag =
                     Distance(v.PrimaryPart)
                 if Mag < TargetDistance then
@@ -165,6 +168,7 @@ local function getNearestMobs()
         end
     return Target
 end
+
 
 local function Hit(v)
     Rep.Damage:FireServer(
@@ -249,8 +253,7 @@ spawn(
                     Q(Settings.Quest)
                     if Player.Character.Humanoid.Health ~= 0 then
                         if
-                            Distance(getNearestMobs().PrimaryPart) <
-                                10
+                            Distance(getNearestMobs().PrimaryPart) < 10
                          then
                             Hit(getNearestMobs())
                             Hitv2(getNearestMobs())
