@@ -153,23 +153,6 @@ local Section5 = Tab1:CreateSection("")
 local Section3 = Tab2:CreateSection("Menu")
 local Section4 = Tab2:CreateSection("Background")
 
-local Toggle1 = Section1:CreateToggle("Auto Shoot Shark", Settings.Hit, function(State)
-Settings.Hit = State
-spawn(
-    function()
-        while wait() and Settings.Hit do
-            pcall(
-                function()
-                    game:GetService("ReplicatedStorage").Projectiles.Events.Weapons.HitScanHitReg:FireServer(
-                        Workspace.Sharks:FindFirstChildWhichIsA("Model")
-                    )
-                end
-            )
-        end
-    end
-)
-end)
-
 local Toggle1 = Section1:CreateToggle("Aimbot", Settings.Aimbot.Enabled, function(State)
     Settings.Aimbot.Enabled = State
 end)
@@ -669,4 +652,3 @@ local Slider4 = Section4:CreateSlider("Tile Scale",0,1,nil,false, function(Value
 	Window:SetTileScale(Value)
 end)
 Slider4:SetValue(0.5)
-
