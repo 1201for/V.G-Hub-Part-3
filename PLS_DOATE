@@ -34,14 +34,10 @@ local function Save()
     writefile("V.G Hub//" .. Name, game:service "HttpService":JSONEncode(Settings))
 end
 
-local hashLib = require(game:GetService("ReplicatedStorage").Common.HashLib)
+
 local function solveRemote(remoteName)
-    local solvedName
-    if typeof(remoteName)~="string" then
-        return
-    end
-    solvedName = hashLib.bin_to_base64(hashLib.hex_to_bin(hashLib.sha1(remoteName .. game.JobId)))
-    return solvedName
+    local remoteName = nil
+    remoteName = require(game.ReplicatedStorage.Remotes).Event(remoteName)
 end
 local Event = game:GetService("ReplicatedStorage").Remotes
 
@@ -89,27 +85,27 @@ local Section4 = Tab2:CreateSection("Background")
 local Toggle1 = Section1:CreateToggle("RainBow Message", Settings.RainBow, function(State)
 Settings.RainBow = State
 spawn(function()
-while Settings.RainBow do
+while Settings.RainBow do pcall(function()
     wait()
-    Event[solveRemote("SetBoothText")]:FireServer('<font color="#9400D3">' .. 
+    require(game.ReplicatedStorage.Remotes).Event("SetBoothText"):FireServer('<font color="#9400D3">' .. 
         tostring(Settings.Text) .. "</font>", "booth")
     wait(2)
-    Event[solveRemote("SetBoothText")]:FireServer('<font color="#0000FF">' .. 
-        tostring(Settings.Text) .. "</font>", "booth")
-    wait(2)
-
-    Event[solveRemote("SetBoothText")]:FireServer('<font color="#FFFF00">' .. 
+    require(game.ReplicatedStorage.Remotes).Event("SetBoothText"):FireServer('<font color="#0000FF">' .. 
         tostring(Settings.Text) .. "</font>", "booth")
     wait(2)
 
-    Event[solveRemote("SetBoothText")]:FireServer('<font color="#FF7F00">' .. 
+    require(game.ReplicatedStorage.Remotes).Event("SetBoothText"):FireServer('<font color="#FFFF00">' .. 
         tostring(Settings.Text) .. "</font>", "booth")
     wait(2)
 
-    Event[solveRemote("SetBoothText")]:FireServer('<font color="#FF0000">' .. 
+    require(game.ReplicatedStorage.Remotes).Event("SetBoothText"):FireServer('<font color="#FF7F00">' .. 
         tostring(Settings.Text) .. "</font>", "booth")
     wait(2)
 
+    require(game.ReplicatedStorage.Remotes).Event("SetBoothText"):FireServer('<font color="#FF0000">' .. 
+        tostring(Settings.Text) .. "</font>", "booth")
+    wait(2)
+    end)
 end
 end)
 end)
@@ -122,7 +118,7 @@ while Settings.NeverGonna do pcall(function()
     wait()
     for i,v in pairs(Table) do
     if Settings.NeverGonna then
-    Event[solveRemote("SetBoothText")]:FireServer(v, "booth") wait(3.5)
+    require(game.ReplicatedStorage.Remotes).Event("SetBoothText"):FireServer(v, "booth") wait(3.5)
     end 
     end 
     end)
