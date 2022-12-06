@@ -51,6 +51,9 @@ local Respawn = function() -- Stolen LOL
         UI.HUD.Visible = true
     end
 end
+local function Direction(i, v)
+    return (v - i).Unit * 1000
+end
 
 
 repeat wait() until game:IsLoaded() wait()
@@ -171,7 +174,7 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self,...)
     if getnamecallmethod() == "Raycast" and not checkcaller() and Settings.E then
         local GivemeHead = ClosestPlayerToCurser()
         if GivemeHead and GivemeHead.Character and GivemeHead.Character.FindFirstChild(GivemeHead.Character, "Head") then
-            Args[1] = GivemeHead.Character.HumanoidRootPart.Position
+            Args[1] = GivemeHead.Character.HumanoidRootPart.Position,RaycastParams.new()
             return OldNameCall(self, unpack(Args))
         end
     end
