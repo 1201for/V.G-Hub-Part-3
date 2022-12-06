@@ -5,6 +5,14 @@ local Config = {
 }
 
 
+for i,v in pairs(getgc(true)) do
+    if type(v) == "function" and (getinfo(v).name == "AddBodyMover" or getinfo(v).name == "RagdollClient" or getinfo(v).name == "CameraShake") then
+        hookfunction(v,function()
+            return 
+        end)
+    end 
+end 
+
 local OldNameCall
 OldNameCall =
     hookmetamethod(
@@ -50,9 +58,6 @@ local Respawn = function() -- Stolen LOL
         UI.MainMenu.Visible = false
         UI.HUD.Visible = true
     end
-end
-local function Direction(i, v)
-    return (v - i).Unit * 1000
 end
 
 
@@ -174,7 +179,7 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self,...)
     if getnamecallmethod() == "Raycast" and not checkcaller() and Settings.E then
         local GivemeHead = ClosestPlayerToCurser()
         if GivemeHead and GivemeHead.Character and GivemeHead.Character.FindFirstChild(GivemeHead.Character, "Head") then
-            Args[1] = GivemeHead.Character.HumanoidRootPart.Position,RaycastParams.new()
+            Args[1] = GivemeHead.Character.HumanoidRootPart.Position
             return OldNameCall(self, unpack(Args))
         end
     end
