@@ -32,6 +32,9 @@ local Numbers = {
     51,
     52
 }
+
+ 
+
 local Workspace = Get.Workspace 
 local Players = Get.Players
 local RunService = Get.RunService
@@ -44,7 +47,7 @@ local StarterGui = Get.StarterGui
 local Player = Players.LocalPlayer
 local wait = task.wait
 local spawn = task.spawn
-local Data = Player['MAIN_DATA']
+local Data = Player:FindFirstChild('MAIN_DATA')
 local UI = Player.PlayerGui.UI
 
 local Respawn = function() -- Stolen LOL
@@ -66,6 +69,54 @@ Player.Idled:connect(function()
 VirtualUser:ClickButton2(Vector2.new())
 end)
 
+
+local Slots = Player["MAIN_DATA"].Slots
+local Slot = Player["MAIN_DATA"].Slot
+local Load = require(ReplicatedStorage.Loader)
+local FruitsHandler = require(ReplicatedStorage.Loader.Replicated.FruitsHandler)
+
+local Wants = {}
+for i,v in pairs(FruitsHandler.List) do
+    table.insert(Wants, v)
+end 
+local Codes = {
+    "FREEBREAD!",
+    "60KLETSGO",
+    "SORRY4SHUTDOWN",
+    "MAGMALETSGOO",
+    "50KINSANE",
+    "40KDAMN",
+    "35KWOWBRO",
+    "30KLOVEYOU"
+}
+
+for i,v in pairs(Codes) do
+    Load.Server("Codes","Redeem",{["Code"] = v}) 
+end 
+--[[while wait(2) do
+    if not table.find(Wants,Slots[Slot.Value].Value) then
+        Load.Server("FruitsHandler","Spin",{}) 
+    end
+end ]]--
+
+local Self = {}
+getgenv().Text = Drawing.new("Text")
+Text.Color = Color3.new(0, 1, 1)
+Text.Font = 1
+Text.Outline = true
+Text.OutlineColor = Color3.new(0, 0, 0)
+Text.Position = Vector2.new(0,0)
+Text.Size = 25
+Text.Text = ""
+Text.Visible = true
+
+Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(
+    function()
+        local X,Y= Text.TextBounds.X,Text.Position.Y
+        Text.Position = Vector2.new(Camera.ViewportSize.X / X , Y)
+        
+    end
+)
 
 RunService.Stepped:Connect(function()
     if (not Player.Character or Player.Character == nil) and not UI.HUD.Visible then
@@ -186,6 +237,23 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self,...)
     return OldNameCall(self, ...)
 end)
 end)
+
+local Toggle1 = Section1:CreateToggle("Auto Spin", Settings.Spin, function(State)
+Settings.Spin = State
+spawn(function()
+    while Settings.Spin do wait(2)
+        if not string.find(Settings.Fruit,Slots[Slot.Value].Value) then
+            Load.Server("FruitsHandler","Spin",{}) 
+        end
+    end 
+end)
+end)
+local Dropdown = Section1:CreateDropdown("Fruits", Wants, function(Name)
+	Settings.Fruit = Name
+end)
+
+
+
 
 local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", Settings.Go, function(State)
 Settings.Go = State
