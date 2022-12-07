@@ -98,6 +98,7 @@ local Codes = {
 for i,v in pairs(Codes) do
     Load.Server("Codes","Redeem",{["Code"] = v}) 
 end 
+
 --[[while wait(2) do
     if not table.find(Wants,Slots[Slot.Value].Value) then
         Load.Server("FruitsHandler","Spin",{}) 
@@ -123,11 +124,7 @@ Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(
     end
 )
 
-RunService.Stepped:Connect(function()
-    if (not Player.Character or Player.Character == nil) and not UI.HUD.Visible then
-        Respawn()
-    end 
-end)
+
 
 local Name = "000.txt"
 
@@ -153,7 +150,9 @@ Settings = HttpService:JSONDecode(readfile("V.G Hub//" .. Name))
 local function Save()
     writefile("V.G Hub//" .. Name, HttpService:JSONEncode(Settings))
 end
-
+if Settings.Method == nil then
+    Settings.Method = "Sky"
+end 
 
 local Library =  loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
@@ -168,12 +167,25 @@ local Section3 = Tab2:CreateSection("Menu")
 local Section4 = Tab2:CreateSection("Background")
 
 
+
 local Toggle1 = Section1:CreateToggle("AutoFarm", Settings.Ez, function(State)
 Settings.Ez = State
 RunService.Stepped:connect(
     function()
         if Settings.Ez then
-            Workspace.Ro.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0,-3,0)
+            pcall(function()
+                if (not Player.Character or Player.Character == nil) and not UI.HUD.Visible then
+                    Respawn()
+                end 
+                if Settings.Method == "Sky" then
+                    Player.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(0, 10000, math.random(9000))
+                end 
+                if Settings.Method == "Floor" then
+                    Player.Character.HumanoidRootPart.CFrame = Workspace.Assets.ShelfPos.CFrame
+                end 
+                Workspace.Ro.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0,-3,0)
+                Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
+            end)
         end
     end
 )
@@ -183,8 +195,6 @@ spawn(
             wait()
             pcall(
                 function()
-                    Player.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(0, 10000, math.random(9000))
-
                     for i, v in pairs(Numbers) do
                         VirtualInputManager:SendKeyEvent(true, v, false, game)
                         wait(1)
@@ -199,6 +209,11 @@ spawn(
 )
 
 end)
+
+local Dropdown = Section1:CreateDropdown("AutoFarm Methods", {"Sky","Floor"}, function(Name)
+	Settings.Method = Name
+end)
+
 
 local Toggle1 = Section1:CreateToggle("Silent Aim", Settings.E, function(State)
 Settings.E = State
