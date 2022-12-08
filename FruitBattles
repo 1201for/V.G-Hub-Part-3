@@ -6,7 +6,7 @@ local Config = {
 
 
 for i,v in pairs(getgc(true)) do
-    if type(v) == "function" and (getinfo(v).name == "AddBodyMover" or getinfo(v).name == "RagdollClient" or getinfo(v).name == "CameraShake") then
+    if type(v) == "function" and (getinfo(v).name == "AddBodyMover" or getinfo(v).name == "CameraShake") then
         hookfunction(v,function()
             return 
         end)
@@ -75,6 +75,14 @@ VirtualUser:ClickButton2(Vector2.new())
 end)
 
 
+
+RunService.Stepped:connect(
+    function()
+        Workspace.FallenPartsDestroyHeight = math.huge/math.huge
+        sethiddenproperty(Player, "SimulationRadius", 1000)
+    end
+)
+
 local Slots = Player["MAIN_DATA"].Slots
 local Slot = Player["MAIN_DATA"].Slot
 local Load = require(ReplicatedStorage.Loader)
@@ -93,6 +101,14 @@ local Codes = {
     "40KDAMN",
     "35KWOWBRO",
     "30KLOVEYOU"
+}
+
+local CFrames = {
+    ["1"] = CFrame.new(-987, 502, -1102),
+    ["2"] = CFrame.new(-289, 557, -1343),
+    ["3"] = CFrame.new(321, 583, -1442),
+    ["4"] = CFrame.new(486, 549, -1316),
+    ["5"] = CFrame.new(1195, 562, -826)
 }
 
 for i,v in pairs(Codes) do
@@ -177,13 +193,6 @@ RunService.Stepped:connect(
                 if (not Player.Character or Player.Character == nil) and not UI.HUD.Visible then
                     Respawn()
                 end 
-                if Settings.Method == "Sky" then
-                    Player.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(0, 10000, math.random(9000))
-                end 
-                if Settings.Method == "Floor" then
-                    Player.Character.HumanoidRootPart.CFrame = Workspace.Assets.ShelfPos.CFrame
-                end 
-                Workspace.Ro.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0,-3,0)
                 Player.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(11)
             end)
         end
@@ -193,8 +202,17 @@ spawn(
     function()
         while Settings.Ez do
             wait()
-            pcall(
-                function()
+            pcall(function()
+                if Settings.Method == "Sky" then
+                    Player.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(0, 10000, math.random(9000))
+                end 
+                if Settings.Method == "Floor" then
+                    for i,v in pairs(CFrames) do
+                        if i == tostring(math.random(1,5)) then
+                            Player.Character:WaitForChild("HumanoidRootPart").CFrame = v
+                        end 
+                    end 
+                end 
                     for i, v in pairs(Numbers) do
                         VirtualInputManager:SendKeyEvent(true, v, false, game)
                         wait(1)
@@ -202,8 +220,7 @@ spawn(
                         VirtualInputManager:SendMouseButtonEvent(0,0,0, false, game, 1) 
                         wait(1)
                     end
-                end
-            )
+            end)
         end
     end
 )
@@ -250,7 +267,7 @@ OldNameCall = hookmetamethod(game, "__namecall", function(self,...)
     if getnamecallmethod() == "Raycast" and not checkcaller() and Settings.E then
         local GivemeHead = ClosestPlayerToCurser()
         if GivemeHead and GivemeHead.Character and GivemeHead.Character.FindFirstChild(GivemeHead.Character, "Head") then
-            Args[1] = GivemeHead.Character.HumanoidRootPart.Position
+            Args[1] = GivemeHead.Character.HumanoidRootPart.Position, RaycastParams.new()
             return OldNameCall(self, unpack(Args))
         end
     end
