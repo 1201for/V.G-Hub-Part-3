@@ -139,6 +139,9 @@ Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(
         
     end
 )
+local function Direction(A, B)
+    return (B - A).Unit * 1000
+end
 
 
 
@@ -262,18 +265,22 @@ end
 
 
 local OldNameCall = nil
-OldNameCall = hookmetamethod(game, "__namecall", function(self,...)
+OldNameCall = hookmetamethod(game, "__namecall", function(...)
     local Args = {...}
     if getnamecallmethod() == "Raycast" and not checkcaller() and Settings.E then
         local GivemeHead = ClosestPlayerToCurser()
-        if GivemeHead and GivemeHead.Character and GivemeHead.Character.FindFirstChild(GivemeHead.Character, "Head") then
-            Args[1] = GivemeHead.Character.HumanoidRootPart.Position, RaycastParams.new()
-            return OldNameCall(self, unpack(Args))
+        if GivemeHead and GivemeHead.Character then
+            local T = Args[2]
+            Args[3] = Direction(T,ClosestPlayerToCurser().Character.HumanoidRootPart.Position)
+            return OldNameCall(unpack(Args))
         end
     end
-    return OldNameCall(self, ...)
+    return OldNameCall(...)
 end)
 end)
+
+
+  
 local LOL = {"Quake", "Gravity"}
 local Toggle1 = Section1:CreateToggle("Auto Spin", Settings.Spin, function(State)
 Settings.Spin = State
