@@ -79,24 +79,39 @@ spawn(function()
     end 
 end)
 end)
-
+local Toggle1 = Section1:CreateToggle("Auto Studs", Settings.Studs, function(State)
+Settings.Studs = State 
+spawn(function()
+    while wait() and Settings.Studs do 
+        pcall(function()
+             for i,v in pairs(Workspace:GetChildren()) do
+                if v:FindFirstChild("End") then
+                    firetouchinterest(Player.Character.HumanoidRootPart, Workspace.Worlds[Current.Value].Launch, 0)
+                    firetouchinterest(Player.Character.HumanoidRootPart, Workspace.Worlds[Current.Value].Launch, 1) wait(1)
+                    firetouchinterest(Player.Character.HumanoidRootPart, v.Land, 0)
+                    firetouchinterest(Player.Character.HumanoidRootPart, v.Land, 1)
+                end 
+             end 
+        end)
+    end 
+end)
+end)
+                    
 local Toggle1 = Section1:CreateToggle("Auto Laps", Settings.Laps, function(State)
 Settings.Laps = State 
 spawn(function()
     while wait() and Settings.Laps do 
         pcall(function()
-            for i,v in pairs(Workspace:GetChildren()) do
-                if v:FindFirstChild("End") then
-
-                    firetouchinterest(Player.Character.HumanoidRootPart, game:GetService("Workspace").Worlds[Current.Value].Launch, 0)
-                    firetouchinterest(Player.Character.HumanoidRootPart, game:GetService("Workspace").Worlds[Current.Value].Launch, 1) wait()
-                    Player.Character.HumanoidRootPart.CFrame = v.End.CFrame 
-                end 
-            end 
+            Player.Character.HumanoidRootPart.CFrame = Workspace.LandSpots1.End.CFrame 
+            wait()
+            firetouchinterest(Player.Character.HumanoidRootPart, Workspace.Worlds[Current.Value].Launch, 0)
+            firetouchinterest(Player.Character.HumanoidRootPart, Workspace.Worlds[Current.Value].Launch, 1) 
         end)
     end 
 end)
 end)
+
+
 
 
 local Toggle1 = Section1:CreateToggle("Auto Rebirth", Settings.Rebirth, function(State)
