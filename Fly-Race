@@ -7,6 +7,7 @@ local Config = {
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
 local RunService = game:GetService("RunService")
@@ -49,12 +50,7 @@ for i,v in pairs(Workspace.Eggs:GetChildren()) do
         table.insert(Eggs,v.Name)
     end 
 end 
-local Auto = {}
-for i,v in pairs(Player.PlayerGui.EggPreview.EggPreview.AutoDelete:GetChildren()) do 
-    if v:IsA("Frame") and not table.find(Auto,v.Name) then
-        table.insert(Auto,v.Name)
-    end 
-end 
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, CoreGui)
 
@@ -574,4 +570,3 @@ local Slider4 = Section4:CreateSlider("Tile Scale",0,1,nil,false, function(Value
 	Window:SetTileScale(Value)
 end)
 Slider4:SetValue(0.5)
- 
