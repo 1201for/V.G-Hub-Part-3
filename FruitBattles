@@ -1,3 +1,6 @@
+
+
+
 local Config = {
     WindowName = "V.G Hub",
 	Color = Color3.fromRGB(255,128,64),
@@ -295,6 +298,8 @@ spawn(function()
                 Load.Server("FruitsHandler","Spin",{}) 
            
             end 
+        elseif string.find(Settings.Fruit,Slots[Slot.Vlue].Value) or table.find(LOL,Slots[Slot.Value].Value) then
+            Load.ServerEvent("Core","UpdateSettings",{["Textures"] = true,["FPSCounter"] = true,["KillFeed"] = true, ["Music"] = false, ["Shadows"] = true})       
         else
             TeleportService:Teleport(game.PlaceId, Player)
         end
