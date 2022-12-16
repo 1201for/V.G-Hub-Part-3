@@ -290,7 +290,7 @@ Load.ServerEvent("Core", "UpdateSettings", {["\255"] = true, ["\255"] = true, ["
 
 spawn(function()
     while Settings.Spin do wait(2)
-        if not string.find(Settings.Fruit,Slots[Slot.Value].Value) and Player.MAIN_DATA.Gems.Value <= 49 then
+        if not string.find(Settings.Fruit,Slots[Slot.Value].Value) and Player.MAIN_DATA.Gems.Value >= 49 then
             if not table.find(LOL,Slots[Slot.Value].Value) then
                 Load.Server("FruitsHandler","Spin",{}) 
            
