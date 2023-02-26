@@ -6,7 +6,8 @@ local Config = {
 repeat 
     task.wait()
 until game:IsLoaded()
-
+local Table = {3272915504,12604352060}
+if not table.find(Table,game.PlaceId) then return end
 local Players = Get.Players
 local ReplicatedStorage = Get.ReplicatedStorage
 local Workspace = Get.Workspace
