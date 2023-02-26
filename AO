@@ -95,7 +95,7 @@ local Toggle1 = Section1:CreateToggle("Auto Fruits", Settings.AutoFruits, functi
                     if v:FindFirstChild("Fruits",true) then
                         for i,v in pairs(v.Fruits:GetChildren()) do
                             if v:IsA('BasePart') and v.Transparency == 0 and Settings.AutoFruits then
-                                Player.Character:FindFirstChild("HumanoidRootPart").CFrame = v.CFrame wait(0.3)
+                                Player.Character:FindFirstChild("HumanoidRootPart").CFrame = v.CFrame wait(2)
                                 fireproximityprompt(v:FindFirstChildWhichIsA("ProximityPrompt",true))
                             end 
                         end 
@@ -151,7 +151,7 @@ local Toggle1 = Section1:CreateToggle("Auto Herbs", Settings.Herbs, function(Sta
                     if v:FindFirstChild("Herbs",true) then
                         for i,v in pairs(v.Herbs:GetChildren()) do
                             if v:IsA("BasePart") and v.Transparency == 0 and Settings.Herbs then
-                                Player.Character:FindFirstChild("HumanoidRootPart").CFrame = v.CFrame * CFrame.new(0,-5,0) wait(0.3)
+                                Player.Character:FindFirstChild("HumanoidRootPart").CFrame = v.CFrame * CFrame.new(0,-5,0) wait(2)
                                 fireproximityprompt(v:FindFirstChildWhichIsA("ProximityPrompt",true))
                             end 
                         end 
