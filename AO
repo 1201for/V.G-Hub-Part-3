@@ -8,17 +8,17 @@ repeat
 until game:IsLoaded()
 local Table = {3272915504,12604352060}
 if not table.find(Table,game.PlaceId) then return end
-local Players = Get.Players
-local ReplicatedStorage = Get.ReplicatedStorage
-local Workspace = Get.Workspace
-local VirtualUser = Get.VirtualUser 
-local HttpService = Get.HttpService 
-local VirtualInputManager = Get.VirtualInputManager
-local HttpService = Get.HttpService
-local TweenService = Get.TweenService 
-local TeleportService = Get.TeleportService
-local RunService = Get.RunService
-local MarketplaceService = Get.MarketplaceService
+local Players = game.Players
+local ReplicatedStorage = game.ReplicatedStorage
+local Workspace = game.Workspace
+local VirtualUser = game.VirtualUser 
+local HttpService = game.HttpService 
+local VirtualInputManager = game.VirtualInputManager
+local HttpService = game.HttpService
+local TweenService = game.TweenService 
+local TeleportService = game.TeleportService
+local RunService = game.RunService
+local MarketplaceService = game.MarketplaceService
 
 local Player = Players.LocalPlayer
 local Character = (Player.Character or Player.CharacterAdded:Wait())
@@ -66,6 +66,14 @@ local function Save()
     writefile("V.G Hub//" .. Name, HttpService:JSONEncode(Settings))
 end
 
+local Mobs = {}
+if Workspace:FindFirstChild("Enemies") then
+    for i,v in pairs(Workspace.Enemies:GetChildren()) do
+        if v:IsA("Model") and not table.find(Mobs,v.Name) then
+            table.insert(Mobs, v.Name)
+        end 
+    end 
+end
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
@@ -189,7 +197,37 @@ local Toggle1 = Section1:CreateToggle("Auto Notes", Settings.AutoNotes, function
         end 
     end)
 end)
-
+if Workspace:FindFirstChild("Enemies") then
+local Toggle1 = Section1:CreateToggle("Auto Mob", Settings.Go, function(State)
+    Settings.Mobs = State
+    RunService.Stepped:Connect(function()
+        if Settings.Mobs then
+            pcall(function()
+                NoClip(Player.Character:FindFirstChildWhichIsA("Humanoid"))
+            end)
+        end
+    end)
+    spawn(function()
+        while wait(.1) and Settings.Mobs do 
+            pcall(function()
+                for i,v in pairs(Workspace.Enemies:GetChildren()) do
+                    if v:IsA("Model")  and v.Attributes.Health.Value ~= 0 then
+                        Player.Character:FindFirstChild("HumanoidRootPart",true).CFrame = v:GetModelCFrame() * CFrame.new(0,0,3)
+                        if not Player.Character:FindFirstChildWhichIsA("Tool") then
+                            Player.Character:FindFirstChildWhichIsA("Humanoid"):EquipTool(Player.Backpack:FindFirstChild(Player.Character.Data.Melee1.Value))
+                        end 
+                        
+                        ReplicatedStorage.RS.Remotes.Combat.DealWeaponDamage:FireServer(0,game:GetService("Players").LocalPlayer.Character,v,"{\"Level\":2,\"Name\":\"Old Dagger\"}","Slash")
+                    end 
+                end 
+            end)
+        end
+    end)
+end)
+local Dropdown3 = Section1:CreateDropdown("Mobs", Mobs, function(Name)
+	Settings.Mob = Name
+end)
+end
 local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", Settings.Go, function(State)
 Settings.Go = State
 RunService.Stepped:connect(
@@ -213,17 +251,11 @@ end)
 
 
 Section2:CreateTextBox("Teleport To Player", "UserName Here", false, function(String)
-for i, v in pairs(Players:GetPlayers()) do
-    if
-        string.find(v.Name, String) or v.Name:lower():match(String) or v.Name:upper():match(String) or
-            string.find(v.DisplayName, String) or
-            v.DisplayName:lower():match(String) or
-            v.DisplayName:upper():match(String)
-     then
-        Teleport(Player.Character.HumanoidRootPart,v.Player.Character.HumanoidRootPart.CFrame,true)
+    for i, v in pairs(Players:GetPlayers()) do
+        if string.find(v.Name, String) or v.Name:lower():match(String) or v.Name:upper():match(String) or string.find(v.DisplayName, String) or v.DisplayName:lower():match(String) or v.DisplayName:upper():match(String) then
+            Player.Character.HumanoidRootPart.CFrame = v.Player.Character.HumanoidRootPart.CFrame
+        end
     end
-end
-
 end)
 
 local TextBox1 = Section2:CreateTextBox("Fps Cap", "Only numbers", true, function(Value)
