@@ -6,7 +6,10 @@ local Config = {
 repeat 
     task.wait()
 until game:IsLoaded()
-local Table = {3272915504,12604352060}
+local Table = {
+    3272915504,
+    12604352060
+}
 if not table.find(Table,game.PlaceId) then return end
 local Players = game.Players
 local ReplicatedStorage = game.ReplicatedStorage
@@ -32,6 +35,12 @@ end
 local KeyPress = function(A)
     return VirtualInputManager:SendKeyEvent(false,A,true,game)
 end 
+local Invis = function()
+    local Clone = Player.Character:FindFirstChild("LowerTorso").Root:Clone()
+    Clone.Parent = Player.Character:FindFirstChild("LowerTorso")
+    Player.Character:FindFirstChild("LowerTorso").velocity = Vector3.new(0,0,0)
+    Player.Character:FindFirstChild("LowerTorso").Root:Destroy()
+end 
 Players.LocalPlayer.Idled:connect(
     function()
         VirtualUser:ClickButton2(Vector2.new())
@@ -40,6 +49,7 @@ Players.LocalPlayer.Idled:connect(
 for i,v in pairs(getconnections(Player.Idled)) do 
     v:Disable()
 end 
+
 
 local Name = "Ihate.json"
 
@@ -75,6 +85,20 @@ if Workspace:FindFirstChild("Enemies") then
     end 
 end
 
+for i,v in pairs(ReplicatedStorage.RS.UnloadEnemies:GetChildren()) do
+    if v:IsA("Model") and not table.find(Mobs,v.Name) then
+        table.insert(Mobs,v.Name)
+    end 
+end 
+
+local Rods = {}
+for i,v in pairs(Player.Backpack:GetChildren()) do
+    if v.Name:find("Rod") then
+        table.insert(Rods,v.Name)
+    end 
+end 
+
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
@@ -86,6 +110,28 @@ local Section2 = Tab1:CreateSection("")
 local Section3 = Tab2:CreateSection("Menu")
 local Section4 = Tab2:CreateSection("Background")
 
+
+local Toggle1 = Section1:CreateToggle("Auto Fish", Settings.Fishing, function(State)
+    Settings.Fishing = State
+    spawn(function()
+        while wait() and Settings.Fishing do
+            pcall(function()
+                if not Player.Character:FindFirstChild(Settings.Rod) then
+                    Player.Character:FindFirstChild("Humanoid"):EquipTool(Player.Backpack:FindFirstChild(Settings.Rod))
+                end 
+                if not Player.Character:FindFirstChild("FishClock") then
+                    ReplicatedStorage.RS.Remotes.Misc.ToolAction:FireServer(Player.Character:FindFirstChild(Settings.Rod)) wait(5)
+                end 
+                if Player.Character:FindFirstChild("FishClock") and Player.Character:FindFirstChild("FishBiteGoal") then
+                    ReplicatedStorage.RS.Remotes.Misc.ToolAction:FireServer(Player.Character:FindFirstChild(Settings.Rod))
+                end 
+            end)
+        end 
+    end)
+end)
+local Dropdown3 = Section1:CreateDropdown("Rods", Rods, function(Name3)
+	Settings.Rod = Name3
+end)
 
 local Toggle1 = Section1:CreateToggle("Auto Fruits", Settings.AutoFruits, function(State)
     Settings.AutoFruits = State
@@ -119,7 +165,7 @@ local Toggle1 = Section1:CreateToggle("Auto Chests", Settings.AutoChests, functi
     RunService.Stepped:Connect(function()
         if Settings.AutoChests then
             pcall(function()
-                NoClip(Player.Character:FindFirstChildWhichIsA("Humanoid"))
+                
             end)
         end 
     end)
@@ -131,14 +177,24 @@ local Toggle1 = Section1:CreateToggle("Auto Chests", Settings.AutoChests, functi
                         for i,v in pairs(v.Chests:GetChildren()) do
                             local D = v:FindFirstChildWhichIsA("BasePart",true)
                             if v:IsA("Model") and D.Transparency == 0 and Settings.AutoChests then
-                                Player.Character:FindFirstChild("HumanoidRootPart").CFrame = v:GetModelCFrame() * CFrame.new(0,-5,0)
-                                wait(5)
+                                Player.Character:FindFirstChild("HumanoidRootPart").CFrame = v:GetModelCFrame() * CFrame.new(0,5,0)
+                                wait(0.5)
                                 fireproximityprompt(v:FindFirstChildWhichIsA("ProximityPrompt",true))
-                                wait(3)
+                                wait(5)
                             end 
                         end 
                     end 
                 end 
+            end)
+        end 
+    end)
+end)
+local Toggle1 = Section1:CreateToggle("Auto Invis", Settings.AutoInvis, function(State)
+    Settings.AutoInvis = State
+    spawn(function()
+        while wait() and Settings.AutoInvis do wait(5)
+            pcall(function()
+                Invis()
             end)
         end 
     end)
@@ -197,8 +253,24 @@ local Toggle1 = Section1:CreateToggle("Auto Notes", Settings.AutoNotes, function
         end 
     end)
 end)
+
+local Toggle1 = Section1:CreateToggle("Auto Charge Energy", Settings.Ad, function(State)
+    Settings.Ad = State
+    spawn(function()
+        while wait(1) and Settings.Ad do 
+            pcall(function()
+                if Player.bin.MagicEnergy.Value ~= Player.bin.MaxMagicEnergy.Value then
+                    ReplicatedStorage.RS.Remotes.Misc.ChargingToggle:FireServer(true)
+                elseif Player.bin.MagicEnergy.Value == Player.bin.MaxMagicEnergy.Value then
+                    ReplicatedStorage.RS.Remotes.Misc.ChargingToggle:FireServer(false)
+                end 
+            end)
+        end
+    end)
+end)
+
 if Workspace:FindFirstChild("Enemies") then
-local Toggle1 = Section1:CreateToggle("Auto Mob", Settings.Go, function(State)
+local Toggle1 = Section1:CreateToggle("Auto Mob", Settings.G, function(State)
     Settings.Mobs = State
     RunService.Stepped:Connect(function()
         if Settings.Mobs then
@@ -210,13 +282,18 @@ local Toggle1 = Section1:CreateToggle("Auto Mob", Settings.Go, function(State)
     spawn(function()
         while wait(.1) and Settings.Mobs do 
             pcall(function()
+                local Pairs = {Settings.Mob1,Settings.Mob2,Settings.Mob3}
+                for i,v in pairs(ReplicatedStorage.RS.UnloadEnemies:GetChildren()) do
+                    if v:IsA("Model") and (table.find(Pairs,v.Name) or Settings.AllMobs) then
+                        Player.Character.HumanoidRootPart.CFrame = v:GetModelCFrame()
+                    end 
+                end 
                 for i,v in pairs(Workspace.Enemies:GetChildren()) do
-                    if v:IsA("Model")  and v.Attributes.Health.Value ~= 0 then
+                    if v:IsA("Model")  and v.Attributes.Health.Value ~= 0 and (table.find(Pairs,v.Name) or Settings.AllMobs) then
                         Player.Character:FindFirstChild("HumanoidRootPart",true).CFrame = v:GetModelCFrame() * CFrame.new(0,0,3)
                         if not Player.Character:FindFirstChildWhichIsA("Tool") then
                             Player.Character:FindFirstChildWhichIsA("Humanoid"):EquipTool(Player.Backpack:FindFirstChild(Player.Character.Data.Melee1.Value))
                         end 
-                        
                         ReplicatedStorage.RS.Remotes.Combat.DealWeaponDamage:FireServer(0,game:GetService("Players").LocalPlayer.Character,v,"{\"Level\":2,\"Name\":\"Old Dagger\"}","Slash")
                     end 
                 end 
@@ -224,8 +301,49 @@ local Toggle1 = Section1:CreateToggle("Auto Mob", Settings.Go, function(State)
         end
     end)
 end)
-local Dropdown3 = Section1:CreateDropdown("Mobs", Mobs, function(Name)
-	Settings.Mob = Name
+local Toggle1 = Section1:CreateToggle("Auto AllMobs", Settings.AllMobs, function(State)
+    Settings.AllMobs = State
+end)
+
+local Toggle1 = Section1:CreateToggle("Kill Mob Aura", Settings.G91, function(State)
+    Settings.G91 = State
+    spawn(function()
+        while wait() and Settings.G91 do 
+            pcall(function()
+                for i,v in pairs(Workspace.Enemies:GetChildren()) do
+                    if v:IsA("Model")  and v.Attributes.Health.Value ~= 0 and (Player.Character:GetModelCFrame().Position - v:GetModelCFrame().Position).Magnitude < 10 then
+                        ReplicatedStorage.RS.Remotes.Combat.DealWeaponDamage:FireServer(0,Player.Character,v,"{\"Level\":2,\"Name\":\"Old Dagger\"}","Slash")
+                    end 
+                end 
+            end)
+        end 
+    end)
+end)
+
+local Toggle1 = Section1:CreateToggle("Kill Player Aura", Settings.G9, function(State)
+    Settings.G9 = State
+    spawn(function()
+        while wait() and Settings.G9 do 
+           pcall(function()
+                for i,v in pairs(Players:GetPlayers()) do
+                    if v:IsA("Model") and (Player.Character:GetModelCFrame().Position - v.Character:GetModelCFrame().Position).Magnitude < 10 then
+                        ReplicatedStorage.RS.Remotes.Combat.DealWeaponDamage:FireServer(0,Player.Character,v.Character,"{\"Level\":2,\"Name\":\"Old Dagger\"}","Slash")
+                    end 
+                end 
+            end)
+        end 
+    end)
+end)
+
+
+local Dropdown3 = Section1:CreateDropdown("Mobs1", Mobs, function(Name)
+	Settings.Mob1 = Name
+end)
+local Dropdown3 = Section1:CreateDropdown("Mobs2", Mobs, function(Name2)
+	Settings.Mob2 = Name2
+end)
+local Dropdown3 = Section1:CreateDropdown("Mobs3", Mobs, function(Name3)
+	Settings.Mob3 = Name3
 end)
 end
 local Toggle1 = Section2:CreateToggle("Enable WalkSpeed/JumpPower", Settings.Go, function(State)
@@ -411,7 +529,7 @@ Mouse.KeyDown:connect(
                         function()
                             repeat
                                 wait()
-                                LP.Player.Character.Humanoid.PlatformStand = false
+                                LP.Character.Humanoid.PlatformStand = false
                                 if S.L + S.R ~= 0 or S.F + S.B ~= 0 then
                                     SPEED = 200
                                 elseif not (S.L + S.R ~= 0 or S.F + S.B ~= 0) and SPEED ~= 0 then
@@ -457,7 +575,7 @@ Mouse.KeyDown:connect(
                             SPEED = 0
                             BodyGyro:destroy()
                             BodyVelocity:destroy()
-                            LP.Player.Character.Humanoid.PlatformStand = false
+                            LP.Character.Humanoid.PlatformStand = false
                         end
                     )
                 end
@@ -634,18 +752,6 @@ while wait() do
             end
         end
     )
-end
-end)
-local Button1 = Section1:CreateButton("???", function()
-while wait() do
-for i,v in pairs(Workspace.NPCS:GetChildren()) do
-if v:IsA("Model") and v:FindFirstChild("Humanoid") then
-v.Name = HttpService:GenerateGUID(false)
-end end 
-for i,v in pairs(Live:GetChildren()) do
-if v:IsA("Model") and v:FindFirstChild("Humanoid") then
-v.Name = HttpService:GenerateGUID(false)
-end end 
 end
 end)
 
