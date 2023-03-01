@@ -133,6 +133,13 @@ local Dropdown3 = Section1:CreateDropdown("Rods", Rods, function(Name3)
 	Settings.Rod = Name3
 end)
 
+local Toggle1 = Section1:CreateToggle("WalkOnWater", Settings.No, function(State)
+    if Settings.No then
+        game:GetService("Workspace").Camera.Waves.CanCollide = true
+    else
+        game:GetService("Workspace").Camera.Waves.CanCollide = false
+    end 
+end)
 local Toggle1 = Section1:CreateToggle("Auto Fruits", Settings.AutoFruits, function(State)
     Settings.AutoFruits = State
     RunService.Stepped:Connect(function()
