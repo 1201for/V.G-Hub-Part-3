@@ -1,22 +1,14 @@
-
-local get_thread_context = get_thread_context or getthreadcontext or getidentity or syn.get_thread_identity
-local set_thread_context = set_thread_context or setthreadcontext or setidentity or syn.set_thread_identity
-local OldToNew = get_thread_context()
-for i,v in next, getgc() do
-    if type(v) == "function" and islclosure(v) then
-        if table.find(getconstants(v), "Detected") and table.find(getconstants(v), "crash") then
-            set_thread_context(2)
-            hookfunction(v, function()
-                return 
-            end)
-            set_thread_context(OldToNew)
-        end 
+for i,v in next, getgc(true) do
+    if type(v) == "table" and type(rawget(v, "Detected")) == "function" then
+        hookfunction(v.Detected, function(...)
+            local A, B = ...
+            if A == Player then 
+                return
+            end 
+        end)
+        break
     end 
 end 
-
-
-
-
 local Config = {
     WindowName = "V.G Hub",
 	Color = Color3.fromRGB(255,128,64),
