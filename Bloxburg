@@ -75,9 +75,6 @@ local Invoke = function(A)
     getfenv(Da.InvokeServer).i = O
 end
 local Invis = function()
-    local Clone = Player.Character.LowerTorso.Root:Clone()
-    Player.Character.LowerTorso.Root:Destroy()
-    Clone.Parent = Player.Character.LowerTorso
 end
 local F = {}
 getgenv().Text = Drawing.new("Text")
